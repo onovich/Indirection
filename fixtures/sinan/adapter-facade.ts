@@ -1,8 +1,11 @@
 import {
+  AssetAbortError,
   type AssetManager,
+  AssetResolutionError,
   type AssetScope,
   type ResolvedSource
 } from "@indirection/runtime";
+import type { DiagnosticCode } from "@indirection/protocol";
 
 export interface SinanWebRuntimeBoundary {
   loadModel(assetId: string, url: string): Promise<unknown>;
@@ -25,6 +28,15 @@ export interface SinanRuntimeAdapter extends SinanWebRuntimeBoundary {
   readonly sceneScope: AssetScope;
 
   disposeSceneScope(): Promise<void>;
+  diagnostics(): readonly SinanAdapterDiagnostic[];
+}
+
+export interface SinanAdapterDiagnostic {
+  readonly code: DiagnosticCode;
+  readonly phase: "adapter";
+  readonly assetId: string;
+  readonly legacyUrl: string;
+  readonly message: string;
 }
 
 export function createSinanRuntimeAdapter(
@@ -37,6 +49,7 @@ export function createSinanRuntimeAdapter(
     name: "indirection-runtime-adapter",
     enabled: true
   };
+  const diagnostics: SinanAdapterDiagnostic[] = [];
 
   return {
     featureFlag,
@@ -46,11 +59,37 @@ export function createSinanRuntimeAdapter(
         return options.hostRuntime.loadModel(assetId, url);
       }
 
-      const handle = await sceneScope.acquire<ResolvedSource>(assetId);
-      return handle.value;
+      try {
+        const handle = await sceneScope.acquire<ResolvedSource>(assetId);
+        return handle.value;
+      } catch (error) {
+        diagnostics.push({
+          code: mapAdapterErrorCode(error),
+          phase: "adapter",
+          assetId,
+          legacyUrl: url,
+          message: "Indirection adapter fell back to the host runtime."
+        });
+        return options.hostRuntime.loadModel(assetId, url);
+      }
     },
     async disposeSceneScope(): Promise<void> {
       await sceneScope.dispose();
+    },
+    diagnostics() {
+      return diagnostics;
     }
   };
+}
+
+function mapAdapterErrorCode(error: unknown): DiagnosticCode {
+  if (error instanceof AssetResolutionError) {
+    return "IND_ASSET_UNKNOWN";
+  }
+
+  if (error instanceof AssetAbortError) {
+    return "IND_ABORTED";
+  }
+
+  return "IND_INTERNAL_ERROR";
 }

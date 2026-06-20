@@ -77,4 +77,34 @@ describe("Sinan runtime adapter facade", () => {
       host: true
     });
   });
+
+  it("falls back to host runtime and records adapter diagnostics", async () => {
+    const manager = createAssetManager({ catalog });
+    const hostRuntime: SinanWebRuntimeBoundary = {
+      async loadModel(assetId, url) {
+        return { assetId, url, host: true };
+      }
+    };
+    const adapter = createSinanRuntimeAdapter({
+      manager,
+      hostRuntime
+    });
+
+    await expect(
+      adapter.loadModel("sinan:missing.model", "legacy/missing.glb")
+    ).resolves.toEqual({
+      assetId: "sinan:missing.model",
+      url: "legacy/missing.glb",
+      host: true
+    });
+    expect(adapter.diagnostics()).toEqual([
+      {
+        code: "IND_ASSET_UNKNOWN",
+        phase: "adapter",
+        assetId: "sinan:missing.model",
+        legacyUrl: "legacy/missing.glb",
+        message: "Indirection adapter fell back to the host runtime."
+      }
+    ]);
+  });
 });
