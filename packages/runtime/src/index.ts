@@ -17,7 +17,9 @@ export interface CreateAssetManagerOptions {
 
 export interface AssetManager {
   readonly catalogStore: CatalogStore;
+  readonly resourceTable: ResourceTable;
 
+  createScope(id?: string): AssetScope;
   replaceCatalog(catalog: CompiledCatalog): void;
   resolveSource(
     assetId: AssetId | string,
@@ -31,6 +33,53 @@ export interface AssetManagerSnapshot {
   readonly assetCount: number;
   readonly groupCount: number;
   readonly resources: readonly ResourceSnapshot[];
+}
+
+export interface AssetHandle<T = ResolvedSource> {
+  readonly assetId: string;
+  readonly value: T;
+  readonly released: boolean;
+
+  release(): void;
+}
+
+export interface AssetScope {
+  readonly id: string;
+  readonly disposed: boolean;
+
+  acquire(
+    assetId: AssetId | string,
+    context?: ResolutionContext
+  ): Promise<AssetHandle<ResolvedSource>>;
+  dispose(): Promise<void>;
+  snapshot(): AssetScopeSnapshot;
+}
+
+export interface AssetScopeSnapshot {
+  readonly id: string;
+  readonly disposed: boolean;
+  readonly handleCount: number;
+  readonly assetIds: readonly string[];
+}
+
+export class AssetScopeDisposedError extends Error {
+  readonly scopeId: string;
+
+  constructor(scopeId: string) {
+    super(`Asset scope is disposed: ${scopeId}`);
+    this.name = "AssetScopeDisposedError";
+    this.scopeId = scopeId;
+  }
+}
+
+export class AssetResolutionError extends Error {
+  readonly assetId: string;
+
+  constructor(assetId: string) {
+    super(`Asset could not be resolved: ${assetId}`);
+    this.name = "AssetResolutionError";
+    this.assetId = assetId;
+  }
 }
 
 export class CatalogStore {
@@ -238,6 +287,107 @@ export class ResourceTable {
   }
 }
 
+class RuntimeAssetHandle<T> implements AssetHandle<T> {
+  readonly assetId: string;
+  readonly value: T;
+  #released = false;
+  readonly #releaseHandle: () => void;
+
+  constructor(assetId: string, value: T, releaseHandle: () => void) {
+    this.assetId = assetId;
+    this.value = value;
+    this.#releaseHandle = releaseHandle;
+  }
+
+  get released(): boolean {
+    return this.#released;
+  }
+
+  release(): void {
+    if (this.#released) {
+      return;
+    }
+
+    this.#released = true;
+    this.#releaseHandle();
+  }
+}
+
+class RuntimeAssetScope implements AssetScope {
+  readonly id: string;
+  readonly #resolveSource: (
+    assetId: AssetId | string,
+    context?: ResolutionContext
+  ) => ResolvedSource | undefined;
+  readonly #resourceTable: ResourceTable;
+  readonly #handles = new Set<RuntimeAssetHandle<ResolvedSource>>();
+  #disposed = false;
+
+  constructor(
+    id: string,
+    resourceTable: ResourceTable,
+    resolveSource: (
+      assetId: AssetId | string,
+      context?: ResolutionContext
+    ) => ResolvedSource | undefined
+  ) {
+    this.id = id;
+    this.#resourceTable = resourceTable;
+    this.#resolveSource = resolveSource;
+  }
+
+  get disposed(): boolean {
+    return this.#disposed;
+  }
+
+  async acquire(
+    assetId: AssetId | string,
+    context?: ResolutionContext
+  ): Promise<AssetHandle<ResolvedSource>> {
+    if (this.#disposed) {
+      throw new AssetScopeDisposedError(this.id);
+    }
+
+    const resolved = this.#resolveSource(assetId, context);
+    if (resolved === undefined) {
+      throw new AssetResolutionError(String(assetId));
+    }
+
+    this.#resourceTable.retain(assetId);
+    this.#resourceTable.transition(assetId, {
+      state: "ready",
+      hasValue: true
+    });
+
+    const handle = new RuntimeAssetHandle(String(assetId), resolved, () => {
+      this.#handles.delete(handle);
+      this.#resourceTable.release(assetId);
+    });
+    this.#handles.add(handle);
+    return handle;
+  }
+
+  async dispose(): Promise<void> {
+    if (this.#disposed) {
+      return;
+    }
+
+    this.#disposed = true;
+    for (const handle of [...this.#handles]) {
+      handle.release();
+    }
+  }
+
+  snapshot(): AssetScopeSnapshot {
+    return {
+      id: this.id,
+      disposed: this.#disposed,
+      handleCount: this.#handles.size,
+      assetIds: [...this.#handles].map((handle) => handle.assetId).sort()
+    };
+  }
+}
+
 export type ResolutionContextValue = string | readonly string[];
 
 export interface ResolutionContext {
@@ -321,9 +471,15 @@ export function createAssetManager(
   const resourceTable = new ResourceTable();
   const resolverChain = options.resolverChain ?? new ResolverChain();
   const defaultContext = options.context ?? {};
+  let nextScopeId = 1;
 
-  return {
+  const manager: AssetManager = {
     catalogStore,
+    resourceTable,
+    createScope(id = `scope-${nextScopeId}`) {
+      nextScopeId += 1;
+      return new RuntimeAssetScope(id, resourceTable, manager.resolveSource);
+    },
     replaceCatalog(catalog) {
       catalogStore.replaceCatalog(catalog);
     },
@@ -347,6 +503,8 @@ export function createAssetManager(
       };
     }
   };
+
+  return manager;
 }
 
 function sourceMatchesContext(
