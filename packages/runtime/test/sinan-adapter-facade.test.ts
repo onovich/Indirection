@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { normalizeAssetId, protocolVersion, type CompiledCatalog } from "@indirection/protocol";
-import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
+import {
+  InMemoryTransport,
+  createAssetManager,
+  type AssetLoader
+} from "@indirection/runtime";
 import {
   createSinanRuntimeAdapter,
   type SinanWebRuntimeBoundary
@@ -103,6 +107,50 @@ describe("Sinan runtime adapter facade", () => {
         phase: "adapter",
         assetId: "sinan:missing.model",
         legacyUrl: "legacy/missing.glb",
+        message: "Indirection adapter fell back to the host runtime."
+      }
+    ]);
+  });
+
+  it("falls back to host built-in loader when adapter loading fails", async () => {
+    const failingModelLoader: AssetLoader = {
+      id: "failing-model-loader",
+      types: ["model/gltf"],
+      load() {
+        throw new Error("fake model decode failed");
+      }
+    };
+    const manager = createAssetManager({
+      catalog,
+      loaders: [failingModelLoader],
+      transport: new InMemoryTransport({
+        "models/gate/hero.glb": "not-a-real-glb"
+      })
+    });
+    const hostCalls: Array<readonly [string, string]> = [];
+    const hostRuntime: SinanWebRuntimeBoundary = {
+      async loadModel(assetId, url) {
+        hostCalls.push([assetId, url]);
+        return { assetId, url, host: true };
+      }
+    };
+    const adapter = createSinanRuntimeAdapter({
+      manager,
+      hostRuntime
+    });
+
+    await expect(adapter.loadModel("sinan:gate.hero", "legacy/hero.glb")).resolves.toEqual({
+      assetId: "sinan:gate.hero",
+      url: "legacy/hero.glb",
+      host: true
+    });
+    expect(hostCalls).toEqual([["sinan:gate.hero", "legacy/hero.glb"]]);
+    expect(adapter.diagnostics()).toEqual([
+      {
+        code: "IND_INTERNAL_ERROR",
+        phase: "adapter",
+        assetId: "sinan:gate.hero",
+        legacyUrl: "legacy/hero.glb",
         message: "Indirection adapter fell back to the host runtime."
       }
     ]);
