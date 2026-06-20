@@ -80,6 +80,11 @@ describe("Sinan runtime adapter facade", () => {
       url: "legacy/hero.glb",
       host: true
     });
+    expect(adapter.sceneScope.snapshot()).toMatchObject({
+      handleCount: 0,
+      disposed: false
+    });
+    expect(adapter.diagnostics()).toEqual([]);
   });
 
   it("falls back to host runtime and records adapter diagnostics", async () => {
@@ -110,6 +115,11 @@ describe("Sinan runtime adapter facade", () => {
         message: "Indirection adapter fell back to the host runtime."
       }
     ]);
+
+    const diagnostics = adapter.diagnostics() as Array<unknown>;
+    diagnostics.push({ code: "IND_INTERNAL_ERROR" });
+
+    expect(adapter.diagnostics()).toHaveLength(1);
   });
 
   it("falls back to host built-in loader when adapter loading fails", async () => {

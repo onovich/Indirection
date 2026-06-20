@@ -77,7 +77,7 @@ export function createSinanRuntimeAdapter(
       await sceneScope.dispose();
     },
     diagnostics() {
-      return diagnostics;
+      return [...diagnostics];
     }
   };
 }
