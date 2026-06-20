@@ -16,6 +16,7 @@
     "format": "echo \"format not configured yet\""
   },
   "devDependencies": {
+    "@indirection/compiler": "workspace:*",
     "@indirection/protocol": "workspace:*",
     "@types/node": "24.13.2",
     "typescript": "6.0.3",

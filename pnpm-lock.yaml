@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@indirection/compiler':
+        specifier: workspace:*
+        version: link:packages/compiler
       '@indirection/protocol':
         specifier: workspace:*
         version: link:packages/protocol
