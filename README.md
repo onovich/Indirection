@@ -47,6 +47,8 @@ corepack pnpm validate:full
 
 ## Documents
 
+- [Docs index](docs/README.md)
+- [Changelog](CHANGELOG.md)
 - [Architecture and technical design v0.1](docs/Indirection_寻址_架构与技术选型设计_v0.1.md)
 - [Current technical architecture and development plan v0.2](docs/Indirection_技术架构与开发计划_v0.2.md)
 - [Phase 0-7 Big Goal execution guide](docs/indirection-phase-0-7-big-goal-execution-guide.md)

@@ -27,6 +27,7 @@ POC-1 不做：
 - Fixture reports：`fixtures/sinan/report.ts`
 - Coverage：`packages/compiler/test/sinan-importer.test.ts`
 - Report snapshot：`packages/compiler/test/sinan-report.test.ts`
+- Report contract：`packages/compiler/test/sinan-report-contract.test.ts`
 
 这些文件位于 fixture/test 边界。`packages/protocol/src`、`packages/runtime/src`、`packages/compiler/src`、`packages/schema/src` 不包含 Sinan 专有 public API。
 
