@@ -18,6 +18,7 @@
   "devDependencies": {
     "@indirection/compiler": "workspace:*",
     "@indirection/protocol": "workspace:*",
+    "@indirection/runtime": "workspace:*",
     "@types/node": "24.13.2",
     "typescript": "6.0.3",
     "vitest": "4.1.9"

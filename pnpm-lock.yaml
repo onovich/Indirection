@@ -14,6 +14,9 @@ importers:
       '@indirection/protocol':
         specifier: workspace:*
         version: link:packages/protocol
+      '@indirection/runtime':
+        specifier: workspace:*
+        version: link:packages/runtime
       '@types/node':
         specifier: 24.13.2
         version: 24.13.2
