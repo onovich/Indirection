@@ -46,6 +46,49 @@ export function createWebDataLoaders(): readonly AssetLoader[] {
   return [createWebJsonLoader(), createWebTextLoader(), createWebBinaryLoader()];
 }
 
+export interface CacheStorageKey {
+  readonly catalogVersion: string;
+  readonly sourceUrl: string;
+}
+
+export interface IndirectionCacheStorageAdapter {
+  put(key: CacheStorageKey, body: TransportBody): Promise<void>;
+  match(key: CacheStorageKey): Promise<TransportBody | undefined>;
+  deleteCatalogVersion(catalogVersion: string): Promise<void>;
+  keys(catalogVersion: string): Promise<readonly string[]>;
+}
+
+export class MemoryCacheStorageAdapter implements IndirectionCacheStorageAdapter {
+  readonly #versions = new Map<string, Map<string, TransportBody>>();
+
+  async put(key: CacheStorageKey, body: TransportBody): Promise<void> {
+    this.getVersion(key.catalogVersion).set(key.sourceUrl, body);
+  }
+
+  async match(key: CacheStorageKey): Promise<TransportBody | undefined> {
+    return this.#versions.get(key.catalogVersion)?.get(key.sourceUrl);
+  }
+
+  async deleteCatalogVersion(catalogVersion: string): Promise<void> {
+    this.#versions.delete(catalogVersion);
+  }
+
+  async keys(catalogVersion: string): Promise<readonly string[]> {
+    return [...(this.#versions.get(catalogVersion)?.keys() ?? [])].sort();
+  }
+
+  private getVersion(catalogVersion: string): Map<string, TransportBody> {
+    const existing = this.#versions.get(catalogVersion);
+    if (existing !== undefined) {
+      return existing;
+    }
+
+    const version = new Map<string, TransportBody>();
+    this.#versions.set(catalogVersion, version);
+    return version;
+  }
+}
+
 async function readText(context: LoaderContext): Promise<string> {
   return bodyToText((await context.transport.read(context)).body);
 }
