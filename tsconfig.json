@@ -1,4 +1,10 @@
 {
   "include": ["types/**/*.d.ts"],
-  "references": []
+  "references": [
+    { "path": "./packages/protocol" },
+    { "path": "./packages/schema" },
+    { "path": "./packages/compiler" },
+    { "path": "./packages/runtime" },
+    { "path": "./packages/testkit" }
+  ]
 }
