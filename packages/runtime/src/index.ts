@@ -3,6 +3,7 @@ import {
   type CatalogAsset,
   type CatalogSource,
   type CompiledCatalog,
+  type JsonValue,
   protocolVersion
 } from "@indirection/protocol";
 
@@ -12,7 +13,9 @@ export const runtimeProtocolVersion = protocolVersion;
 export interface CreateAssetManagerOptions {
   readonly catalog: CompiledCatalog;
   readonly context?: ResolutionContext;
+  readonly loaders?: readonly AssetLoader[];
   readonly resolverChain?: ResolverChain;
+  readonly transport?: AssetTransport;
 }
 
 export interface AssetManager {
@@ -47,10 +50,10 @@ export interface AssetScope {
   readonly id: string;
   readonly disposed: boolean;
 
-  acquire(
+  acquire<T = ResolvedSource>(
     assetId: AssetId | string,
     context?: ResolutionContext
-  ): Promise<AssetHandle<ResolvedSource>>;
+  ): Promise<AssetHandle<T>>;
   dispose(): Promise<void>;
   snapshot(): AssetScopeSnapshot;
 }
@@ -79,6 +82,18 @@ export class AssetResolutionError extends Error {
     super(`Asset could not be resolved: ${assetId}`);
     this.name = "AssetResolutionError";
     this.assetId = assetId;
+  }
+}
+
+export class AssetLoaderError extends Error {
+  readonly assetId: string;
+  readonly type: string;
+
+  constructor(assetId: string, type: string) {
+    super(`No asset loader registered for ${type}: ${assetId}`);
+    this.name = "AssetLoaderError";
+    this.assetId = assetId;
+    this.type = type;
   }
 }
 
@@ -319,8 +334,9 @@ class RuntimeAssetScope implements AssetScope {
     assetId: AssetId | string,
     context?: ResolutionContext
   ) => ResolvedSource | undefined;
+  readonly #loadAsset: (resolved: ResolvedSource) => Promise<unknown>;
   readonly #resourceTable: ResourceTable;
-  readonly #handles = new Set<RuntimeAssetHandle<ResolvedSource>>();
+  readonly #handles = new Set<RuntimeAssetHandle<unknown>>();
   #disposed = false;
 
   constructor(
@@ -329,21 +345,23 @@ class RuntimeAssetScope implements AssetScope {
     resolveSource: (
       assetId: AssetId | string,
       context?: ResolutionContext
-    ) => ResolvedSource | undefined
+    ) => ResolvedSource | undefined,
+    loadAsset: (resolved: ResolvedSource) => Promise<unknown>
   ) {
     this.id = id;
     this.#resourceTable = resourceTable;
     this.#resolveSource = resolveSource;
+    this.#loadAsset = loadAsset;
   }
 
   get disposed(): boolean {
     return this.#disposed;
   }
 
-  async acquire(
+  async acquire<T = ResolvedSource>(
     assetId: AssetId | string,
     context?: ResolutionContext
-  ): Promise<AssetHandle<ResolvedSource>> {
+  ): Promise<AssetHandle<T>> {
     if (this.#disposed) {
       throw new AssetScopeDisposedError(this.id);
     }
@@ -355,11 +373,17 @@ class RuntimeAssetScope implements AssetScope {
 
     this.#resourceTable.retain(assetId);
     this.#resourceTable.transition(assetId, {
+      state: "resolving"
+    });
+    const value = await this.#loadAsset(resolved);
+
+    this.#resourceTable.transition(assetId, {
       state: "ready",
+      hasTransport: false,
       hasValue: true
     });
 
-    const handle = new RuntimeAssetHandle(String(assetId), resolved, () => {
+    const handle = new RuntimeAssetHandle(String(assetId), value as T, () => {
       this.#handles.delete(handle);
       this.#resourceTable.release(assetId);
     });
@@ -404,6 +428,139 @@ export interface ResolvedSource {
   readonly catalogVersion: string;
   readonly sourceIndex: number;
   readonly source: CatalogSource;
+}
+
+export interface TransportRequest {
+  readonly assetId: string;
+  readonly source: ResolvedSource;
+  readonly signal?: AbortSignal;
+}
+
+export interface TransportResponse {
+  readonly body: TransportBody;
+  readonly contentType?: string;
+}
+
+export type TransportBody = string | Uint8Array | ArrayBuffer | JsonValue;
+
+export interface AssetTransport {
+  read(request: TransportRequest): Promise<TransportResponse> | TransportResponse;
+}
+
+export interface LoadedAsset<T = unknown> {
+  readonly value: T;
+  readonly dispose?: () => void | Promise<void>;
+  readonly cost?: {
+    readonly cpuBytes?: number;
+    readonly gpuBytes?: number;
+  };
+}
+
+export interface LoaderContext {
+  readonly assetId: string;
+  readonly source: ResolvedSource;
+  readonly signal?: AbortSignal;
+  readonly transport: AssetTransport;
+}
+
+export interface AssetLoader<T = unknown> {
+  readonly id: string;
+  readonly types: readonly string[];
+
+  load(context: LoaderContext): Promise<LoadedAsset<T>> | LoadedAsset<T>;
+}
+
+export class LoaderRegistry {
+  readonly #loaders = new Map<string, AssetLoader>();
+
+  constructor(loaders: readonly AssetLoader[] = []) {
+    for (const loader of loaders) {
+      this.register(loader);
+    }
+  }
+
+  register(loader: AssetLoader): void {
+    for (const type of loader.types) {
+      this.#loaders.set(type, loader);
+    }
+  }
+
+  get(type: string): AssetLoader | undefined {
+    return this.#loaders.get(type);
+  }
+}
+
+export class InMemoryTransport implements AssetTransport {
+  readonly #records = new Map<string, TransportBody>();
+
+  constructor(records: Readonly<Record<string, TransportBody>> = {}) {
+    for (const [url, body] of Object.entries(records)) {
+      this.#records.set(url, body);
+    }
+  }
+
+  set(url: string, body: TransportBody): void {
+    this.#records.set(url, body);
+  }
+
+  read(request: TransportRequest): TransportResponse {
+    if (request.signal?.aborted) {
+      throw new Error(`Transport request aborted: ${request.assetId}`);
+    }
+
+    const url = request.source.source.url;
+    if (!this.#records.has(url)) {
+      throw new Error(`Missing in-memory transport record: ${url}`);
+    }
+
+    return {
+      body: this.#records.get(url) as TransportBody
+    };
+  }
+}
+
+export const jsonAssetLoader: AssetLoader<unknown> = {
+  id: "fake-json",
+  types: ["data/json"],
+  async load(context) {
+    const response = await context.transport.read(createTransportRequest(context));
+
+    return {
+      value: JSON.parse(bodyToText(response.body))
+    };
+  }
+};
+
+export const textAssetLoader: AssetLoader<string> = {
+  id: "fake-text",
+  types: ["text/plain"],
+  async load(context) {
+    const response = await context.transport.read(createTransportRequest(context));
+
+    return {
+      value: bodyToText(response.body)
+    };
+  }
+};
+
+export const binaryAssetLoader: AssetLoader<Uint8Array> = {
+  id: "fake-binary",
+  types: ["binary/array-buffer"],
+  async load(context) {
+    const response = await context.transport.read(createTransportRequest(context));
+
+    return {
+      value: bodyToBytes(response.body)
+    };
+  }
+};
+
+function createTransportRequest(context: LoaderContext): TransportRequest {
+  return {
+    assetId: context.assetId,
+    source: context.source,
+    ...(context.signal === undefined ? {} : { signal: context.signal })
+  };
 }
 
 export interface SourceResolver {
@@ -469,6 +626,12 @@ export function createAssetManager(
 ): AssetManager {
   const catalogStore = new CatalogStore(options.catalog);
   const resourceTable = new ResourceTable();
+  const loaderRegistry = new LoaderRegistry([
+    jsonAssetLoader,
+    textAssetLoader,
+    binaryAssetLoader,
+    ...(options.loaders ?? [])
+  ]);
   const resolverChain = options.resolverChain ?? new ResolverChain();
   const defaultContext = options.context ?? {};
   let nextScopeId = 1;
@@ -478,7 +641,12 @@ export function createAssetManager(
     resourceTable,
     createScope(id = `scope-${nextScopeId}`) {
       nextScopeId += 1;
-      return new RuntimeAssetScope(id, resourceTable, manager.resolveSource);
+      return new RuntimeAssetScope(
+        id,
+        resourceTable,
+        manager.resolveSource,
+        loadAsset
+      );
     },
     replaceCatalog(catalog) {
       catalogStore.replaceCatalog(catalog);
@@ -505,6 +673,64 @@ export function createAssetManager(
   };
 
   return manager;
+
+  async function loadAsset(resolved: ResolvedSource): Promise<unknown> {
+    const loader = loaderRegistry.get(resolved.type);
+    if (loader === undefined || options.transport === undefined) {
+      return resolved;
+    }
+
+    resourceTable.transition(resolved.assetId, {
+      state: "loading",
+      hasTransport: true
+    });
+    resourceTable.transition(resolved.assetId, {
+      state: "decoding"
+    });
+
+    const loaded = await loader.load({
+      assetId: resolved.assetId,
+      source: resolved,
+      transport: options.transport
+    });
+
+    resourceTable.transition(resolved.assetId, {
+      state: "ready",
+      hasTransport: false,
+      hasValue: true,
+      hasDisposer: loaded.dispose !== undefined
+    });
+
+    return loaded.value;
+  }
+}
+
+function bodyToText(body: TransportBody): string {
+  if (typeof body === "string") {
+    return body;
+  }
+
+  if (body instanceof Uint8Array) {
+    return new TextDecoder().decode(body);
+  }
+
+  if (body instanceof ArrayBuffer) {
+    return new TextDecoder().decode(new Uint8Array(body));
+  }
+
+  return JSON.stringify(body);
+}
+
+function bodyToBytes(body: TransportBody): Uint8Array {
+  if (body instanceof Uint8Array) {
+    return body;
+  }
+
+  if (body instanceof ArrayBuffer) {
+    return new Uint8Array(body);
+  }
+
+  return new TextEncoder().encode(bodyToText(body));
 }
 
 function sourceMatchesContext(
