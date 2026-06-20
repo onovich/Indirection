@@ -36,3 +36,4 @@ Early milestones:
 - [R&D plan after Sinan alignment](docs/rd-plan-sinan-alignment-2026-06-20.md)
 - [Sinan POC-1 compatibility note](docs/sinan-cooperation/indirection-poc-1-compatibility-note.md)
 - [Sinan POC-1 usage](docs/sinan-cooperation/indirection-poc-1-usage.md)
+- [Sinan POC-2 adapter boundary](docs/sinan-cooperation/indirection-poc-2-adapter-boundary.md)
