@@ -155,4 +155,39 @@ describe("Sinan runtime adapter facade", () => {
       }
     ]);
   });
+
+  it("clears scene scope handles and leak warnings after repeated loads", async () => {
+    const manager = createAssetManager({ catalog });
+    const hostRuntime: SinanWebRuntimeBoundary = {
+      async loadModel(assetId, url) {
+        return { assetId, url, host: true };
+      }
+    };
+    const adapter = createSinanRuntimeAdapter({
+      manager,
+      hostRuntime
+    });
+
+    await adapter.loadModel("sinan:gate.hero", "legacy/hero.glb");
+    await adapter.loadModel("sinan:gate.hero", "legacy/hero.glb");
+
+    expect(adapter.sceneScope.snapshot()).toMatchObject({
+      handleCount: 2
+    });
+    expect(manager.snapshot().leakWarnings).toEqual([
+      {
+        assetId: "sinan:gate.hero",
+        state: "ready",
+        refCount: 2
+      }
+    ]);
+
+    await adapter.disposeSceneScope();
+
+    expect(adapter.sceneScope.snapshot()).toMatchObject({
+      disposed: true,
+      handleCount: 0
+    });
+    expect(manager.snapshot().leakWarnings).toEqual([]);
+  });
 });
