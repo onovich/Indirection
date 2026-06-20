@@ -36,6 +36,7 @@ export interface AssetManagerSnapshot {
   readonly assetCount: number;
   readonly groupCount: number;
   readonly resources: readonly ResourceSnapshot[];
+  readonly leakWarnings: readonly ResourceLeakWarning[];
 }
 
 export interface AssetHandle<T = ResolvedSource> {
@@ -152,7 +153,8 @@ export class CatalogStore {
       catalogVersion: this.#catalog.catalogVersion,
       assetCount: this.listAssetIds().length,
       groupCount: this.listGroupIds().length,
-      resources: []
+      resources: [],
+      leakWarnings: []
     };
   }
 }
@@ -191,6 +193,12 @@ export interface ResourceSnapshot {
   readonly dependencyRefs: readonly string[];
   readonly causeCode?: string;
   readonly fallbackAssetId?: string;
+}
+
+export interface ResourceLeakWarning {
+  readonly assetId: string;
+  readonly state: ResourceStateName;
+  readonly refCount: number;
 }
 
 interface ResourceEntry {
@@ -282,6 +290,17 @@ export class ResourceTable {
     return [...this.#entries.values()]
       .sort((left, right) => left.assetId.localeCompare(right.assetId))
       .map((entry) => this.snapshotEntry(entry));
+  }
+
+  leakWarnings(): readonly ResourceLeakWarning[] {
+    return [...this.#entries.values()]
+      .filter((entry) => entry.refCount > 0)
+      .sort((left, right) => left.assetId.localeCompare(right.assetId))
+      .map((entry) => ({
+        assetId: entry.assetId,
+        state: entry.state,
+        refCount: entry.refCount
+      }));
   }
 
   private ensureEntry(assetId: AssetId | string): ResourceEntry {
@@ -776,7 +795,8 @@ export function createAssetManager(
     snapshot() {
       return {
         ...catalogStore.snapshot(),
-        resources: resourceTable.snapshot()
+        resources: resourceTable.snapshot(),
+        leakWarnings: resourceTable.leakWarnings()
       };
     }
   };

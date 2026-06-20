@@ -33,7 +33,8 @@ describe("CatalogStore", () => {
       catalogVersion: "sha256-initial",
       assetCount: 1,
       groupCount: 1,
-      resources: []
+      resources: [],
+      leakWarnings: []
     });
   });
 
@@ -63,7 +64,8 @@ describe("createAssetManager", () => {
       catalogVersion: "sha256-manager",
       assetCount: 1,
       groupCount: 1,
-      resources: []
+      resources: [],
+      leakWarnings: []
     });
   });
 });
