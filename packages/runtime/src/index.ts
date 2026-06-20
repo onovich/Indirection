@@ -245,16 +245,20 @@ export class ResourceTable {
     entry.hasTransport = transition.hasTransport ?? entry.hasTransport;
     entry.hasValue = transition.hasValue ?? entry.hasValue;
     entry.hasDisposer = transition.hasDisposer ?? entry.hasDisposer;
-    if (transition.causeCode === undefined) {
-      delete entry.causeCode;
-    } else {
-      entry.causeCode = transition.causeCode;
+    if ("causeCode" in transition) {
+      if (transition.causeCode === undefined) {
+        delete entry.causeCode;
+      } else {
+        entry.causeCode = transition.causeCode;
+      }
     }
 
-    if (transition.fallbackAssetId === undefined) {
-      delete entry.fallbackAssetId;
-    } else {
-      entry.fallbackAssetId = transition.fallbackAssetId;
+    if ("fallbackAssetId" in transition) {
+      if (transition.fallbackAssetId === undefined) {
+        delete entry.fallbackAssetId;
+      } else {
+        entry.fallbackAssetId = transition.fallbackAssetId;
+      }
     }
 
     return this.snapshotEntry(entry);
@@ -353,6 +357,7 @@ class RuntimeAssetScope implements AssetScope {
     resolved: ResolvedSource,
     signal: AbortSignal | undefined
   ) => Promise<unknown>;
+  readonly #getAsset: (assetId: AssetId | string) => CatalogAsset | undefined;
   readonly #resourceTable: ResourceTable;
   readonly #handles = new Set<RuntimeAssetHandle<unknown>>();
   #disposed = false;
@@ -367,12 +372,14 @@ class RuntimeAssetScope implements AssetScope {
     loadAsset: (
       resolved: ResolvedSource,
       signal: AbortSignal | undefined
-    ) => Promise<unknown>
+    ) => Promise<unknown>,
+    getAsset: (assetId: AssetId | string) => CatalogAsset | undefined
   ) {
     this.id = id;
     this.#resourceTable = resourceTable;
     this.#resolveSource = resolveSource;
     this.#loadAsset = loadAsset;
+    this.#getAsset = getAsset;
   }
 
   get disposed(): boolean {
@@ -394,27 +401,100 @@ class RuntimeAssetScope implements AssetScope {
     }
 
     this.#resourceTable.retain(assetId);
+    const linkedAssetIds = new Set<string>();
     try {
+      const dependencies = this.#getAsset(assetId)?.dependencies ?? [];
+      this.#resourceTable.setDependencies(assetId, dependencies);
+      for (const dependency of dependencies) {
+        linkedAssetIds.add(dependency);
+        this.#resourceTable.retain(dependency);
+      }
+
       this.#resourceTable.transition(assetId, {
         state: "resolving"
       });
-      const value = await this.#loadAsset(resolved, acquireOptions.signal);
+      const loaded = await this.loadWithFallback(
+        String(assetId),
+        resolved,
+        acquireOptions,
+        linkedAssetIds
+      );
 
       this.#resourceTable.transition(assetId, {
-        state: "ready",
+        state: loaded.usedFallback ? "fallback-ready" : "ready",
         hasTransport: false,
         hasValue: true
       });
 
-      const handle = new RuntimeAssetHandle(String(assetId), value as T, () => {
+      const handle = new RuntimeAssetHandle(String(assetId), loaded.value as T, () => {
         this.#handles.delete(handle);
         this.#resourceTable.release(assetId);
+        for (const linkedAssetId of linkedAssetIds) {
+          this.#resourceTable.release(linkedAssetId);
+        }
       });
       this.#handles.add(handle);
       return handle;
     } catch (error) {
       this.#resourceTable.release(assetId);
+      for (const linkedAssetId of linkedAssetIds) {
+        this.#resourceTable.release(linkedAssetId);
+      }
       throw error;
+    }
+  }
+
+  private async loadWithFallback(
+    assetId: string,
+    resolved: ResolvedSource,
+    acquireOptions: AcquireAssetOptions,
+    linkedAssetIds: Set<string>
+  ): Promise<{ readonly value: unknown; readonly usedFallback: boolean }> {
+    try {
+      return {
+        value: await this.#loadAsset(resolved, acquireOptions.signal),
+        usedFallback: false
+      };
+    } catch (error) {
+      if (error instanceof AssetAbortError) {
+        throw error;
+      }
+
+      const fallbackAssetId = this.#getAsset(assetId)?.fallback;
+      if (fallbackAssetId === undefined) {
+        this.#resourceTable.transition(assetId, {
+          state: "failed",
+          causeCode: causeCodeFromError(error)
+        });
+        throw error;
+      }
+
+      const fallbackResolved = this.#resolveSource(
+        fallbackAssetId,
+        acquireOptions.context
+      );
+      if (fallbackResolved === undefined) {
+        this.#resourceTable.transition(assetId, {
+          state: "failed",
+          causeCode: causeCodeFromError(error),
+          fallbackAssetId
+        });
+        throw error;
+      }
+
+      linkedAssetIds.add(fallbackAssetId);
+      this.#resourceTable.retain(fallbackAssetId);
+      this.#resourceTable.transition(assetId, {
+        state: "fallback-ready",
+        hasValue: true,
+        causeCode: causeCodeFromError(error),
+        fallbackAssetId
+      });
+
+      return {
+        value: await this.#loadAsset(fallbackResolved, acquireOptions.signal),
+        usedFallback: true
+      };
     }
   }
 
@@ -673,7 +753,8 @@ export function createAssetManager(
         id,
         resourceTable,
         manager.resolveSource,
-        loadAsset
+        loadAsset,
+        (assetId) => catalogStore.getAsset(assetId)
       );
     },
     replaceCatalog(catalog) {
@@ -892,6 +973,18 @@ function normalizeAcquireOptions(
   return {
     context: options as ResolutionContext
   };
+}
+
+function causeCodeFromError(error: unknown): string {
+  if (error instanceof AssetAbortError) {
+    return "IND_ABORTED";
+  }
+
+  if (error instanceof AssetResolutionError) {
+    return "IND_SOURCE_UNRESOLVED";
+  }
+
+  return "IND_DECODE_FAILED";
 }
 
 function sourceMatchesContext(
