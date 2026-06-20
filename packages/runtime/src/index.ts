@@ -52,7 +52,7 @@ export interface AssetScope {
 
   acquire<T = ResolvedSource>(
     assetId: AssetId | string,
-    context?: ResolutionContext
+    options?: ResolutionContext | AcquireAssetOptions
   ): Promise<AssetHandle<T>>;
   dispose(): Promise<void>;
   snapshot(): AssetScopeSnapshot;
@@ -63,6 +63,11 @@ export interface AssetScopeSnapshot {
   readonly disposed: boolean;
   readonly handleCount: number;
   readonly assetIds: readonly string[];
+}
+
+export interface AcquireAssetOptions {
+  readonly context?: ResolutionContext;
+  readonly signal?: AbortSignal;
 }
 
 export class AssetScopeDisposedError extends Error {
@@ -94,6 +99,16 @@ export class AssetLoaderError extends Error {
     this.name = "AssetLoaderError";
     this.assetId = assetId;
     this.type = type;
+  }
+}
+
+export class AssetAbortError extends Error {
+  readonly assetId: string;
+
+  constructor(assetId: string) {
+    super(`Asset acquire aborted: ${assetId}`);
+    this.name = "AssetAbortError";
+    this.assetId = assetId;
   }
 }
 
@@ -334,7 +349,10 @@ class RuntimeAssetScope implements AssetScope {
     assetId: AssetId | string,
     context?: ResolutionContext
   ) => ResolvedSource | undefined;
-  readonly #loadAsset: (resolved: ResolvedSource) => Promise<unknown>;
+  readonly #loadAsset: (
+    resolved: ResolvedSource,
+    signal: AbortSignal | undefined
+  ) => Promise<unknown>;
   readonly #resourceTable: ResourceTable;
   readonly #handles = new Set<RuntimeAssetHandle<unknown>>();
   #disposed = false;
@@ -346,7 +364,10 @@ class RuntimeAssetScope implements AssetScope {
       assetId: AssetId | string,
       context?: ResolutionContext
     ) => ResolvedSource | undefined,
-    loadAsset: (resolved: ResolvedSource) => Promise<unknown>
+    loadAsset: (
+      resolved: ResolvedSource,
+      signal: AbortSignal | undefined
+    ) => Promise<unknown>
   ) {
     this.id = id;
     this.#resourceTable = resourceTable;
@@ -360,35 +381,41 @@ class RuntimeAssetScope implements AssetScope {
 
   async acquire<T = ResolvedSource>(
     assetId: AssetId | string,
-    context?: ResolutionContext
+    options?: ResolutionContext | AcquireAssetOptions
   ): Promise<AssetHandle<T>> {
     if (this.#disposed) {
       throw new AssetScopeDisposedError(this.id);
     }
 
-    const resolved = this.#resolveSource(assetId, context);
+    const acquireOptions = normalizeAcquireOptions(options);
+    const resolved = this.#resolveSource(assetId, acquireOptions.context);
     if (resolved === undefined) {
       throw new AssetResolutionError(String(assetId));
     }
 
     this.#resourceTable.retain(assetId);
-    this.#resourceTable.transition(assetId, {
-      state: "resolving"
-    });
-    const value = await this.#loadAsset(resolved);
+    try {
+      this.#resourceTable.transition(assetId, {
+        state: "resolving"
+      });
+      const value = await this.#loadAsset(resolved, acquireOptions.signal);
 
-    this.#resourceTable.transition(assetId, {
-      state: "ready",
-      hasTransport: false,
-      hasValue: true
-    });
+      this.#resourceTable.transition(assetId, {
+        state: "ready",
+        hasTransport: false,
+        hasValue: true
+      });
 
-    const handle = new RuntimeAssetHandle(String(assetId), value as T, () => {
-      this.#handles.delete(handle);
+      const handle = new RuntimeAssetHandle(String(assetId), value as T, () => {
+        this.#handles.delete(handle);
+        this.#resourceTable.release(assetId);
+      });
+      this.#handles.add(handle);
+      return handle;
+    } catch (error) {
       this.#resourceTable.release(assetId);
-    });
-    this.#handles.add(handle);
-    return handle;
+      throw error;
+    }
   }
 
   async dispose(): Promise<void> {
@@ -632,6 +659,7 @@ export function createAssetManager(
     binaryAssetLoader,
     ...(options.loaders ?? [])
   ]);
+  const inFlightLoads = new Map<string, InFlightLoad>();
   const resolverChain = options.resolverChain ?? new ResolverChain();
   const defaultContext = options.context ?? {};
   let nextScopeId = 1;
@@ -674,35 +702,152 @@ export function createAssetManager(
 
   return manager;
 
-  async function loadAsset(resolved: ResolvedSource): Promise<unknown> {
+  async function loadAsset(
+    resolved: ResolvedSource,
+    signal: AbortSignal | undefined
+  ): Promise<unknown> {
+    if (signal?.aborted) {
+      throw new AssetAbortError(resolved.assetId);
+    }
+
     const loader = loaderRegistry.get(resolved.type);
     if (loader === undefined || options.transport === undefined) {
       return resolved;
     }
 
-    resourceTable.transition(resolved.assetId, {
-      state: "loading",
-      hasTransport: true
-    });
-    resourceTable.transition(resolved.assetId, {
-      state: "decoding"
-    });
+    const key = createInFlightKey(resolved, loader);
+    let inFlight = inFlightLoads.get(key);
+    if (inFlight === undefined) {
+      inFlight = startInFlightLoad(
+        resolved,
+        loader,
+        options.transport,
+        resourceTable,
+        () => {
+          inFlightLoads.delete(key);
+        }
+      );
+      inFlightLoads.set(key, inFlight);
+    }
 
-    const loaded = await loader.load({
-      assetId: resolved.assetId,
-      source: resolved,
-      transport: options.transport
-    });
-
-    resourceTable.transition(resolved.assetId, {
-      state: "ready",
-      hasTransport: false,
-      hasValue: true,
-      hasDisposer: loaded.dispose !== undefined
-    });
-
-    return loaded.value;
+    return waitForInFlight(inFlight, resolved.assetId, signal);
   }
+}
+
+interface InFlightLoad {
+  readonly controller: AbortController;
+  readonly consumers: Set<symbol>;
+  readonly promise: Promise<unknown>;
+  settled: boolean;
+}
+
+function createInFlightKey(resolved: ResolvedSource, loader: AssetLoader): string {
+  return [
+    resolved.catalogVersion,
+    resolved.assetId,
+    resolved.sourceIndex,
+    resolved.source.url,
+    loader.id
+  ].join("|");
+}
+
+function startInFlightLoad(
+  resolved: ResolvedSource,
+  loader: AssetLoader,
+  transport: AssetTransport,
+  resourceTable: ResourceTable,
+  cleanup: () => void
+): InFlightLoad {
+  const controller = new AbortController();
+  const inFlight: InFlightLoad = {
+    controller,
+    consumers: new Set(),
+    promise: Promise.resolve().then(async () => {
+      resourceTable.transition(resolved.assetId, {
+        state: "loading",
+        hasTransport: true
+      });
+      resourceTable.transition(resolved.assetId, {
+        state: "decoding"
+      });
+
+      const loaded = await loader.load({
+        assetId: resolved.assetId,
+        source: resolved,
+        signal: controller.signal,
+        transport
+      });
+
+      resourceTable.transition(resolved.assetId, {
+        state: "ready",
+        hasTransport: false,
+        hasValue: true,
+        hasDisposer: loaded.dispose !== undefined
+      });
+
+      return loaded.value;
+    }),
+    settled: false
+  };
+
+  inFlight.promise
+    .finally(() => {
+      inFlight.settled = true;
+      cleanup();
+    })
+    .catch(() => undefined);
+
+  return inFlight;
+}
+
+function waitForInFlight(
+  inFlight: InFlightLoad,
+  assetId: string,
+  signal: AbortSignal | undefined
+): Promise<unknown> {
+  const consumer = Symbol(assetId);
+  inFlight.consumers.add(consumer);
+
+  return new Promise((resolve, reject) => {
+    let done = false;
+
+    const cleanup = (): void => {
+      if (done) {
+        return;
+      }
+
+      done = true;
+      signal?.removeEventListener("abort", onAbort);
+      inFlight.consumers.delete(consumer);
+
+      if (!inFlight.settled && inFlight.consumers.size === 0) {
+        inFlight.controller.abort();
+      }
+    };
+
+    const onAbort = (): void => {
+      cleanup();
+      reject(new AssetAbortError(assetId));
+    };
+
+    if (signal?.aborted) {
+      onAbort();
+      return;
+    }
+
+    signal?.addEventListener("abort", onAbort, { once: true });
+
+    inFlight.promise.then(
+      (value) => {
+        cleanup();
+        resolve(value);
+      },
+      (error: unknown) => {
+        cleanup();
+        reject(error);
+      }
+    );
+  });
 }
 
 function bodyToText(body: TransportBody): string {
@@ -731,6 +876,22 @@ function bodyToBytes(body: TransportBody): Uint8Array {
   }
 
   return new TextEncoder().encode(bodyToText(body));
+}
+
+function normalizeAcquireOptions(
+  options: ResolutionContext | AcquireAssetOptions | undefined
+): AcquireAssetOptions {
+  if (options === undefined) {
+    return {};
+  }
+
+  if ("context" in options || "signal" in options) {
+    return options;
+  }
+
+  return {
+    context: options as ResolutionContext
+  };
 }
 
 function sourceMatchesContext(
