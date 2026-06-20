@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "namespace": "vanilla",
+  "assets": {
+    "config.gameplay": {
+      "type": "data/json",
+      "sources": [
+        {
+          "url": "./config/gameplay.json"
+        }
+      ],
+      "metadata": {
+        "tags": ["config"]
+      }
+    },
+    "text.intro": {
+      "type": "text/plain",
+      "sources": [
+        {
+          "when": {
+            "locale": ["zh-CN"]
+          },
+          "url": "./text/intro.zh-CN.txt"
+        },
+        {
+          "url": "./text/intro.en.txt"
+        }
+      ],
+      "fallback": "text.fallback"
+    },
+    "text.fallback": {
+      "type": "text/plain",
+      "sources": [
+        {
+          "url": "./text/fallback.txt"
+        }
+      ]
+    }
+  },
+  "groups": {
+    "scene.intro": {
+      "assets": ["config.gameplay", "text.intro"]
+    }
+  }
+}

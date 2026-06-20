@@ -179,6 +179,58 @@ export interface ValidationOptions {
   readonly sourceUrl?: string;
 }
 
+export interface CompileOptions extends ValidationOptions {}
+
+export interface CompileResult {
+  readonly catalog: CompiledCatalog;
+  readonly report: AssetReport;
+  readonly diagnostics: readonly Diagnostic[];
+}
+
+export interface AssetReport {
+  readonly summary: {
+    readonly protocolVersion: typeof protocolVersion;
+    readonly catalogVersion: string;
+    readonly assetCount: number;
+    readonly groupCount: number;
+    readonly diagnosticCount: number;
+  };
+  readonly assets: readonly AssetReportAsset[];
+  readonly groups: readonly AssetReportGroup[];
+  readonly diagnostics: readonly Diagnostic[];
+  readonly fallbackSummary: readonly AssetReportFallback[];
+  readonly dependencyGraph: readonly AssetReportDependency[];
+  readonly determinism: {
+    readonly canonicalJsonVersion: 1;
+    readonly hashAlgorithm: "sha256";
+    readonly excludes: readonly ["timestamps", "absolutePaths", "gitSha"];
+  };
+}
+
+export interface AssetReportAsset {
+  readonly id: string;
+  readonly type: string;
+  readonly sourceCount: number;
+  readonly dependencyCount: number;
+  readonly fallback?: string;
+}
+
+export interface AssetReportGroup {
+  readonly id: string;
+  readonly assets: readonly string[];
+  readonly assetCount: number;
+}
+
+export interface AssetReportFallback {
+  readonly assetId: string;
+  readonly fallbackAssetId: string;
+}
+
+export interface AssetReportDependency {
+  readonly assetId: string;
+  readonly dependencies: readonly string[];
+}
+
 export function validateNormalizedModel(
   model: NormalizedAssetModel,
   options: ValidationOptions = {}
@@ -281,10 +333,110 @@ export function validateNormalizedModel(
   return diagnostics;
 }
 
+export function compileNormalizedModel(
+  model: NormalizedAssetModel,
+  options: CompileOptions = {}
+): CompileResult {
+  const diagnostics = [...model.diagnostics, ...validateNormalizedModel(model, options)];
+  const catalogHashInput = createCatalogHashInput(model);
+  const catalogVersion = computeCatalogHash(catalogHashInput);
+  const catalog: CompiledCatalog = {
+    ...catalogHashInput,
+    catalogVersion
+  };
+  const report = createAssetReport(catalog, model, diagnostics);
+
+  return {
+    catalog,
+    report,
+    diagnostics
+  };
+}
+
 function createNormalizeOptions(
   defaultNamespace: string | undefined
 ): NormalizeAssetIdOptions {
   return defaultNamespace === undefined ? {} : { defaultNamespace };
+}
+
+function createCatalogHashInput(model: NormalizedAssetModel): CatalogHashInput {
+  const assets = Object.fromEntries(
+    [...model.assets]
+      .sort((left, right) => left.id.localeCompare(right.id))
+      .map((asset) => [
+        asset.id,
+        {
+          type: asset.type,
+          sources: asset.sources,
+          ...(asset.dependencies.length === 0
+            ? {}
+            : { dependencies: [...asset.dependencies].sort() }),
+          ...(asset.fallback === undefined ? {} : { fallback: asset.fallback }),
+          ...(asset.metadata === undefined ? {} : { metadata: asset.metadata })
+        }
+      ])
+  );
+  const groups = Object.fromEntries(
+    [...model.groups]
+      .sort((left, right) => left.id.localeCompare(right.id))
+      .map((group) => [group.id, group.assets])
+  );
+
+  return {
+    protocolVersion,
+    assets,
+    ...(Object.keys(groups).length === 0 ? {} : { groups })
+  };
+}
+
+function createAssetReport(
+  catalog: CompiledCatalog,
+  model: NormalizedAssetModel,
+  diagnostics: readonly Diagnostic[]
+): AssetReport {
+  const sortedAssets = [...model.assets].sort((left, right) =>
+    left.id.localeCompare(right.id)
+  );
+  const sortedGroups = [...model.groups].sort((left, right) =>
+    left.id.localeCompare(right.id)
+  );
+
+  return {
+    summary: {
+      protocolVersion,
+      catalogVersion: catalog.catalogVersion,
+      assetCount: sortedAssets.length,
+      groupCount: sortedGroups.length,
+      diagnosticCount: diagnostics.length
+    },
+    assets: sortedAssets.map((asset) => ({
+      id: asset.id,
+      type: asset.type,
+      sourceCount: asset.sources.length,
+      dependencyCount: asset.dependencies.length,
+      ...(asset.fallback === undefined ? {} : { fallback: asset.fallback })
+    })),
+    groups: sortedGroups.map((group) => ({
+      id: group.id,
+      assets: group.assets,
+      assetCount: group.assets.length
+    })),
+    diagnostics,
+    fallbackSummary: sortedAssets.flatMap((asset) =>
+      asset.fallback === undefined
+        ? []
+        : [{ assetId: asset.id, fallbackAssetId: asset.fallback }]
+    ),
+    dependencyGraph: sortedAssets.map((asset) => ({
+      assetId: asset.id,
+      dependencies: [...asset.dependencies].sort()
+    })),
+    determinism: {
+      canonicalJsonVersion: 1,
+      hashAlgorithm: "sha256",
+      excludes: ["timestamps", "absolutePaths", "gitSha"]
+    }
+  };
 }
 
 function validateVariantSources(
