@@ -39,6 +39,12 @@ corepack pnpm pack:check
 corepack pnpm check:boundaries
 ```
 
+Or run the full local matrix:
+
+```powershell
+corepack pnpm validate:full
+```
+
 ## Documents
 
 - [Architecture and technical design v0.1](docs/Indirection_寻址_架构与技术选型设计_v0.1.md)
