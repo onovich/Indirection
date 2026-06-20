@@ -3,6 +3,66 @@ export const protocolVersion = 1;
 
 export type AssetId = string & { readonly __brand: "AssetId" };
 
+export const diagnosticCodes = [
+  "IND_ASSET_ID_INVALID",
+  "IND_ASSET_DUPLICATE",
+  "IND_ASSET_UNKNOWN",
+  "IND_TYPE_UNSUPPORTED",
+  "IND_SOURCE_UNRESOLVED",
+  "IND_DEPENDENCY_CYCLE",
+  "IND_FALLBACK_CYCLE",
+  "IND_FALLBACK_TYPE_MISMATCH",
+  "IND_VARIANT_INVALID",
+  "IND_CATALOG_INVALID",
+  "IND_TRANSPORT_FAILED",
+  "IND_DECODE_FAILED",
+  "IND_ABORTED",
+  "IND_SCOPE_DISPOSED",
+  "IND_INTERNAL_ERROR"
+] as const;
+
+export const diagnosticSeverities = ["info", "warning", "error"] as const;
+
+export const diagnosticPhases = [
+  "protocol",
+  "schema",
+  "importer",
+  "compiler",
+  "runtime",
+  "transport",
+  "loader",
+  "adapter",
+  "cli",
+  "browser-smoke",
+  "internal"
+] as const;
+
+export type DiagnosticCode = (typeof diagnosticCodes)[number];
+export type DiagnosticSeverity = (typeof diagnosticSeverities)[number];
+export type DiagnosticPhase = (typeof diagnosticPhases)[number];
+
+export interface Diagnostic {
+  readonly code: DiagnosticCode;
+  readonly severity: DiagnosticSeverity;
+  readonly phase: DiagnosticPhase;
+  readonly assetId?: string;
+  readonly path?: readonly string[];
+  readonly sourceUrl?: string;
+  readonly catalogVersion?: string;
+  readonly causeCode?: string;
+  readonly recoverable: boolean;
+  readonly fallbackAssetId?: string;
+  readonly message: string;
+}
+
+export function isDiagnosticCode(code: string): code is DiagnosticCode {
+  return diagnosticCodes.includes(code as DiagnosticCode);
+}
+
+export function defineDiagnostic(diagnostic: Diagnostic): Diagnostic {
+  return diagnostic;
+}
+
 export interface AssetIdParts {
   readonly namespace?: string;
   readonly path: readonly string[];
