@@ -43,6 +43,16 @@ describe("Sinan runtime adapter facade", () => {
         url: "models/gate/hero.glb"
       }
     });
+    expect(adapter.sceneScope.snapshot()).toMatchObject({
+      id: "sinan-runtime-adapter",
+      handleCount: 1
+    });
+
+    await adapter.disposeSceneScope();
+    expect(adapter.sceneScope.snapshot()).toMatchObject({
+      disposed: true,
+      handleCount: 0
+    });
   });
 
   it("can be feature-disabled back to the host runtime", async () => {
@@ -55,7 +65,10 @@ describe("Sinan runtime adapter facade", () => {
     const adapter = createSinanRuntimeAdapter({
       manager,
       hostRuntime,
-      enabled: false
+      featureFlag: {
+        name: "indirection-runtime-adapter",
+        enabled: false
+      }
     });
 
     await expect(adapter.loadModel("sinan:gate.hero", "legacy/hero.glb")).resolves.toEqual({

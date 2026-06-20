@@ -11,28 +11,46 @@ export interface SinanWebRuntimeBoundary {
 export interface SinanRuntimeAdapterOptions {
   readonly manager: AssetManager;
   readonly hostRuntime: SinanWebRuntimeBoundary;
-  readonly enabled?: boolean;
+  readonly featureFlag?: SinanRuntimeAdapterFeatureFlag;
   readonly scopeId?: string;
 }
 
+export interface SinanRuntimeAdapterFeatureFlag {
+  readonly name: "indirection-runtime-adapter";
+  readonly enabled: boolean;
+}
+
 export interface SinanRuntimeAdapter extends SinanWebRuntimeBoundary {
-  readonly scope: AssetScope;
+  readonly featureFlag: SinanRuntimeAdapterFeatureFlag;
+  readonly sceneScope: AssetScope;
+
+  disposeSceneScope(): Promise<void>;
 }
 
 export function createSinanRuntimeAdapter(
   options: SinanRuntimeAdapterOptions
 ): SinanRuntimeAdapter {
-  const scope = options.manager.createScope(options.scopeId ?? "sinan-runtime-adapter");
+  const sceneScope = options.manager.createScope(
+    options.scopeId ?? "sinan-runtime-adapter"
+  );
+  const featureFlag = options.featureFlag ?? {
+    name: "indirection-runtime-adapter",
+    enabled: true
+  };
 
   return {
-    scope,
+    featureFlag,
+    sceneScope,
     async loadModel(assetId: string, url: string): Promise<unknown> {
-      if (options.enabled === false) {
+      if (!featureFlag.enabled) {
         return options.hostRuntime.loadModel(assetId, url);
       }
 
-      const handle = await scope.acquire<ResolvedSource>(assetId);
+      const handle = await sceneScope.acquire<ResolvedSource>(assetId);
       return handle.value;
+    },
+    async disposeSceneScope(): Promise<void> {
+      await sceneScope.dispose();
     }
   };
 }
