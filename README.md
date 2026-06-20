@@ -34,3 +34,5 @@ Early milestones:
 - [Current technical architecture and development plan v0.2](docs/Indirection_技术架构与开发计划_v0.2.md)
 - [Phase 0-7 Big Goal execution guide](docs/indirection-phase-0-7-big-goal-execution-guide.md)
 - [R&D plan after Sinan alignment](docs/rd-plan-sinan-alignment-2026-06-20.md)
+- [Sinan POC-1 compatibility note](docs/sinan-cooperation/indirection-poc-1-compatibility-note.md)
+- [Sinan POC-1 usage](docs/sinan-cooperation/indirection-poc-1-usage.md)
