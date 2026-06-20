@@ -1,5 +1,6 @@
 import {
   type CatalogSource,
+  type CompiledCatalog,
   type Diagnostic,
   type JsonObject,
   type NormalizedAssetGroup,
@@ -15,6 +16,7 @@ import {
   parseIndirectionManifest,
   schemaVersion
 } from "@indirection/schema";
+import { createHash } from "node:crypto";
 
 export const compilerPackageName = "@indirection/compiler";
 export const compilerBaseline = {
@@ -119,6 +121,56 @@ export function emptyImportResult(
     groups: [],
     diagnostics
   };
+}
+
+export type CatalogHashInput = Omit<CompiledCatalog, "catalogVersion">;
+
+export function canonicalJson(value: unknown): string {
+  if (value === null) {
+    return "null";
+  }
+
+  if (typeof value === "string") {
+    return JSON.stringify(value);
+  }
+
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) {
+      throw new TypeError("Canonical JSON does not support non-finite numbers.");
+    }
+
+    return JSON.stringify(value);
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item)).join(",")}]`;
+  }
+
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const keys = Object.keys(record).sort();
+    const entries = keys.map((key) => {
+      const item = record[key];
+      if (item === undefined) {
+        throw new TypeError("Canonical JSON does not support undefined values.");
+      }
+
+      return `${JSON.stringify(key)}:${canonicalJson(item)}`;
+    });
+
+    return `{${entries.join(",")}}`;
+  }
+
+  throw new TypeError(`Canonical JSON does not support ${typeof value}.`);
+}
+
+export function computeCatalogHash(input: CatalogHashInput): string {
+  const digest = createHash("sha256").update(canonicalJson(input)).digest("hex");
+  return `sha256-${digest}`;
 }
 
 function createNormalizeOptions(
