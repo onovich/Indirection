@@ -12,7 +12,12 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map",
+    "dist/**/*.js",
+    "dist/**/*.js.map"
+  ],
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc -b --pretty false"

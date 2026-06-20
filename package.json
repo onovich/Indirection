@@ -12,6 +12,7 @@
     "typecheck": "tsc -b --pretty false",
     "test": "pnpm build && vitest run",
     "test:browser": "node scripts/browser-smoke.mjs",
+    "pack:check": "node scripts/pack-check.mjs",
     "test:watch": "vitest",
     "lint": "echo \"lint not configured yet\"",
     "format": "echo \"format not configured yet\""
