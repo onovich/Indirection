@@ -6,13 +6,15 @@
 - 状态：设计基线 / 待评审
 - 日期：2026-06-20
 - 项目定位：独立发布、引擎中立、manifest-first 的 Web 游戏资源协议、构建工具与运行时
-- 首个集成宿主：Sinan Scene Director
+- 首个集成宿主：Sinan Engine（原 Sinan Scene Director 范围已升级为引擎内 Director System）
+
+> 2026-06-20 Sinan 对齐说明：Sinan 最新 RFC 与合作函明确要求 Sinan 保留 authoring manifest、schema、ReferenceResolver、budget/report policy 与 fallback policy。Indirection 的研发顺序和合作边界以 `docs/rd-plan-sinan-alignment-2026-06-20.md` 为准；本文仍作为 v0.1 架构基线与原始设计记录。
 
 ---
 
 ## 0. 决策摘要
 
-本项目应作为**独立基础设施项目**研发，而不是并入某个具体引擎成为内部资源模块。Sinan Scene Director 适合作为首个真实宿主、集成样例和回归测试场，但 Indirection 的核心包不得依赖 Sinan、React、Three.js 或 Vite。
+本项目应作为**独立基础设施项目**研发，而不是并入某个具体引擎成为内部资源模块。Sinan Engine 适合作为首个真实宿主、集成样例和回归测试场，但 Indirection 的核心包不得依赖 Sinan、React、Three.js 或 Vite。
 
 核心设计结论如下：
 
@@ -1084,7 +1086,7 @@ pnpm catalog:determinism
 
 ### 项目上下文
 
-- [S1] *Sinan Scene Director 项目对外协作介绍*，2026-06-19。用户提供的项目文档。
+- [S1] *Sinan Scene Director 项目对外协作介绍*，2026-06-19。用户提供的早期项目文档；后续合作资料已将 Sinan 定位升级为 Sinan Engine。
 
 ### 官方技术资料
 
