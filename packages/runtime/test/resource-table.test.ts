@@ -83,4 +83,50 @@ describe("ResourceTable state skeleton", () => {
       fallbackAssetId: "system:placeholder.model"
     });
   });
+
+  it("reopens disposed entries through an explicit retain", () => {
+    const table = new ResourceTable();
+    const hero = normalizeAssetId("game:character.hero");
+
+    table.transition(hero, {
+      state: "disposed",
+      hasTransport: false,
+      hasValue: false,
+      hasDisposer: false
+    });
+
+    expect(table.retain(hero)).toMatchObject({
+      state: "idle",
+      refCount: 1
+    });
+  });
+
+  it("clears stale fallback cause metadata explicitly", () => {
+    const table = new ResourceTable();
+    const hero = normalizeAssetId("game:character.hero");
+    const fallback = normalizeAssetId("system:placeholder.model");
+
+    table.transition(hero, {
+      state: "fallback-ready",
+      hasValue: true,
+      causeCode: "IND_DECODE_FAILED",
+      fallbackAssetId: fallback
+    });
+
+    expect(
+      table.transition(hero, {
+        state: "ready",
+        causeCode: undefined,
+        fallbackAssetId: undefined
+      })
+    ).toEqual({
+      assetId: "game:character.hero",
+      state: "ready",
+      refCount: 0,
+      hasTransport: false,
+      hasValue: true,
+      hasDisposer: false,
+      dependencyRefs: []
+    });
+  });
 });
