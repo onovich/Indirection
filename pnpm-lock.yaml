@@ -71,6 +71,15 @@ importers:
         specifier: workspace:*
         version: link:../runtime
 
+  packages/three:
+    dependencies:
+      '@indirection/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      three:
+        specifier: '>=0.160.0'
+        version: 0.184.0
+
 packages:
 
   '@emnapi/core@1.10.0':
@@ -395,6 +404,9 @@ packages:
 
   std-env@4.1.0:
     resolution: {integrity: sha512-Rq7ybcX2RuC55r9oaPVEW7/xu3tj8u4GeBYHBWCychFtzMIr86A7e3PPEBPT37sHStKX3+TiX/Fr/ACmJLVlLQ==}
+
+  three@0.184.0:
+    resolution: {integrity: sha512-wtTRjG92pM5eUg/KuUnHsqSAlPM296brTOcLgMRqEeylYTh/CdtvKUvCyyCQTzFuStieWxvZb8mVTMvdPyUpxg==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -775,6 +787,8 @@ snapshots:
   stackback@0.0.2: {}
 
   std-env@4.1.0: {}
+
+  three@0.184.0: {}
 
   tinybench@2.9.0: {}
 
