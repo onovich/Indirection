@@ -2,6 +2,7 @@ import {
   type CatalogSource,
   type CompiledCatalog,
   type Diagnostic,
+  type DiagnosticCode,
   type JsonObject,
   type NormalizedAssetGroup,
   type NormalizedAssetModel,
@@ -173,8 +174,258 @@ export function computeCatalogHash(input: CatalogHashInput): string {
   return `sha256-${digest}`;
 }
 
+export interface ValidationOptions {
+  readonly catalogVersion?: string;
+  readonly sourceUrl?: string;
+}
+
+export function validateNormalizedModel(
+  model: NormalizedAssetModel,
+  options: ValidationOptions = {}
+): readonly Diagnostic[] {
+  const diagnostics: Diagnostic[] = [];
+  const assetsById = new Map<string, NormalizedAssetRecord>();
+  const duplicateIds = new Set<string>();
+
+  for (const asset of model.assets) {
+    if (assetsById.has(asset.id)) {
+      duplicateIds.add(asset.id);
+      diagnostics.push(
+        createCompilerDiagnostic(
+          "IND_ASSET_DUPLICATE",
+          asset.id,
+          "Duplicate asset id.",
+          options
+        )
+      );
+      continue;
+    }
+
+    assetsById.set(asset.id, asset);
+  }
+
+  for (const asset of model.assets) {
+    diagnostics.push(...validateVariantSources(asset, options));
+
+    for (const dependency of asset.dependencies) {
+      if (!assetsById.has(dependency)) {
+        diagnostics.push(
+          createCompilerDiagnostic(
+            "IND_ASSET_UNKNOWN",
+            asset.id,
+            "Asset dependency is not declared.",
+            options,
+            {
+              path: ["assets", asset.id, "dependencies", dependency],
+              causeCode: "dependency"
+            }
+          )
+        );
+      }
+    }
+
+    if (asset.fallback !== undefined) {
+      const fallback = assetsById.get(asset.fallback);
+      if (fallback === undefined) {
+        diagnostics.push(
+          createCompilerDiagnostic(
+            "IND_ASSET_UNKNOWN",
+            asset.id,
+            "Asset fallback is not declared.",
+            options,
+            {
+              path: ["assets", asset.id, "fallback"],
+              fallbackAssetId: asset.fallback,
+              causeCode: "fallback"
+            }
+          )
+        );
+      } else if (fallback.type !== asset.type) {
+        diagnostics.push(
+          createCompilerDiagnostic(
+            "IND_FALLBACK_TYPE_MISMATCH",
+            asset.id,
+            "Asset fallback has an incompatible type.",
+            options,
+            {
+              path: ["assets", asset.id, "fallback"],
+              fallbackAssetId: asset.fallback
+            }
+          )
+        );
+      }
+    }
+  }
+
+  diagnostics.push(
+    ...detectAssetCycles(
+      model.assets,
+      assetsById,
+      (asset) => asset.dependencies,
+      "IND_DEPENDENCY_CYCLE",
+      duplicateIds,
+      options
+    )
+  );
+  diagnostics.push(
+    ...detectAssetCycles(
+      model.assets,
+      assetsById,
+      (asset) => (asset.fallback === undefined ? [] : [asset.fallback]),
+      "IND_FALLBACK_CYCLE",
+      duplicateIds,
+      options
+    )
+  );
+
+  return diagnostics;
+}
+
 function createNormalizeOptions(
   defaultNamespace: string | undefined
 ): NormalizeAssetIdOptions {
   return defaultNamespace === undefined ? {} : { defaultNamespace };
+}
+
+function validateVariantSources(
+  asset: NormalizedAssetRecord,
+  options: ValidationOptions
+): readonly Diagnostic[] {
+  const diagnostics: Diagnostic[] = [];
+  const defaultSourceIndexes = asset.sources
+    .map((source, index) => (source.when === undefined ? index : -1))
+    .filter((index) => index >= 0);
+
+  if (defaultSourceIndexes.length !== 1) {
+    diagnostics.push(
+      createCompilerDiagnostic(
+        "IND_VARIANT_INVALID",
+        asset.id,
+        "Asset sources must contain exactly one default source.",
+        options,
+        { path: ["assets", asset.id, "sources"] }
+      )
+    );
+  } else if (defaultSourceIndexes[0] !== asset.sources.length - 1) {
+    diagnostics.push(
+      createCompilerDiagnostic(
+        "IND_VARIANT_INVALID",
+        asset.id,
+        "Asset default source must be last.",
+        options,
+        { path: ["assets", asset.id, "sources"] }
+      )
+    );
+  }
+
+  asset.sources.forEach((source, sourceIndex) => {
+    for (const [dimension, values] of Object.entries(source.when ?? {})) {
+      if (dimension.length === 0 || values.length === 0) {
+        diagnostics.push(
+          createCompilerDiagnostic(
+            "IND_VARIANT_INVALID",
+            asset.id,
+            "Variant conditions must use non-empty dimensions and values.",
+            options,
+            {
+              path: ["assets", asset.id, "sources", String(sourceIndex), "when"]
+            }
+          )
+        );
+      }
+    }
+  });
+
+  return diagnostics;
+}
+
+function detectAssetCycles(
+  assets: readonly NormalizedAssetRecord[],
+  assetsById: ReadonlyMap<string, NormalizedAssetRecord>,
+  getTargets: (asset: NormalizedAssetRecord) => readonly string[],
+  code: Extract<DiagnosticCode, "IND_DEPENDENCY_CYCLE" | "IND_FALLBACK_CYCLE">,
+  duplicateIds: ReadonlySet<string>,
+  options: ValidationOptions
+): readonly Diagnostic[] {
+  const diagnostics: Diagnostic[] = [];
+  const visited = new Set<string>();
+  const active = new Set<string>();
+  const reported = new Set<string>();
+
+  function visit(asset: NormalizedAssetRecord, stack: readonly string[]): void {
+    if (duplicateIds.has(asset.id)) {
+      return;
+    }
+
+    if (active.has(asset.id)) {
+      const cycleStart = stack.indexOf(asset.id);
+      const cycle = [...stack.slice(cycleStart), asset.id];
+      const key = cycle.join(">");
+
+      if (!reported.has(key)) {
+        reported.add(key);
+        diagnostics.push(
+          createCompilerDiagnostic(
+            code,
+            asset.id,
+            "Asset reference graph contains a cycle.",
+            options,
+            {
+              path: cycle,
+              causeCode: code === "IND_DEPENDENCY_CYCLE" ? "dependency" : "fallback"
+            }
+          )
+        );
+      }
+
+      return;
+    }
+
+    if (visited.has(asset.id)) {
+      return;
+    }
+
+    active.add(asset.id);
+    const nextStack = [...stack, asset.id];
+
+    for (const targetId of getTargets(asset)) {
+      const target = assetsById.get(targetId);
+      if (target !== undefined) {
+        visit(target, nextStack);
+      }
+    }
+
+    active.delete(asset.id);
+    visited.add(asset.id);
+  }
+
+  for (const asset of assets) {
+    visit(asset, []);
+  }
+
+  return diagnostics;
+}
+
+function createCompilerDiagnostic(
+  code: DiagnosticCode,
+  assetId: string,
+  message: string,
+  options: ValidationOptions,
+  details: Partial<
+    Pick<Diagnostic, "causeCode" | "fallbackAssetId" | "path">
+  > = {}
+): Diagnostic {
+  return {
+    code,
+    severity: "error",
+    phase: "compiler",
+    assetId,
+    recoverable: false,
+    message,
+    ...(options.catalogVersion === undefined
+      ? {}
+      : { catalogVersion: options.catalogVersion }),
+    ...(options.sourceUrl === undefined ? {} : { sourceUrl: options.sourceUrl }),
+    ...details
+  };
 }
