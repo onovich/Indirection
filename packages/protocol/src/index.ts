@@ -63,6 +63,60 @@ export function defineDiagnostic(diagnostic: Diagnostic): Diagnostic {
   return diagnostic;
 }
 
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonValue = JsonPrimitive | JsonObject | readonly JsonValue[];
+
+export interface JsonObject {
+  readonly [key: string]: JsonValue;
+}
+
+export interface VariantCondition {
+  readonly [dimension: string]: readonly string[];
+}
+
+export interface CatalogSource {
+  readonly url: string;
+  readonly when?: VariantCondition;
+  readonly bytes?: number;
+  readonly integrity?: string;
+}
+
+export interface CatalogAsset {
+  readonly type: string;
+  readonly sources: readonly CatalogSource[];
+  readonly dependencies?: readonly AssetId[];
+  readonly fallback?: AssetId;
+  readonly metadata?: JsonObject;
+}
+
+export interface CompiledCatalog {
+  readonly protocolVersion: typeof protocolVersion;
+  readonly catalogVersion: string;
+  readonly assets: Readonly<Record<string, CatalogAsset>>;
+  readonly groups?: Readonly<Record<string, readonly AssetId[]>>;
+  readonly diagnostics?: readonly Diagnostic[];
+}
+
+export interface NormalizedAssetRecord {
+  readonly id: AssetId;
+  readonly type: string;
+  readonly sources: readonly CatalogSource[];
+  readonly dependencies: readonly AssetId[];
+  readonly fallback?: AssetId;
+  readonly metadata?: JsonObject;
+}
+
+export interface NormalizedAssetGroup {
+  readonly id: AssetId;
+  readonly assets: readonly AssetId[];
+}
+
+export interface NormalizedAssetModel {
+  readonly assets: readonly NormalizedAssetRecord[];
+  readonly groups: readonly NormalizedAssetGroup[];
+  readonly diagnostics: readonly Diagnostic[];
+}
+
 export interface AssetIdParts {
   readonly namespace?: string;
   readonly path: readonly string[];
