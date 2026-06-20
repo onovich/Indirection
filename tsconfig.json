@@ -5,6 +5,7 @@
     { "path": "./packages/schema" },
     { "path": "./packages/compiler" },
     { "path": "./packages/runtime" },
+    { "path": "./packages/loaders-web" },
     { "path": "./packages/testkit" }
   ]
 }

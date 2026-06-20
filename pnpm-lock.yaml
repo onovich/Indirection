@@ -36,6 +36,12 @@ importers:
         specifier: workspace:*
         version: link:../schema
 
+  packages/loaders-web:
+    dependencies:
+      '@indirection/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+
   packages/protocol: {}
 
   packages/runtime:
