@@ -17,11 +17,11 @@ describe("Sinan fixture reports", () => {
 
     expect(result.catalogDraft.catalogVersion).toMatch(/^sha256-[0-9a-f]{64}$/);
     expect({
-      ...result,
       catalogDraft: {
         ...result.catalogDraft,
         catalogVersion: "<catalog-hash>"
-      }
+      },
+      missingReferenceReport: result.missingReferenceReport
     }).toMatchInlineSnapshot(`
       {
         "catalogDraft": {
@@ -156,6 +156,80 @@ describe("Sinan fixture reports", () => {
               "rawAssetId": "gate.missing-audio",
             },
           ],
+        },
+      }
+    `);
+  });
+
+  it("outputs fallback and budget compatibility reports", async () => {
+    const manifest = JSON.parse(readFileSync(fixtureUrl, "utf8")) as SinanFixtureManifest;
+    const result = await createSinanFixtureReport(manifest);
+
+    expect({
+      fallbackReport: result.fallbackReport,
+      budgetCompatibilityReport: result.budgetCompatibilityReport
+    }).toMatchInlineSnapshot(`
+      {
+        "budgetCompatibilityReport": {
+          "assets": [
+            {
+              "assetId": "sinan:gate.hero",
+              "transferBytes": 1800000,
+            },
+            {
+              "assetId": "sinan:gate.environment",
+              "transferBytes": 4200000,
+            },
+            {
+              "assetId": "sinan:gate.caption",
+              "transferBytes": 4096,
+            },
+            {
+              "assetId": "sinan:system.placeholder.model",
+              "transferBytes": 128000,
+            },
+            {
+              "assetId": "sinan:system.placeholder.text",
+              "transferBytes": 512,
+            },
+          ],
+          "fixture": "gate-demo-desensitized",
+          "groups": [
+            {
+              "actualTransferBytes": 6004096,
+              "budgetTransferBytes": 6500000,
+              "groupId": "sinan:scene.gate-demo",
+              "withinBudget": true,
+            },
+          ],
+          "host": "sinan-engine",
+        },
+        "fallbackReport": {
+          "fallbacks": [
+            {
+              "assetId": "sinan:gate.hero",
+              "compatible": true,
+              "fallbackAssetId": "sinan:system.placeholder.model",
+              "fallbackType": "model/gltf",
+              "type": "model/gltf",
+            },
+            {
+              "assetId": "sinan:gate.environment",
+              "compatible": true,
+              "fallbackAssetId": "sinan:system.placeholder.model",
+              "fallbackType": "model/gltf",
+              "type": "model/gltf",
+            },
+            {
+              "assetId": "sinan:gate.caption",
+              "compatible": true,
+              "fallbackAssetId": "sinan:system.placeholder.text",
+              "fallbackType": "text/plain",
+              "type": "text/plain",
+            },
+          ],
+          "fixture": "gate-demo-desensitized",
+          "host": "sinan-engine",
         },
       }
     `);

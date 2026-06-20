@@ -18,6 +18,8 @@ import {
 export interface SinanFixtureReportResult {
   readonly catalogDraft: CompiledCatalog;
   readonly missingReferenceReport: SinanMissingReferenceReport;
+  readonly fallbackReport: SinanFallbackReport;
+  readonly budgetCompatibilityReport: SinanBudgetCompatibilityReport;
 }
 
 export interface SinanMissingReferenceReport {
@@ -32,6 +34,39 @@ export interface SinanMissingReference {
   readonly ownerId: string;
   readonly rawAssetId: string;
   readonly assetId: string;
+}
+
+export interface SinanFallbackReport {
+  readonly host: string;
+  readonly fixture: string;
+  readonly fallbacks: readonly SinanFallbackEntry[];
+}
+
+export interface SinanFallbackEntry {
+  readonly assetId: string;
+  readonly fallbackAssetId: string;
+  readonly type: string;
+  readonly fallbackType?: string;
+  readonly compatible: boolean;
+}
+
+export interface SinanBudgetCompatibilityReport {
+  readonly host: string;
+  readonly fixture: string;
+  readonly groups: readonly SinanBudgetGroupEntry[];
+  readonly assets: readonly SinanBudgetAssetEntry[];
+}
+
+export interface SinanBudgetGroupEntry {
+  readonly groupId: string;
+  readonly budgetTransferBytes?: number;
+  readonly actualTransferBytes: number;
+  readonly withinBudget: boolean;
+}
+
+export interface SinanBudgetAssetEntry {
+  readonly assetId: string;
+  readonly transferBytes?: number;
 }
 
 export async function createSinanFixtureReport(
@@ -64,7 +99,12 @@ export async function createSinanFixtureReport(
       fixture: manifest.fixture,
       missingReferences,
       diagnostics
-    }
+    },
+    fallbackReport: createFallbackReport(manifest, defaultNamespace),
+    budgetCompatibilityReport: createBudgetCompatibilityReport(
+      manifest,
+      defaultNamespace
+    )
   };
 }
 
@@ -78,4 +118,97 @@ function normalizeReference(
     rawAssetId: reference.assetId,
     assetId: normalizeAssetId(reference.assetId, { defaultNamespace })
   };
+}
+
+function createFallbackReport(
+  manifest: SinanFixtureManifest,
+  defaultNamespace: string
+): SinanFallbackReport {
+  const assetsById = new Map(
+    manifest.assets.map((asset) => [
+      normalizeAssetId(asset.id, { defaultNamespace }),
+      asset
+    ])
+  );
+
+  return {
+    host: manifest.host,
+    fixture: manifest.fixture,
+    fallbacks: manifest.assets.flatMap((asset) => {
+      if (asset.fallback === undefined) {
+        return [];
+      }
+
+      const assetId = normalizeAssetId(asset.id, { defaultNamespace });
+      const fallbackAssetId = normalizeAssetId(asset.fallback, { defaultNamespace });
+      const fallback = assetsById.get(fallbackAssetId);
+
+      return [
+        {
+          assetId,
+          fallbackAssetId,
+          type: asset.type,
+          ...(fallback === undefined ? {} : { fallbackType: fallback.type }),
+          compatible: fallback?.type === asset.type
+        }
+      ];
+    })
+  };
+}
+
+function createBudgetCompatibilityReport(
+  manifest: SinanFixtureManifest,
+  defaultNamespace: string
+): SinanBudgetCompatibilityReport {
+  const assetsById = new Map(
+    manifest.assets.map((asset) => [
+      normalizeAssetId(asset.id, { defaultNamespace }),
+      asset
+    ])
+  );
+  const groups = Object.entries(manifest.groups ?? {}).map(([groupId, rawAssetIds]) => {
+    const normalizedGroupId = normalizeAssetId(groupId, { defaultNamespace });
+    const actualTransferBytes = rawAssetIds.reduce((total, rawAssetId) => {
+      const asset = assetsById.get(normalizeAssetId(rawAssetId, { defaultNamespace }));
+      return total + (readTransferBytes(asset?.budget) ?? 0);
+    }, 0);
+    const budgetTransferBytes = readTransferBytes(
+      readJsonObject(manifest.budgets?.[groupId])
+    );
+
+    return {
+      groupId: normalizedGroupId,
+      ...(budgetTransferBytes === undefined ? {} : { budgetTransferBytes }),
+      actualTransferBytes,
+      withinBudget:
+        budgetTransferBytes === undefined
+          ? true
+          : actualTransferBytes <= budgetTransferBytes
+    };
+  });
+
+  return {
+    host: manifest.host,
+    fixture: manifest.fixture,
+    groups,
+    assets: manifest.assets.map((asset) => ({
+      assetId: normalizeAssetId(asset.id, { defaultNamespace }),
+      ...(readTransferBytes(asset.budget) === undefined
+        ? {}
+        : { transferBytes: readTransferBytes(asset.budget) })
+    }))
+  };
+}
+
+function readTransferBytes(budget: JsonObject | undefined): number | undefined {
+  const transferBytes = budget?.["transferBytes"];
+  return typeof transferBytes === "number" ? transferBytes : undefined;
+}
+
+function readJsonObject(value: unknown): JsonObject | undefined {
+  if (value === null || Array.isArray(value) || typeof value !== "object") {
+    return undefined;
+  }
+
+  return value as JsonObject;
 }
