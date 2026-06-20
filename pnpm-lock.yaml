@@ -8,15 +8,33 @@ importers:
 
   .:
     devDependencies:
+      '@indirection/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@indirection/compiler':
         specifier: workspace:*
         version: link:packages/compiler
+      '@indirection/loaders-web':
+        specifier: workspace:*
+        version: link:packages/loaders-web
       '@indirection/protocol':
         specifier: workspace:*
         version: link:packages/protocol
       '@indirection/runtime':
         specifier: workspace:*
         version: link:packages/runtime
+      '@indirection/schema':
+        specifier: workspace:*
+        version: link:packages/schema
+      '@indirection/testkit':
+        specifier: workspace:*
+        version: link:packages/testkit
+      '@indirection/three':
+        specifier: workspace:*
+        version: link:packages/three
+      '@indirection/vite':
+        specifier: workspace:*
+        version: link:packages/vite
       '@types/node':
         specifier: 24.13.2
         version: 24.13.2

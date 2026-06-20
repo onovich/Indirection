@@ -2,7 +2,7 @@
 
 Indirection is a manifest-first asset addressing protocol, build toolchain, and runtime for Web games and 3D editors.
 
-The project is currently at the design-baseline stage. The core idea is to let application and authoring data reference stable `AssetId` values, while Indirection resolves those identities into deployable URLs, variants, dependencies, cache behavior, loader adapters, and lifecycle-managed runtime handles.
+The project now has an executable Phase 0-7 baseline: protocol, schema, compiler, runtime, testkit, Web loaders, Three adapter skeleton, Vite plugin skeleton, CLI, browser smoke, and package smoke. The core idea is to let application and authoring data reference stable `AssetId` values, while Indirection resolves those identities into deployable URLs, variants, dependencies, cache behavior, loader adapters, and lifecycle-managed runtime handles.
 
 ## Positioning
 
@@ -16,9 +16,9 @@ The project is currently at the design-baseline stage. The core idea is to let a
 
 Sinan Engine is planned as the initial first-party design partner, POC host, and regression test field. Sinan should validate Indirection in a realistic engine workflow without defining the core architecture boundary.
 
-## Planned Shape
+## Workspace Shape
 
-The design baseline proposes a pnpm workspace with packages for protocol, schema, compiler, runtime, Web loaders, Three.js adapter, Vite plugin, CLI, and examples. After Sinan alignment, the first implementation slice should stay narrower: protocol, schema, compiler, runtime, and testkit before Web/Three/Vite integration.
+The pnpm workspace contains packages for protocol, schema, compiler, runtime, testkit, Web loaders, Three.js adapter boundary, Vite plugin, CLI, and examples. Advanced packages remain adapters around the core; they do not redefine host authoring schemas or runtime lifecycle ownership.
 
 Early milestones:
 
@@ -28,11 +28,23 @@ Early milestones:
 4. Runtime adapter behind Sinan's existing `WebRuntime.loadModel(assetId, url)` boundary.
 5. Scene scope/group preload, followed later by Web/Three loaders, variant, compression, cache strategy, Vite integration, and CLI polish.
 
+## Validation
+
+```powershell
+corepack pnpm typecheck
+corepack pnpm test
+corepack pnpm test:browser
+corepack pnpm smoke:phase7
+corepack pnpm pack:check
+corepack pnpm check:boundaries
+```
+
 ## Documents
 
 - [Architecture and technical design v0.1](docs/Indirection_寻址_架构与技术选型设计_v0.1.md)
 - [Current technical architecture and development plan v0.2](docs/Indirection_技术架构与开发计划_v0.2.md)
 - [Phase 0-7 Big Goal execution guide](docs/indirection-phase-0-7-big-goal-execution-guide.md)
+- [Phase 7 integration and package smoke](docs/phase-7-integration.md)
 - [R&D plan after Sinan alignment](docs/rd-plan-sinan-alignment-2026-06-20.md)
 - [Sinan POC-1 compatibility note](docs/sinan-cooperation/indirection-poc-1-compatibility-note.md)
 - [Sinan POC-1 usage](docs/sinan-cooperation/indirection-poc-1-usage.md)
