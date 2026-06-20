@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "host": "sinan-engine",
+  "fixture": "gate-demo-desensitized",
+  "assets": [
+    {
+      "id": "gate.hero",
+      "type": "model/gltf",
+      "url": "models/gate/hero.glb",
+      "fallback": "system.placeholder.model",
+      "budget": {
+        "transferBytes": 1800000
+      },
+      "metadata": {
+        "tags": ["character", "gate-demo"],
+        "owner": "runtime/three"
+      }
+    },
+    {
+      "id": "gate.environment",
+      "type": "model/gltf",
+      "url": "models/gate/environment.glb",
+      "fallback": "system.placeholder.model",
+      "budget": {
+        "transferBytes": 4200000
+      },
+      "metadata": {
+        "tags": ["environment", "gate-demo"],
+        "owner": "runtime/three"
+      }
+    },
+    {
+      "id": "gate.caption",
+      "type": "text/plain",
+      "url": "text/gate/caption.zh-CN.txt",
+      "fallback": "system.placeholder.text",
+      "budget": {
+        "transferBytes": 4096
+      },
+      "metadata": {
+        "tags": ["caption", "director"]
+      }
+    },
+    {
+      "id": "system.placeholder.model",
+      "type": "model/gltf",
+      "url": "models/system/placeholder.glb",
+      "budget": {
+        "transferBytes": 128000
+      },
+      "metadata": {
+        "tags": ["fallback"]
+      }
+    },
+    {
+      "id": "system.placeholder.text",
+      "type": "text/plain",
+      "url": "text/system/placeholder.txt",
+      "budget": {
+        "transferBytes": 512
+      },
+      "metadata": {
+        "tags": ["fallback"]
+      }
+    }
+  ],
+  "groups": {
+    "scene.gate-demo": ["gate.hero", "gate.environment", "gate.caption"]
+  },
+  "references": [
+    {
+      "ownerType": "level",
+      "ownerId": "gate-demo",
+      "assetId": "gate.hero"
+    },
+    {
+      "ownerType": "level",
+      "ownerId": "gate-demo",
+      "assetId": "gate.environment"
+    },
+    {
+      "ownerType": "timeline",
+      "ownerId": "intro",
+      "assetId": "gate.caption"
+    },
+    {
+      "ownerType": "timeline",
+      "ownerId": "intro",
+      "assetId": "gate.missing-audio"
+    }
+  ],
+  "budgets": {
+    "scene.gate-demo": {
+      "transferBytes": 6500000
+    }
+  }
+}
