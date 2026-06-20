@@ -39,4 +39,29 @@ describe("MemoryCacheStorageAdapter", () => {
     await expect(cache.keys("sha256-old")).resolves.toEqual([]);
     await expect(cache.keys("sha256-new")).resolves.toEqual(["b.txt"]);
   });
+
+  it("overwrites matching keys and returns sorted source urls", async () => {
+    const cache = new MemoryCacheStorageAdapter();
+
+    await cache.put(
+      { catalogVersion: "sha256-current", sourceUrl: "z.txt" },
+      "old-z"
+    );
+    await cache.put(
+      { catalogVersion: "sha256-current", sourceUrl: "a.txt" },
+      "a"
+    );
+    await cache.put(
+      { catalogVersion: "sha256-current", sourceUrl: "z.txt" },
+      "new-z"
+    );
+
+    await expect(
+      cache.match({ catalogVersion: "sha256-current", sourceUrl: "z.txt" })
+    ).resolves.toBe("new-z");
+    await expect(cache.keys("sha256-current")).resolves.toEqual([
+      "a.txt",
+      "z.txt"
+    ]);
+  });
 });

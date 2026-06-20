@@ -76,4 +76,26 @@ describe("indirection cli", () => {
       type: "text/plain"
     });
   });
+
+  it("returns actionable errors for unknown commands and missing assets", async () => {
+    await expect(run(["unknown", "--manifest", manifestPath])).resolves.toEqual({
+      code: 1,
+      stdout: [],
+      stderr: ["Unknown command: unknown"]
+    });
+
+    await expect(
+      run([
+        "inspect",
+        "--manifest",
+        manifestPath,
+        "--asset",
+        "vanilla:text.missing"
+      ])
+    ).resolves.toEqual({
+      code: 1,
+      stdout: [],
+      stderr: ["Asset not found: vanilla:text.missing"]
+    });
+  });
 });
