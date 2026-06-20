@@ -32,7 +32,8 @@ describe("CatalogStore", () => {
     expect(store.snapshot()).toEqual({
       catalogVersion: "sha256-initial",
       assetCount: 1,
-      groupCount: 1
+      groupCount: 1,
+      resources: []
     });
   });
 
@@ -61,7 +62,8 @@ describe("createAssetManager", () => {
     expect(manager.snapshot()).toEqual({
       catalogVersion: "sha256-manager",
       assetCount: 1,
-      groupCount: 1
+      groupCount: 1,
+      resources: []
     });
   });
 });
