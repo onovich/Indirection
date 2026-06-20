@@ -8,6 +8,7 @@ This index points to the current Phase 0-7 release-candidate documentation.
 - [Current technical architecture and development plan v0.2](Indirection_技术架构与开发计划_v0.2.md)
 - [Architecture and technical design v0.1](Indirection_寻址_架构与技术选型设计_v0.1.md)
 - [Phase 0-7 Big Goal execution guide](indirection-phase-0-7-big-goal-execution-guide.md)
+- [Phase 0-7 PASS report](phase-0-7-pass-report.md)
 - [Phase 7 integration and package smoke](phase-7-integration.md)
 - [R&D plan after Sinan alignment](rd-plan-sinan-alignment-2026-06-20.md)
 
