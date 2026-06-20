@@ -1,0 +1,17 @@
+﻿{
+    "schemaVersion":  1,
+    "initializedMarker":  "codex-project-git-workflow: initialized",
+    "initializedAt":  "2026-06-20 19:24:21 +08:00",
+    "projectName":  "Indirection",
+    "repoRoot":  "D:/LabProjects/Engine/Indirection",
+    "safeDirectory":  "D:/LabProjects/Engine/Indirection",
+    "statusCommand":  "git -c safe.directory=D:/LabProjects/Engine/Indirection status --short --branch",
+    "validationCommands":  [
+
+                           ],
+    "stagingPolicy":  "selected files only",
+    "commitCommand":  "",
+    "pushCommand":  "git -c safe.directory=D:/LabProjects/Engine/Indirection push -u origin HEAD",
+    "docsRequirement":  "For architecture or protocol changes, update the relevant docs/ADR notes or state no doc update is needed.",
+    "forbiddenCommands":  "No force-push; no destructive git commands without explicit user request."
+}
