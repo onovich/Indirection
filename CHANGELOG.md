@@ -23,3 +23,4 @@ git diff --check
 - Added report JSON shape documentation and contract tests.
 - Added CLI, docs drift, package file whitelist, and GitHub Actions validation gates.
 - Documented release readiness and v0.1 remaining risks.
+- Added the Phase 8 PASS report.

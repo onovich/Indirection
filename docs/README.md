@@ -9,6 +9,7 @@ This index points to the current Phase 0-8 release-candidate and release-hardeni
 - [Architecture and technical design v0.1](Indirection_寻址_架构与技术选型设计_v0.1.md)
 - [Phase 0-7 Big Goal execution guide](indirection-phase-0-7-big-goal-execution-guide.md)
 - [Phase 8 Release Hardening Goal guide](indirection-phase-8-release-hardening-goal-guide.md)
+- [Phase 8 PASS report](phase-8-pass-report.md)
 - [Phase 0-7 PASS report](phase-0-7-pass-report.md)
 - [Phase 7 integration and package smoke](phase-7-integration.md)
 - [Report JSON shapes](report-json-shapes.md)
