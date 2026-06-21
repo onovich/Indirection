@@ -15,9 +15,9 @@
     "pack:check": "node scripts/pack-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
     "smoke:phase7": "pnpm build && node examples/phase7-advanced-loaders.mjs",
-    "validate:full": "pnpm typecheck && pnpm test && pnpm test:browser && pnpm check:boundaries && pnpm smoke:phase7 && pnpm pack:check",
+    "validate:full": "pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm test:browser && pnpm check:boundaries && pnpm smoke:phase7 && pnpm pack:check",
     "test:watch": "vitest",
-    "lint": "echo \"lint not configured yet\"",
+    "lint": "node scripts/lint-check.mjs",
     "format": "node scripts/format-check.mjs"
   },
   "devDependencies": {
