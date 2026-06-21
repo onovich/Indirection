@@ -31,12 +31,16 @@ Early milestones:
 ## Validation
 
 ```powershell
+corepack pnpm lint
+corepack pnpm format
+corepack pnpm check:docs
 corepack pnpm typecheck
 corepack pnpm test
 corepack pnpm test:browser
+corepack pnpm check:boundaries
+corepack pnpm smoke:cli
 corepack pnpm smoke:phase7
 corepack pnpm pack:check
-corepack pnpm check:boundaries
 ```
 
 Or run the full local matrix:

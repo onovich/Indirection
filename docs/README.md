@@ -30,4 +30,4 @@ corepack pnpm validate:full
 git diff --check
 ```
 
-`validate:full` runs typecheck, tests, browser-facing loader smoke, boundary checks, Phase 7 example smoke, and package tarball/import smoke.
+`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
