@@ -12,6 +12,7 @@ This index points to the current Phase 0-8 release-candidate and release-hardeni
 - [Phase 0-7 PASS report](phase-0-7-pass-report.md)
 - [Phase 7 integration and package smoke](phase-7-integration.md)
 - [Report JSON shapes](report-json-shapes.md)
+- [Release readiness](release-readiness.md)
 - [R&D plan after Sinan alignment](rd-plan-sinan-alignment-2026-06-20.md)
 
 ## Sinan Cooperation

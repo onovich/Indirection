@@ -15,3 +15,11 @@ Validation:
 corepack pnpm validate:full
 git diff --check
 ```
+
+## 0.0.0-phase-8-hardening - 2026-06-21
+
+- Replaced placeholder `lint` and `format` scripts with lightweight zero-dependency quality gates.
+- Disabled `skipLibCheck` and kept the TypeScript matrix passing.
+- Added report JSON shape documentation and contract tests.
+- Added CLI, docs drift, package file whitelist, and GitHub Actions validation gates.
+- Documented release readiness and v0.1 remaining risks.
