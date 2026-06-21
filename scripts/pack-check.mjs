@@ -137,10 +137,13 @@ async function assertPackedFiles(packedPackages) {
     assertPackedPath(packedPaths, "package.json", manifest.name);
     assertPackedPath(packedPaths, "dist/index.js", manifest.name);
     assertPackedPath(packedPaths, "dist/index.d.ts", manifest.name);
+    for (const binPath of Object.values(manifest.bin ?? {})) {
+      assertPackedPath(packedPaths, withoutLeadingDotSlash(binPath), manifest.name);
+    }
 
     for (const file of packedPaths) {
-      if (file.endsWith(".tsbuildinfo")) {
-        throw new Error(`${manifest.name} packed build info file: ${file}`);
+      if (!isAllowedPackedFile(file)) {
+        throw new Error(`${manifest.name} packed unexpected file: ${file}`);
       }
     }
   }
@@ -335,6 +338,17 @@ function assertPackedPath(paths, path, packageName) {
   if (!paths.has(path)) {
     throw new Error(`${packageName} tarball is missing ${path}`);
   }
+}
+
+function isAllowedPackedFile(path) {
+  return (
+    path === "package.json" ||
+    /^dist\/.+\.(?:d\.ts|d\.ts\.map|js|js\.map)$/.test(path)
+  );
+}
+
+function withoutLeadingDotSlash(path) {
+  return path.startsWith("./") ? path.slice(2) : path;
 }
 
 function assertString(value, field, packageName) {
