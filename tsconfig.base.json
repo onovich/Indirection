@@ -14,7 +14,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "types": []
   }
 }
