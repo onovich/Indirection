@@ -33,6 +33,17 @@ git diff --check
 - CLI and package smoke are part of the full matrix.
 - GitHub Actions mirrors the local validation entrypoint.
 
+## Phase 8 Main Implementation Checkpoint
+
+The main implementation rounds have converged on one local and CI-ready release gate:
+
+```powershell
+corepack pnpm validate:full
+git diff --check
+```
+
+At this checkpoint, the full matrix passes without requiring buffer-round fixes.
+
 ## v0.1 Remaining Risks
 
 - No real npm publishing workflow has been created yet.
