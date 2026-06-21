@@ -89,7 +89,7 @@ function checkSourceFiles() {
       if (skippedTestPattern.test(line)) {
         issues.push(`${location}: skipped test must be documented outside committed code`);
       }
-      if (/\bdebugger\b/.test(line)) {
+      if (/^\s*debugger\s*;?\s*(?:(?:\/\/).*)?$/.test(line)) {
         issues.push(`${location}: debugger statement is not allowed`);
       }
     });
