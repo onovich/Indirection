@@ -46,3 +46,14 @@ Expected validation surface:
 - Package smoke entrypoint: `corepack pnpm pack:check`
 - Boundary guard entrypoint: `corepack pnpm check:boundaries`
 - Phase 7 example entrypoint: `corepack pnpm smoke:phase7`
+
+## Next Phase
+
+Phase 8 should focus on release hardening rather than feature expansion:
+
+- Replace placeholder lint/format scripts or define equivalent lightweight gates.
+- Decide whether `skipLibCheck` remains acceptable before v0.1.
+- Add report/diagnostics JSON shape documentation and contract coverage.
+- Keep the Phase 0-7 full validation matrix passing.
+
+Guide: `docs/indirection-phase-8-release-hardening-goal-guide.md`

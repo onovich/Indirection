@@ -52,6 +52,7 @@ corepack pnpm validate:full
 - [Architecture and technical design v0.1](docs/Indirection_寻址_架构与技术选型设计_v0.1.md)
 - [Current technical architecture and development plan v0.2](docs/Indirection_技术架构与开发计划_v0.2.md)
 - [Phase 0-7 Big Goal execution guide](docs/indirection-phase-0-7-big-goal-execution-guide.md)
+- [Phase 8 Release Hardening Goal guide](docs/indirection-phase-8-release-hardening-goal-guide.md)
 - [Phase 7 integration and package smoke](docs/phase-7-integration.md)
 - [R&D plan after Sinan alignment](docs/rd-plan-sinan-alignment-2026-06-20.md)
 - [Sinan POC-1 compatibility note](docs/sinan-cooperation/indirection-poc-1-compatibility-note.md)
