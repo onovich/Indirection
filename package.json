@@ -18,7 +18,7 @@
     "validate:full": "pnpm typecheck && pnpm test && pnpm test:browser && pnpm check:boundaries && pnpm smoke:phase7 && pnpm pack:check",
     "test:watch": "vitest",
     "lint": "echo \"lint not configured yet\"",
-    "format": "echo \"format not configured yet\""
+    "format": "node scripts/format-check.mjs"
   },
   "devDependencies": {
     "@indirection/cli": "workspace:*",

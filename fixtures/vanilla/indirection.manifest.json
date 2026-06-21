@@ -10,7 +10,9 @@
         }
       ],
       "metadata": {
-        "tags": ["config"]
+        "tags": [
+          "config"
+        ]
       }
     },
     "text.intro": {
@@ -18,7 +20,9 @@
       "sources": [
         {
           "when": {
-            "locale": ["zh-CN"]
+            "locale": [
+              "zh-CN"
+            ]
           },
           "url": "./text/intro.zh-CN.txt"
         },
@@ -39,7 +43,10 @@
   },
   "groups": {
     "scene.intro": {
-      "assets": ["config.gameplay", "text.intro"]
+      "assets": [
+        "config.gameplay",
+        "text.intro"
+      ]
     }
   }
 }

@@ -12,7 +12,10 @@
         "transferBytes": 1800000
       },
       "metadata": {
-        "tags": ["character", "gate-demo"],
+        "tags": [
+          "character",
+          "gate-demo"
+        ],
         "owner": "runtime/three"
       }
     },
@@ -25,7 +28,10 @@
         "transferBytes": 4200000
       },
       "metadata": {
-        "tags": ["environment", "gate-demo"],
+        "tags": [
+          "environment",
+          "gate-demo"
+        ],
         "owner": "runtime/three"
       }
     },
@@ -38,7 +44,10 @@
         "transferBytes": 4096
       },
       "metadata": {
-        "tags": ["caption", "director"]
+        "tags": [
+          "caption",
+          "director"
+        ]
       }
     },
     {
@@ -49,7 +58,9 @@
         "transferBytes": 128000
       },
       "metadata": {
-        "tags": ["fallback"]
+        "tags": [
+          "fallback"
+        ]
       }
     },
     {
@@ -60,12 +71,18 @@
         "transferBytes": 512
       },
       "metadata": {
-        "tags": ["fallback"]
+        "tags": [
+          "fallback"
+        ]
       }
     }
   ],
   "groups": {
-    "scene.gate-demo": ["gate.hero", "gate.environment", "gate.caption"]
+    "scene.gate-demo": [
+      "gate.hero",
+      "gate.environment",
+      "gate.caption"
+    ]
   },
   "references": [
     {

@@ -1,14 +1,34 @@
 {
-  "include": ["types/**/*.d.ts"],
+  "include": [
+    "types/**/*.d.ts"
+  ],
   "references": [
-    { "path": "./packages/protocol" },
-    { "path": "./packages/schema" },
-    { "path": "./packages/compiler" },
-    { "path": "./packages/runtime" },
-    { "path": "./packages/loaders-web" },
-    { "path": "./packages/three" },
-    { "path": "./packages/vite" },
-    { "path": "./packages/cli" },
-    { "path": "./packages/testkit" }
+    {
+      "path": "./packages/protocol"
+    },
+    {
+      "path": "./packages/schema"
+    },
+    {
+      "path": "./packages/compiler"
+    },
+    {
+      "path": "./packages/runtime"
+    },
+    {
+      "path": "./packages/loaders-web"
+    },
+    {
+      "path": "./packages/three"
+    },
+    {
+      "path": "./packages/vite"
+    },
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/testkit"
+    }
   ]
 }
