@@ -134,3 +134,21 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
 ```
+
+## 0.0.0-phase-15-compressed-capability - 2026-06-22
+
+- Added declarative compressed capability source-selection coverage for `draco`, `ktx2`, and `meshopt` without real decoder dependencies.
+- Hardened schema/compiler tests so capability conditions remain string-set data and invalid variants carry stable `causeCode: "variant"` diagnostics.
+- Added runtime tests for compressed source selection, default uncompressed source selection, declaration-order matching, and selected-source failure through explicit runtime fallback.
+- Extended compiler reports with machine-readable source selection fields.
+- Added compressed capability docs, Three adapter host decoder guidance, docs drift guards, and packed package smoke coverage for capability source selection.
+- Added the Phase 15 PASS report while keeping real npm publish, login, registry writes, Git tags, GitHub Releases, live Sinan Engine integration, and real decoder packages out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```

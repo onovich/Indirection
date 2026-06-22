@@ -207,6 +207,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-15-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-14-pass-report.md"
     },
     {
@@ -296,6 +300,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "three-gltf-adapter.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-15-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -416,6 +424,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/compressed-capability-source-selection.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-15-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -670,6 +682,58 @@ function checkRequiredDocPointers() {
       text: "docs/indirection-phase-15-compressed-capability-goal-guide.md"
     },
     {
+      file: "docs/phase-15-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "ResolutionContext.capability"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "draco"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "ktx2"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "meshopt"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "default source"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "runtime fallback"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "docs/compressed-capability-source-selection.md"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "Planner selection after PASS: pending architect/strategist next guide"
+    },
+    {
       file: "docs/phase-0-7-pass-report.md",
       text: "docs/indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -900,6 +964,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-14-three-lifecycle"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-15-compressed-capability"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

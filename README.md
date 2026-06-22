@@ -78,6 +78,7 @@ git diff --check
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 15 PASS report](docs/phase-15-pass-report.md)
 - [Phase 14 PASS report](docs/phase-14-pass-report.md)
 - [Phase 13 PASS report](docs/phase-13-pass-report.md)
 - [Phase 12 PASS report](docs/phase-12-pass-report.md)

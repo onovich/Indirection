@@ -166,9 +166,11 @@ Phase 15 makes Draco, KTX2, and meshopt readiness visible through declarative ca
 
 Compressed capability docs: `docs/compressed-capability-source-selection.md`
 
+Phase 15 PASS report: `docs/phase-15-pass-report.md`
+
 ## Recommended Next Steps
 
-1. Complete Phase 15 validation and PASS reporting before starting real publish or live Sinan integration.
+1. Wait for the architect/strategist flow to select and dispatch the next approved guide before starting Phase 16.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -188,6 +190,8 @@ Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 
 Compressed capability docs: `docs/compressed-capability-source-selection.md`
+
+Phase 15 PASS report: `docs/phase-15-pass-report.md`
 
 Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
