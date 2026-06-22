@@ -3,7 +3,8 @@ import {
   createWebDataLoaders,
   loadersWebPackageName
 } from "@indirection/loaders-web";
-import { InMemoryTransport } from "@indirection/runtime";
+import { protocolVersion } from "@indirection/protocol";
+import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
 
 const loaders = createWebDataLoaders();
 const transport = new InMemoryTransport({
@@ -17,6 +18,7 @@ try {
   const text = await load("text/plain", "payload.txt");
   const binary = await load("binary/array-buffer", "payload.bin");
   const cache = await runCacheStorageProbe();
+  const runtime = await runRuntimeLifecycleProbe();
 
   const result = {
     cache,
@@ -28,6 +30,7 @@ try {
       text
     },
     packageName: loadersWebPackageName,
+    runtime,
     status: "ready"
   };
 
@@ -108,5 +111,57 @@ async function runCacheStorageProbe() {
     missBeforePut,
     staleHit,
     staleStillIsolated
+  };
+}
+
+async function runRuntimeLifecycleProbe() {
+  const runtimeAssetId = "browser:runtime.text";
+  const manager = createAssetManager({
+    catalog: {
+      assets: {
+        [runtimeAssetId]: {
+          sources: [{ url: "runtime.txt" }],
+          type: "text/plain"
+        }
+      },
+      catalogVersion: "phase-9-runtime",
+      protocolVersion
+    },
+    loaders,
+    transport: new InMemoryTransport({
+      "runtime.txt": "runtime-from-chromium"
+    })
+  });
+  const scope = manager.createScope("browser-runtime-scope");
+
+  const firstHandle = await scope.acquire(runtimeAssetId);
+  const snapshotWhileHeld = manager.snapshot();
+  firstHandle.release();
+  const snapshotAfterRelease = manager.snapshot();
+
+  const secondHandle = await scope.acquire(runtimeAssetId);
+  const scopeBeforeDispose = scope.snapshot();
+  await scope.dispose();
+  const snapshotAfterDispose = manager.snapshot();
+
+  return {
+    catalogVersion: snapshotAfterDispose.catalogVersion,
+    firstHandleReleased: firstHandle.released,
+    leakWarnings: snapshotAfterDispose.leakWarnings,
+    scopeBeforeDispose,
+    scopeDisposed: scope.disposed,
+    secondHandleReleased: secondHandle.released,
+    snapshotAfterDispose: resourceSummary(snapshotAfterDispose, runtimeAssetId),
+    snapshotAfterRelease: resourceSummary(snapshotAfterRelease, runtimeAssetId),
+    snapshotWhileHeld: resourceSummary(snapshotWhileHeld, runtimeAssetId),
+    value: firstHandle.value
+  };
+}
+
+function resourceSummary(snapshot, assetId) {
+  const resource = snapshot.resources.find((candidate) => candidate.assetId === assetId);
+  return {
+    refCount: resource?.refCount,
+    state: resource?.state
   };
 }

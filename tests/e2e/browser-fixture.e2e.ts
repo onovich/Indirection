@@ -30,6 +30,32 @@ test("serves the browser E2E fixture", async ({ page }) => {
         text: "text-from-chromium"
       },
       packageName: "@indirection/loaders-web",
+      runtime: {
+        catalogVersion: "phase-9-runtime",
+        firstHandleReleased: true,
+        leakWarnings: [],
+        scopeBeforeDispose: {
+          assetIds: ["browser:runtime.text"],
+          disposed: false,
+          handleCount: 1,
+          id: "browser-runtime-scope"
+        },
+        scopeDisposed: true,
+        secondHandleReleased: true,
+        snapshotAfterDispose: {
+          refCount: 0,
+          state: "released"
+        },
+        snapshotAfterRelease: {
+          refCount: 0,
+          state: "released"
+        },
+        snapshotWhileHeld: {
+          refCount: 1,
+          state: "ready"
+        },
+        value: "runtime-from-chromium"
+      },
       status: "ready"
     });
 });
