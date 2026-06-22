@@ -834,6 +834,14 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm pack:check"
     },
     {
+      file: "scripts/pack-check.mjs",
+      text: "compressed.ktx2.txt"
+    },
+    {
+      file: "scripts/pack-check.mjs",
+      text: "capability report meshopt source missing"
+    },
+    {
       file: "docs/browser-e2e.md",
       text: "corepack pnpm exec playwright install chromium firefox webkit"
     },

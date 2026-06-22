@@ -334,6 +334,62 @@ assert(handle.value === "hello from pack", "runtime acquire failed");
 await handle.release();
 await scope.dispose();
 
+const capabilityManifest = {
+  schemaVersion: 1,
+  namespace: "pack",
+  assets: {
+    "text.compressed": {
+      type: "text/plain",
+      sources: [
+        { when: { capability: ["draco"] }, url: "compressed.draco.txt" },
+        { when: { capability: ["ktx2"] }, url: "compressed.ktx2.txt" },
+        { when: { capability: ["meshopt"] }, url: "compressed.meshopt.txt" },
+        { url: "compressed.default.txt" }
+      ]
+    }
+  }
+};
+const capabilityResult = compileNormalizedModel(
+  importIndirectionManifest(capabilityManifest)
+);
+const capabilitySources = capabilityResult.report.assets[0].sources;
+assert(capabilitySources.length === 4, "capability report source count failed");
+assert(capabilitySources[0].when.capability[0] === "draco", "capability report draco source missing");
+assert(capabilitySources[1].when.capability[0] === "ktx2", "capability report ktx2 source missing");
+assert(capabilitySources[2].when.capability[0] === "meshopt", "capability report meshopt source missing");
+assert(capabilitySources[3].default === true, "capability report default source missing");
+
+const capabilityRecords = {
+  "compressed.draco.txt": "draco source",
+  "compressed.ktx2.txt": "ktx2 source",
+  "compressed.meshopt.txt": "meshopt source",
+  "compressed.default.txt": "default source"
+};
+const ktx2Manager = createAssetManager({
+  catalog: capabilityResult.catalog,
+  context: {
+    capability: ["ktx2"]
+  },
+  transport: new InMemoryTransport(capabilityRecords),
+  loaders: [textAssetLoader]
+});
+const ktx2Scope = ktx2Manager.createScope("pack-capability-ktx2");
+const ktx2Handle = await ktx2Scope.acquire("pack:text.compressed");
+assert(ktx2Handle.value === "ktx2 source", "capability compressed source selection failed");
+await ktx2Handle.release();
+await ktx2Scope.dispose();
+
+const defaultCapabilityManager = createAssetManager({
+  catalog: capabilityResult.catalog,
+  transport: new InMemoryTransport(capabilityRecords),
+  loaders: [textAssetLoader]
+});
+const defaultCapabilityScope = defaultCapabilityManager.createScope("pack-capability-default");
+const defaultCapabilityHandle = await defaultCapabilityScope.acquire("pack:text.compressed");
+assert(defaultCapabilityHandle.value === "default source", "capability default source selection failed");
+await defaultCapabilityHandle.release();
+await defaultCapabilityScope.dispose();
+
 assert(createWebDataLoaders().length === 3, "web loaders import failed");
 const cache = new MemoryCacheStorageAdapter();
 await cache.put({ catalogVersion: result.catalog.catalogVersion, sourceUrl: "intro.txt" }, "cached");
