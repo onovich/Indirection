@@ -200,6 +200,7 @@ The safe local gates are:
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:provenance
 corepack pnpm release:dry-run
 git diff --check
 ```
@@ -219,3 +220,9 @@ The same gate is available in GitHub Actions through the manual `Publish Preflig
 Phase 10 proved package readiness and release dry-run safety. Phase 11 adds the policy gate that says which human decisions are still required before a later real publish phase can start.
 
 The Phase 10 `release:dry-run` gate remains required and must continue to pass.
+
+## Relationship To Phase 17
+
+Phase 17 adds `release:provenance` as local dry-run artifact evidence. It records tarball sha256 values, byte sizes, file lists, exports, CLI bin entries, validation command evidence, and no-publish policy booleans for packed packages.
+
+This remains a local gate only. It must not run npm login, npm whoami, npm access, npm token, npm owner, npm dist-tag, registry writes, Git tag creation, GitHub Release creation, signing, Sigstore, npm `--provenance`, or OIDC publish workflows.

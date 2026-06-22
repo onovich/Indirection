@@ -195,10 +195,116 @@ interface SinanBudgetAssetEntry {
 }
 ```
 
+## Release Provenance Report
+
+`scripts/release-provenance.mjs` emits a local dry-run artifact provenance report when run with `--json`. The generated output is for local inspection and test assertions only; do not commit generated provenance reports.
+
+```ts
+interface ReleaseProvenanceReport {
+  schemaVersion: 1;
+  generatedBy: "scripts/release-provenance.mjs";
+  packageCount: number;
+  policy: ReleaseProvenancePolicy;
+  validation: ReleaseProvenanceValidation;
+  packages: readonly ReleaseProvenancePackage[];
+}
+```
+
+Policy fields must stay false while packages are private dry-run artifacts:
+
+```ts
+interface ReleaseProvenancePolicy {
+  packageArtifacts: "dry-run-only";
+  publish: false;
+  npmLogin: false;
+  registryWrite: false;
+  gitTag: false;
+  githubRelease: false;
+  signing: false;
+  sigstore: false;
+  npmProvenanceUpload: false;
+  oidcPublish: false;
+}
+```
+
+Validation evidence:
+
+```ts
+interface ReleaseProvenanceValidation {
+  commands: readonly ReleaseProvenanceCommand[];
+  determinism: {
+    canonicalJsonVersion: 1;
+    hashAlgorithm: "sha256";
+    excludes: readonly [
+      "absolutePaths",
+      "environmentVariables",
+      "gitSha",
+      "npmTokens",
+      "registryCredentials",
+      "timestamps",
+      "usernames"
+    ];
+    verification: "repeat-pack-canonical-json-match";
+  };
+}
+
+interface ReleaseProvenanceCommand {
+  name: string;
+  command: string;
+  evidence: string;
+}
+```
+
+Package entries:
+
+```ts
+interface ReleaseProvenancePackage {
+  name: string;
+  version: string;
+  private: true;
+  license: "UNLICENSED";
+  packageDirectory: string;
+  tarball: {
+    filename: string;
+    sha256: string;
+    sha256Subject: "canonical-packed-payload";
+    byteSize: number;
+  };
+  exports: readonly ReleaseProvenanceExport[];
+  bin: readonly ReleaseProvenanceBin[];
+  files: {
+    count: number;
+    paths: readonly string[];
+  };
+  validation: {
+    packCommand: string;
+    packageSmokeCommand: string;
+    releaseGateCommand: string;
+  };
+}
+
+interface ReleaseProvenanceExport {
+  subpath: string;
+  types?: string;
+  import?: string;
+  require?: string;
+  default?: string;
+  target?: string;
+}
+
+interface ReleaseProvenanceBin {
+  name: string;
+  path: string;
+}
+```
+
+Release provenance reports must not include timestamps, absolute paths, local usernames, environment variable values, npm tokens, registry credentials, Git tags, GitHub Releases, signing evidence, Sigstore attestations, npm provenance uploads, or OIDC publish workflow state.
+
 ## Validation
 
 Report shape changes must update:
 
 - compiler report tests for the vanilla fixture.
 - Sinan report contract tests for the compatibility fixture.
+- release provenance guard tests and `docs/release-provenance.md` when provenance fields change.
 - this document when adding, removing, or changing machine-readable fields.

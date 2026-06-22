@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, and selected Phase 17 release provenance guide before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, and Phase 17 release provenance posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -8,6 +8,7 @@ Local and CI validation use the same main entrypoint:
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
@@ -26,6 +27,7 @@ git diff --check
 - `smoke:cli`: real CLI bin smoke for `validate`, `build`, `report`, and `inspect`.
 - `smoke:phase7`: advanced loader/cache/Vite integration example.
 - `pack:check`: tarball file whitelist plus temporary consumer import smoke, including the packaged Three GLTF parser API with a parser stub.
+- `release:provenance`: deterministic local tarball provenance for all 9 packed workspace packages, including sha256, byte size, file list, exports, bin, validation command evidence, and no-publish policy evidence.
 
 ## Current Release Candidate Status
 
@@ -41,6 +43,7 @@ git diff --check
 - Compressed Draco/KTX2/meshopt readiness is represented through declarative `ResolutionContext.capability` strings, capability-gated catalog sources, compiler reports, runtime tests, and package smoke data without real decoder dependencies.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
+- Phase 17 release provenance, local `release:provenance`, deterministic report guards, docs drift guards, and release dry-run integration are in place without publishing, uploading provenance, signing, creating tags, or creating GitHub Releases.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -180,14 +183,17 @@ Phase 16 PASS report: `docs/phase-16-pass-report.md`
 
 Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
 
-Phase 17 is selected as the next in-repository phase after Phase 16 PASS. It should add deterministic local provenance and verification for packed dry-run artifacts while keeping real npm publish, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, and generated release artifacts out of the committed repository.
+Phase 17 adds deterministic local provenance and verification for packed dry-run artifacts while keeping real npm publish, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, and generated release artifacts out of the committed repository.
+
+Release provenance docs: `docs/release-provenance.md`
+
+Phase 17 PASS report: `docs/phase-17-pass-report.md`
 
 ## Recommended Next Steps
 
-1. Execute the selected Phase 17 release artifact provenance guide before starting real publish or live Sinan integration.
-2. Keep `validate:full` as the local and CI release gate.
-3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
-4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
+1. Keep `validate:full`, `release:provenance`, `release:dry-run`, and `publish:preflight` as the local release-readiness gates.
+2. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
+3. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
 
@@ -206,6 +212,10 @@ Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
 
 Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
+
+Release provenance docs: `docs/release-provenance.md`
+
+Phase 17 PASS report: `docs/phase-17-pass-report.md`
 
 Phase 16 PASS report: `docs/phase-16-pass-report.md`
 

@@ -85,6 +85,10 @@ If the local server port is already occupied, stop the process using port `4173`
 
 If CI fails before tests start on Linux browser dependencies, inspect the `Install Playwright Browsers` step before debugging the fixture.
 
+The Firefox project sets `MOZ_DISABLE_CONTENT_SANDBOX=1` in Playwright launch options. This is a browser harness setting for Windows/headless Firefox juggler stability; it is not product runtime behavior and must stay out of protocol, schema, compiler, and runtime packages.
+
+`playwright.config.ts` starts `tests/e2e/server.mjs` with `--idle-exit-ms=5000` so Windows webServer child processes exit after the fixture has gone idle. The server remains reusable for manual debugging when run without that flag.
+
 If a stress assertion fails, inspect `window.__indirectionE2E.diagnostics` in the assertion output or open the attached `indirection-e2e-result.json` under `test-results/`. The sections list localizes the failure to loaders, cache, runtime, fallback, stress cache, stress capability selection, stress runtime lifecycle, or virtual catalog consumption.
 
 If a Cache Storage stress assertion fails, rerun the affected browser project after clearing local Playwright artifacts and browser cache state:

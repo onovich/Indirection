@@ -13,10 +13,13 @@ This document records the Phase 10 release dry-run policy for v0.1 package readi
 Run the local dry-run gate with:
 
 ```powershell
+corepack pnpm release:provenance
 corepack pnpm release:dry-run
 ```
 
-The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, and no Git status or tag side effects.
+The standalone provenance gate packs every workspace package in temporary directories, records tarball filenames, sha256 hashes, byte sizes, file lists, exports, CLI bin entries, and no-publish policy evidence, then verifies repeated canonical JSON output is deterministic.
+
+The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, local release provenance, and no Git status or tag side effects.
 
 The same core gate is available in GitHub Actions through the manual `Release Dry Run` workflow. It uses read-only repository permissions and does not publish packages or create tags.
 
@@ -74,7 +77,8 @@ A package can move from dry-run candidate to real publish candidate only when:
 
 - Required package metadata is complete and validated.
 - `pack:check` verifies exports, files, tarball contents, CLI bin paths, and temporary consumer imports.
-- `release:dry-run` confirms no real publish, no tag creation, no registry write, and no dirty workspace artifacts.
+- `release:provenance` records deterministic dry-run package artifact evidence without committing generated reports.
+- `release:dry-run` confirms no real publish, no tag creation, no registry write, no provenance upload, and no dirty workspace artifacts.
 - `validate:full` and browser E2E still pass.
 - Package visibility, npm permissions, and release tag policy have been accepted outside the implementation executor lane.
 
@@ -85,6 +89,7 @@ Run this checklist before any release-readiness handoff:
 ```powershell
 corepack pnpm install --frozen-lockfile
 corepack pnpm validate:full
+corepack pnpm release:provenance
 corepack pnpm release:dry-run
 git diff --check
 git status --short --branch
@@ -93,7 +98,8 @@ git status --short --branch
 Expected result:
 
 - `validate:full` passes, including browser E2E and package smoke.
-- `release:dry-run` reports 9 packages audited, packed, and verified without publish or tag side effects.
+- `release:provenance` reports 9 packages audited with deterministic sha256 provenance.
+- `release:dry-run` reports 9 packages audited, packed, and verified with 9 deterministic provenance records and without publish or tag side effects.
 - `git diff --check` is clean.
 - `git status --short --branch` has no tracked or untracked release artifacts.
 

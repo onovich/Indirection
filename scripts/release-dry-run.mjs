@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createReleaseProvenance } from "./release-provenance.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packagesRoot = join(repoRoot, "packages");
@@ -21,6 +22,7 @@ assertNoForbiddenTrackedArtifacts();
 
 runPnpm(["build"]);
 runPnpm(["pack:check"]);
+const provenanceReport = await createReleaseProvenance();
 
 const finalStatus = git(["status", "--porcelain", "--untracked-files=all"]);
 const finalHeadTags = git(["tag", "--points-at", "HEAD"]);
@@ -37,7 +39,7 @@ assertEqual(
 );
 
 console.log(
-  `release-dry-run passed: ${packages.length} packages audited, packed, and verified without publish or tag side effects`
+  `release-dry-run passed: ${packages.length} packages audited, packed, and verified with ${provenanceReport.packageCount} deterministic provenance records and without publish or tag side effects`
 );
 
 async function readWorkspacePackages() {

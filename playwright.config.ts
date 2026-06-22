@@ -16,7 +16,15 @@ export default defineConfig({
     },
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] }
+      use: {
+        ...devices["Desktop Firefox"],
+        launchOptions: {
+          env: {
+            ...process.env,
+            MOZ_DISABLE_CONTENT_SANDBOX: "1"
+          }
+        }
+      }
     },
     {
       name: "webkit",
@@ -24,7 +32,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: "node tests/e2e/server.mjs",
+    command: "node tests/e2e/server.mjs --idle-exit-ms=5000",
     port: 4173,
     reuseExistingServer: !process.env.CI
   }

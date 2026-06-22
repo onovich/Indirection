@@ -11,7 +11,9 @@ import {
 const repoRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const fixtureRoot = join(repoRoot, "tests", "e2e", "fixtures");
 const port = Number(process.env.PORT ?? 4173);
+const idleExitMs = readIdleExitMs();
 const virtualCatalogModule = createVirtualCatalogModule();
+let idleExitTimer;
 
 const contentTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -22,6 +24,8 @@ const contentTypes = new Map([
 ]);
 
 const server = createServer(async (request, response) => {
+  clearIdleExit();
+  response.on("finish", scheduleIdleExit);
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
   if (url.pathname === "/virtual/indirection/catalog.js") {
     response.writeHead(200, {
@@ -60,12 +64,48 @@ const server = createServer(async (request, response) => {
 
 server.listen(port, "127.0.0.1", () => {
   console.log(`Indirection E2E fixture server listening on ${port}`);
+  scheduleIdleExit();
 });
 
 for (const signal of ["SIGINT", "SIGTERM"]) {
-  process.on(signal, () => {
-    server.close(() => process.exit(0));
-  });
+  process.on(signal, shutdown);
+}
+
+function readIdleExitMs() {
+  const prefix = "--idle-exit-ms=";
+  const option = process.argv.find((entry) => entry.startsWith(prefix));
+  if (option === undefined) {
+    return 0;
+  }
+
+  const value = Number(option.slice(prefix.length));
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`Invalid idle exit timeout: ${option}`);
+  }
+
+  return value;
+}
+
+function scheduleIdleExit() {
+  if (idleExitMs === 0) {
+    return;
+  }
+
+  clearIdleExit();
+  idleExitTimer = setTimeout(shutdown, idleExitMs);
+  idleExitTimer.unref();
+}
+
+function clearIdleExit() {
+  if (idleExitTimer !== undefined) {
+    clearTimeout(idleExitTimer);
+    idleExitTimer = undefined;
+  }
+}
+
+function shutdown() {
+  clearIdleExit();
+  server.close(() => process.exit(0));
 }
 
 function resolveRequestPath(pathname) {

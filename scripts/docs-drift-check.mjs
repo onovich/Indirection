@@ -8,6 +8,7 @@ const packageJson = readJson("package.json");
 checkValidateFull();
 checkBrowserMatrix();
 checkReleaseDryRun();
+checkReleaseProvenance();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -51,6 +52,63 @@ function checkReleaseDryRun() {
   }
 }
 
+function checkReleaseProvenance() {
+  const command = packageJson.scripts?.["release:provenance"];
+  if (typeof command !== "string" || !command.includes("scripts/release-provenance.mjs")) {
+    issues.push("package.json: release:provenance must run scripts/release-provenance.mjs");
+  }
+
+  const releaseDryRun = readText("scripts/release-dry-run.mjs");
+  for (const text of [
+    "createReleaseProvenance",
+    "deterministic provenance records"
+  ]) {
+    if (!releaseDryRun.includes(text)) {
+      issues.push(`scripts/release-dry-run.mjs: missing '${text}'`);
+    }
+  }
+
+  const provenanceScript = readText("scripts/release-provenance.mjs");
+  for (const text of [
+    "canonicalReleaseProvenanceJson",
+    "repeat-pack-canonical-json-match",
+    "sha256",
+    "npmProvenanceUpload",
+    "corepack pnpm publish:preflight",
+    "release-provenance passed"
+  ]) {
+    if (!provenanceScript.includes(text)) {
+      issues.push(`scripts/release-provenance.mjs: missing '${text}'`);
+    }
+  }
+
+  const provenanceDocs = readText("docs/release-provenance.md");
+  for (const text of [
+    "corepack pnpm release:provenance",
+    "tarball `sha256`",
+    "repeat-pack-canonical-json-match",
+    "Do not commit generated JSON output",
+    "npm `--provenance`"
+  ]) {
+    if (!provenanceDocs.includes(text)) {
+      issues.push(`docs/release-provenance.md: missing '${text}'`);
+    }
+  }
+
+  const reportShapes = readText("docs/report-json-shapes.md");
+  for (const text of [
+    "ReleaseProvenanceReport",
+    "ReleaseProvenancePolicy",
+    "ReleaseProvenancePackage",
+    "npmProvenanceUpload: false",
+    "repeat-pack-canonical-json-match"
+  ]) {
+    if (!reportShapes.includes(text)) {
+      issues.push(`docs/report-json-shapes.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -62,6 +120,12 @@ function checkBrowserMatrix() {
     if (!playwrightConfig.includes(`name: "${projectName}"`)) {
       issues.push(`playwright.config.ts: missing ${projectName} project`);
     }
+  }
+  if (!playwrightConfig.includes("MOZ_DISABLE_CONTENT_SANDBOX")) {
+    issues.push("playwright.config.ts: missing Firefox sandbox stability setting");
+  }
+  if (!playwrightConfig.includes("--idle-exit-ms=5000")) {
+    issues.push("playwright.config.ts: missing E2E server idle exit setting");
   }
 
   const workflow = readText(".github/workflows/validate.yml");
@@ -203,6 +267,18 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/release-provenance.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-17-pass-report.md"
+    },
+    {
+      file: "README.md",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "README.md",
       text: "docs/compressed-capability-source-selection.md"
     },
     {
@@ -311,6 +387,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/README.md",
+      text: "release-provenance.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-17-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
       text: "compressed-capability-source-selection.md"
     },
     {
@@ -364,6 +448,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/README.md",
+      text: "corepack pnpm release:provenance"
     },
     {
       file: "docs/README.md",
@@ -460,6 +548,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-17-release-provenance-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/release-provenance.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-17-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "corepack pnpm release:provenance"
     },
     {
       file: "docs/release-readiness.md",
@@ -1038,6 +1138,26 @@ function checkRequiredDocPointers() {
       text: "npm provenance upload"
     },
     {
+      file: "docs/release-provenance.md",
+      text: "Release Provenance"
+    },
+    {
+      file: "docs/release-provenance.md",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "docs/release-provenance.md",
+      text: "tarball `sha256`"
+    },
+    {
+      file: "docs/release-provenance.md",
+      text: "repeat-pack-canonical-json-match"
+    },
+    {
+      file: "docs/release-provenance.md",
+      text: "npm `--provenance`"
+    },
+    {
       file: "docs/compressed-capability-source-selection.md",
       text: "Compressed Capability Source Selection"
     },
@@ -1143,6 +1263,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/browser-e2e.md",
+      text: "MOZ_DISABLE_CONTENT_SANDBOX=1"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "--idle-exit-ms=5000"
+    },
+    {
+      file: "docs/browser-e2e.md",
       text: "Install Playwright Browsers"
     },
     {
@@ -1200,6 +1328,26 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-16-browser-e2e-stress"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-17-release-provenance"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "deterministic provenance records"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "Real npm publish"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

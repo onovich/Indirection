@@ -81,6 +81,23 @@ corepack pnpm publish:preflight
 git diff --check
 ```
 
+## 0.0.0-phase-17-release-provenance - 2026-06-22
+
+- Added `release:provenance` for deterministic local dry-run artifact provenance across all 9 workspace packages.
+- Recorded package tarball sha256, byte size, file list, exports, CLI bin entries, package metadata, validation command evidence, and no-publish policy evidence without committing generated reports.
+- Integrated provenance verification into `release:dry-run`.
+- Added release provenance docs, report shape documentation, docs drift guards, and the Phase 17 PASS report while keeping real npm publish, login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, and OIDC publish workflows out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:provenance
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

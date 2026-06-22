@@ -30,6 +30,7 @@
     "test:e2e:webkit": "pnpm build && playwright test --project=webkit",
     "pack:check": "node scripts/pack-check.mjs",
     "release:dry-run": "node scripts/release-dry-run.mjs",
+    "release:provenance": "node scripts/release-provenance.mjs",
     "publish:preflight": "node scripts/publish-preflight.mjs",
     "check:docs": "node scripts/docs-drift-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
