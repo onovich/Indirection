@@ -50,6 +50,14 @@ Or run the full local matrix:
 corepack pnpm validate:full
 ```
 
+Release dry-run and publish preflight gates are separate from `validate:full`:
+
+```powershell
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
 ## Documents
 
 - [Docs index](docs/README.md)

@@ -8,6 +8,8 @@ Local and CI validation use the same main entrypoint:
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
 git diff --check
 ```
 
@@ -92,7 +94,7 @@ Phase 11 should keep the Phase 10 no-publish posture while creating the policy a
 
 Initial publish preflight policy: `docs/publish-preflight-policy.md`
 
-The manual GitHub Actions `Publish Preflight` workflow runs `corepack pnpm publish:preflight`, `corepack pnpm release:dry-run`, and `git diff --check` with read-only repository permissions.
+The manual GitHub Actions [Publish Preflight](../.github/workflows/publish-preflight.yml) workflow runs `corepack pnpm publish:preflight`, `corepack pnpm release:dry-run`, and `git diff --check` with read-only repository permissions.
 
 ## Recommended Next Steps
 

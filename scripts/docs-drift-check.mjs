@@ -7,6 +7,7 @@ const packageJson = readJson("package.json");
 
 checkValidateFull();
 checkReleaseDryRun();
+checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
 
@@ -49,6 +50,44 @@ function checkReleaseDryRun() {
   }
 }
 
+function checkPublishPreflight() {
+  const command = packageJson.scripts?.["publish:preflight"];
+  if (typeof command !== "string" || !command.includes("scripts/publish-preflight.mjs")) {
+    issues.push("package.json: publish:preflight must run scripts/publish-preflight.mjs");
+  }
+
+  const workflow = readText(".github/workflows/publish-preflight.yml");
+  const requiredWorkflowText = [
+    "workflow_dispatch:",
+    "permissions:",
+    "contents: read",
+    "corepack pnpm install --frozen-lockfile",
+    "corepack pnpm publish:preflight",
+    "corepack pnpm release:dry-run",
+    "git diff --check"
+  ];
+
+  for (const text of requiredWorkflowText) {
+    if (!workflow.includes(text)) {
+      issues.push(`.github/workflows/publish-preflight.yml: missing '${text}'`);
+    }
+  }
+
+  const forbiddenWorkflowPatterns = [
+    /\bnpm\s+publish(?:\s|$)/,
+    /\bpnpm\s+publish(?:\s|$)/,
+    /\bgit\s+tag(?:\s|$)/,
+    /\bgh\s+release(?:\s|$)/,
+    /\bcontents:\s+write\b/
+  ];
+
+  for (const pattern of forbiddenWorkflowPatterns) {
+    if (pattern.test(workflow)) {
+      issues.push(`.github/workflows/publish-preflight.yml: must not match ${pattern}`);
+    }
+  }
+}
+
 function checkRequiredDocPointers() {
   const requiredPointers = [
     {
@@ -69,6 +108,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "README.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-9-pass-report.md"
     },
     {
@@ -82,6 +129,10 @@ function checkRequiredDocPointers() {
     {
       file: "README.md",
       text: "docs/phase-10-pass-report.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/publish-preflight-policy.md"
     },
     {
       file: "README.md",
@@ -125,11 +176,23 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/README.md",
+      text: "publish-preflight-policy.md"
+    },
+    {
+      file: "docs/README.md",
       text: "release-workflow.md"
     },
     {
       file: "docs/README.md",
       text: "release-versioning-adr.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/README.md",
+      text: "corepack pnpm publish:preflight"
     },
     {
       file: "docs/release-readiness.md",
@@ -154,6 +217,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/publish-preflight-policy.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "../.github/workflows/publish-preflight.yml"
     },
     {
       file: "docs/phase-9-pass-report.md",
@@ -204,6 +279,18 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/publish-preflight-policy.md",
+      text: "| Package | Phase 11 decision status | Future v0.1 candidacy | Owner decision needed before real publish |"
+    },
+    {
+      file: "docs/publish-preflight-policy.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/publish-preflight-policy.md",
+      text: "Publish Preflight"
+    },
+    {
       file: "docs/release-workflow.md",
       text: "corepack pnpm validate:full"
     },
@@ -229,6 +316,18 @@ function checkRequiredDocPointers() {
     },
     {
       file: ".github/workflows/release-dry-run.yml",
+      text: "contents: read"
+    },
+    {
+      file: ".github/workflows/publish-preflight.yml",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: ".github/workflows/publish-preflight.yml",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: ".github/workflows/publish-preflight.yml",
       text: "contents: read"
     }
   ];

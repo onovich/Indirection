@@ -38,7 +38,11 @@ This index points to the current Phase 0-11 release-candidate, release-hardening
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
 git diff --check
 ```
 
 `validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
+
+`release:dry-run` and `publish:preflight` remain explicit release-readiness gates because they audit publish and tag side effects separately from the main validation matrix.
