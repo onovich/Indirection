@@ -2,9 +2,12 @@ node_modules/
 dist/
 build/
 coverage/
+playwright-report/
+test-results/
 .turbo/
 .vite/
 .vitest/
+trace.zip
 *.tsbuildinfo
 *.log
 .DS_Store

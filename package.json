@@ -12,6 +12,7 @@
     "typecheck": "tsc -b --pretty false",
     "test": "pnpm build && vitest run",
     "test:browser": "node scripts/browser-smoke.mjs",
+    "test:e2e": "playwright test",
     "pack:check": "node scripts/pack-check.mjs",
     "check:docs": "node scripts/docs-drift-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
@@ -32,6 +33,7 @@
     "@indirection/testkit": "workspace:*",
     "@indirection/three": "workspace:*",
     "@indirection/vite": "workspace:*",
+    "@playwright/test": "^1.61.0",
     "@types/node": "24.13.2",
     "typescript": "6.0.3",
     "vitest": "4.1.9"
