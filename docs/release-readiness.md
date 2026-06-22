@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, and Phase 11 publish preflight posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, and Phase 12 browser matrix planning posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -112,9 +112,15 @@ Phase 11 PASS report: `docs/phase-11-pass-report.md`
 
 The manual GitHub Actions [Publish Preflight](../.github/workflows/publish-preflight.yml) workflow runs `corepack pnpm publish:preflight`, `corepack pnpm release:dry-run`, and `git diff --check` with read-only repository permissions.
 
+## Phase 12 Browser Matrix Expansion
+
+Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
+
+Phase 12 has been selected as the next architect/strategist-owned implementation phase. It should expand the existing Playwright E2E gate from Chromium-only to Chromium, Firefox, and WebKit while keeping real npm publish, live Sinan Engine integration, and real Three.js GLTF parsing out of scope.
+
 ## Recommended Next Steps
 
-1. Keep Phase 11 publish preflight policy as the release decision gate until the architect/strategist flow selects Phase 12.
+1. Execute Phase 12 Browser Matrix Expansion using `docs/indirection-phase-12-browser-matrix-goal-guide.md`.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -124,6 +130,8 @@ Phase 9 PASS report: `docs/phase-9-pass-report.md`
 Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
 
 Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
+
+Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
 

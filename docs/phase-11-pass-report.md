@@ -65,6 +65,12 @@ Expected final push target: `origin/main`.
 
 Phase 12 must be selected by the architect/strategist flow rather than by the executor.
 
+Planner selection after PASS: Phase 12 Browser Matrix Expansion.
+
+Selected Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
+
+Rationale: real npm publish still needs owner acceptance of npm account, package visibility, public license, versioning, tag, GitHub Release, and rollback policy; live Sinan integration depends on external repository coordination; real Three.js GLTF parsing expands adapter functionality. Browser matrix expansion is the safest self-contained next phase and directly addresses an explicit remaining release risk.
+
 Candidate directions recorded by the Phase 11 guide:
 
 - real npm publish release candidate after owner acceptance of npm account, license, package visibility, and tag policy.

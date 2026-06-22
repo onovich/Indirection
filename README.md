@@ -69,6 +69,7 @@ git diff --check
 - [Phase 9 Real Browser E2E Goal guide](docs/indirection-phase-9-browser-e2e-goal-guide.md)
 - [Phase 10 Release Workflow Goal guide](docs/indirection-phase-10-release-workflow-goal-guide.md)
 - [Phase 11 Publish Preflight Goal guide](docs/indirection-phase-11-publish-preflight-goal-guide.md)
+- [Phase 12 Browser Matrix Goal guide](docs/indirection-phase-12-browser-matrix-goal-guide.md)
 - [Phase 11 PASS report](docs/phase-11-pass-report.md)
 - [Phase 10 PASS report](docs/phase-10-pass-report.md)
 - [Publish preflight policy](docs/publish-preflight-policy.md)

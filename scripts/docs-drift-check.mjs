@@ -128,6 +128,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-12-browser-matrix-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-10-pass-report.md"
     },
     {
@@ -173,6 +177,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-11-publish-preflight-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-12-browser-matrix-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -240,6 +248,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-12-browser-matrix-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 12 Browser Matrix Expansion"
+    },
+    {
+      file: "docs/release-readiness.md",
       text: "../.github/workflows/publish-preflight.yml"
     },
     {
@@ -275,6 +291,10 @@ function checkRequiredDocPointers() {
       text: "Phase 12 must be selected by the architect/strategist flow"
     },
     {
+      file: "docs/phase-11-pass-report.md",
+      text: "docs/indirection-phase-12-browser-matrix-goal-guide.md"
+    },
+    {
       file: "docs/phase-0-7-pass-report.md",
       text: "docs/indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -304,6 +324,26 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/indirection-phase-11-publish-preflight-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
+      text: "corepack pnpm test:e2e"
+    },
+    {
+      file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
+      text: "Chromium、Firefox、WebKit"
+    },
+    {
+      file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
       text: "corepack pnpm publish:preflight"
     },
     {
