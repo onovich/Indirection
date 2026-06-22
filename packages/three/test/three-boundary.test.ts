@@ -5,6 +5,7 @@ import { normalizeAssetId, protocolVersion, type CompiledCatalog } from "@indire
 import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
 import {
   createThreeGltfLoader,
+  createThreeOwnedResourceDisposer,
   threePackageName,
   type ThreeGltfParseInput
 } from "@indirection/three";
@@ -29,6 +30,21 @@ describe("three adapter", () => {
     expect(packageJson.peerDependenciesMeta?.["three"]?.optional).toBe(true);
     expect(source).not.toContain("from \"three\"");
     expect(source).not.toContain("from 'three'");
+  });
+
+  it("creates idempotent owned resource disposers", async () => {
+    const calls: string[] = [];
+    const geometry = createDisposableResource("geometry", calls);
+    const material = createDisposableResource("material", calls);
+    const dispose = createThreeOwnedResourceDisposer([geometry, material, geometry]);
+
+    expect(createThreeOwnedResourceDisposer([])).toBeUndefined();
+    expect(dispose).toBeDefined();
+
+    await dispose?.();
+    await dispose?.();
+
+    expect(calls).toEqual(["geometry", "material"]);
   });
 
   it("loads fake GLTF payloads through injected transport", async () => {
@@ -106,6 +122,108 @@ describe("three adapter", () => {
     expect(new TextDecoder().decode(seenInputs[0]?.bytes)).toBe(
       "{\"asset\":{\"version\":\"2.0\"}}"
     );
+  });
+
+  it("disposes explicitly owned resources after the final handle release", async () => {
+    const calls: string[] = [];
+    const geometry = createDisposableResource("geometry", calls);
+    const material = createDisposableResource("material", calls);
+    const catalog: CompiledCatalog = {
+      protocolVersion,
+      catalogVersion: "sha256-three-dispose",
+      assets: {
+        [hero]: {
+          type: "model/gltf",
+          sources: [{ url: "models/owned.gltf" }]
+        }
+      }
+    };
+    const manager = createAssetManager({
+      catalog,
+      loaders: [
+        createThreeGltfLoader({
+          parse(input) {
+            return {
+              parsed: true,
+              sourceUrl: input.sourceUrl
+            };
+          },
+          ownedResources(value, input) {
+            expect(value).toMatchObject({
+              parsed: true,
+              sourceUrl: "models/owned.gltf"
+            });
+            expect(input.assetId).toBe("three:hero");
+            return [geometry, material, geometry];
+          }
+        })
+      ],
+      transport: new InMemoryTransport({
+        "models/owned.gltf": "{\"asset\":{\"version\":\"2.0\"}}"
+      })
+    });
+    const scope = manager.createScope("three");
+    const handle = await scope.acquire<{ readonly parsed: boolean; readonly sourceUrl: string }>(
+      hero
+    );
+
+    expect(handle.value.parsed).toBe(true);
+    expect(manager.resourceTable.snapshot(hero)[0]).toMatchObject({
+      refCount: 1,
+      state: "ready",
+      hasDisposer: true
+    });
+
+    await handle.release();
+
+    expect(calls).toEqual(["geometry", "material"]);
+    expect(manager.resourceTable.snapshot(hero)[0]).toMatchObject({
+      refCount: 0,
+      state: "disposed",
+      hasValue: false,
+      hasDisposer: false
+    });
+  });
+
+  it("leaves shared resources to the host ownership policy", async () => {
+    const calls: string[] = [];
+    const owned = createDisposableResource("owned", calls);
+    const shared = createDisposableResource("shared", calls);
+    const catalog: CompiledCatalog = {
+      protocolVersion,
+      catalogVersion: "sha256-three-shared-resource",
+      assets: {
+        [hero]: {
+          type: "model/gltf",
+          sources: [{ url: "models/shared.gltf" }]
+        }
+      }
+    };
+    const manager = createAssetManager({
+      catalog,
+      loaders: [
+        createThreeGltfLoader({
+          parse() {
+            return {
+              parsed: true,
+              shared
+            };
+          },
+          ownedResources() {
+            return [owned];
+          }
+        })
+      ],
+      transport: new InMemoryTransport({
+        "models/shared.gltf": "{\"asset\":{\"version\":\"2.0\"}}"
+      })
+    });
+    const scope = manager.createScope("three");
+    const handle = await scope.acquire(hero);
+
+    await handle.release();
+
+    expect(calls).toEqual(["owned"]);
   });
 
   it("parses minimal glTF through an injected GLTFLoader parser", async () => {
@@ -188,6 +306,14 @@ function createGltfParser(seenBasePaths: string[] = []) {
     async parseAsync(input: ArrayBuffer, basePath: string): Promise<ParsedGltf> {
       seenBasePaths.push(basePath);
       return parser.parseAsync(input, basePath);
+    }
+  };
+}
+
+function createDisposableResource(name: string, calls: string[]) {
+  return {
+    dispose() {
+      calls.push(name);
     }
   };
 }

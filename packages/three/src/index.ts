@@ -1,5 +1,6 @@
 import type {
   AssetLoader,
+  LoadedAsset,
   LoaderContext,
   TransportBody
 } from "@indirection/runtime";
@@ -25,10 +26,20 @@ export interface ThreeGltfParser<TValue = unknown> {
   readonly parseAsync: (input: ArrayBuffer, basePath: string) => TValue | Promise<TValue>;
 }
 
+export interface ThreeDisposableResource {
+  dispose(): void | Promise<void>;
+}
+
+export type ThreeGltfOwnedResources<TValue = unknown> = (
+  value: TValue,
+  input: ThreeGltfParseInput
+) => Iterable<ThreeDisposableResource> | undefined;
+
 export interface ThreeGltfLoaderOptions<TValue = unknown> {
   readonly basePath?: string | ((input: ThreeGltfBasePathInput) => string);
   readonly parse?: (input: ThreeGltfParseInput) => TValue | Promise<TValue>;
   readonly parser?: ThreeGltfParser<TValue>;
+  readonly ownedResources?: ThreeGltfOwnedResources<TValue | FakeGltfPayload>;
 }
 
 export function createThreeGltfLoader<TValue = FakeGltfPayload>(
@@ -54,11 +65,25 @@ export function createThreeGltfLoader<TValue = FakeGltfPayload>(
         arrayBuffer: bytesToArrayBuffer(bytes),
         ...(response.contentType === undefined ? {} : { contentType: response.contentType })
       };
+      const value = await parseGltf(options, parseInput);
 
-      return {
-        value: await parseGltf(options, parseInput)
-      };
+      return createLoadedThreeGltfAsset(value, parseInput, options);
     }
+  };
+}
+
+export function createThreeOwnedResourceDisposer(
+  resources: Iterable<ThreeDisposableResource>
+): (() => Promise<void>) | undefined {
+  const ownedResources = Array.from(new Set(resources));
+  if (ownedResources.length === 0) {
+    return undefined;
+  }
+
+  let disposePromise: Promise<void> | undefined;
+  return () => {
+    disposePromise ??= disposeOwnedResources(ownedResources);
+    return disposePromise;
   };
 }
 
@@ -75,6 +100,39 @@ async function parseGltf<TValue>(
   }
 
   return input;
+}
+
+function createLoadedThreeGltfAsset<TValue>(
+  value: TValue | FakeGltfPayload,
+  input: ThreeGltfParseInput,
+  options: ThreeGltfLoaderOptions<TValue>
+): LoadedAsset<TValue | FakeGltfPayload> {
+  const resources = options.ownedResources?.(value, input);
+  if (resources === undefined) {
+    return { value };
+  }
+
+  const dispose = createThreeOwnedResourceDisposer(resources);
+  return dispose === undefined ? { value } : { value, dispose };
+}
+
+async function disposeOwnedResources(resources: readonly ThreeDisposableResource[]): Promise<void> {
+  const failures: unknown[] = [];
+  for (const resource of resources) {
+    try {
+      await resource.dispose();
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+
+  if (failures.length === 1) {
+    throw failures[0];
+  }
+
+  if (failures.length > 1) {
+    throw new AggregateError(failures, "Failed to dispose one or more Three owned resources");
+  }
 }
 
 function bodyToBytes(body: TransportBody): Uint8Array {
@@ -95,8 +153,8 @@ function bytesToArrayBuffer(bytes: Uint8Array): ArrayBuffer {
   return copy.buffer;
 }
 
-function resolveBasePath(
-  options: ThreeGltfLoaderOptions<unknown>,
+function resolveBasePath<TValue>(
+  options: ThreeGltfLoaderOptions<TValue>,
   input: ThreeGltfBasePathInput
 ): string {
   if (typeof options.basePath === "string") {
