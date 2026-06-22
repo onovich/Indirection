@@ -12,6 +12,7 @@ checkReleaseProvenance();
 checkReleaseCiPolicy();
 checkReleaseCandidateRehearsal();
 checkPublicOnboarding();
+checkPublicDemoDocsSitePlan();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -453,6 +454,35 @@ function checkPublicOnboarding() {
   }
 }
 
+function checkPublicDemoDocsSitePlan() {
+  const guide = readText("docs/indirection-phase-21-public-demo-docs-site-goal-guide.md");
+  for (const text of [
+    "Public Website, Demo Packaging, And Docs Site Rehearsal",
+    "no-deploy",
+    "GitHub Pages",
+    "Vercel",
+    "Netlify",
+    "corepack pnpm validate:full",
+    "corepack pnpm release:rc-check",
+    "corepack pnpm publish:preflight",
+    "docs/phase-21-pass-report.md"
+  ]) {
+    if (!guide.includes(text)) {
+      issues.push(`docs/indirection-phase-21-public-demo-docs-site-goal-guide.md: missing '${text}'`);
+    }
+  }
+
+  const phase20Pass = readText("docs/phase-20-pass-report.md");
+  for (const text of [
+    "Planner selection after PASS: Phase 21 Public Website, Demo Packaging, And Docs Site Rehearsal",
+    "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+  ]) {
+    if (!phase20Pass.includes(text)) {
+      issues.push(`docs/phase-20-pass-report.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -625,6 +655,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/evaluator-quickstart.md"
     },
     {
@@ -794,6 +828,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-21-public-demo-docs-site-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -1022,6 +1060,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 21 Public Website, Demo Packaging, And Docs Site Rehearsal"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1740,6 +1786,26 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md",
+      text: "Public Website, Demo Packaging, And Docs Site Rehearsal"
+    },
+    {
+      file: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md",
+      text: "no-deploy"
+    },
+    {
+      file: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
       file: "docs/release-provenance.md",
       text: "Release Provenance"
     },
@@ -2054,6 +2120,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-20-pass-report.md",
       text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "Planner selection after PASS: Phase 21 Public Website, Demo Packaging, And Docs Site Rehearsal"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
     },
     {
       file: "docs/phase-17-pass-report.md",

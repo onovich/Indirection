@@ -94,6 +94,7 @@ git diff --check
 - [Phase 18 Release CI Policy Goal guide](docs/indirection-phase-18-release-ci-policy-goal-guide.md)
 - [Phase 19 Release Candidate Rehearsal Goal guide](docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Phase 20 Public Docs Onboarding Goal guide](docs/indirection-phase-20-public-docs-onboarding-goal-guide.md)
+- [Phase 21 Public Demo Docs Site Goal guide](docs/indirection-phase-21-public-demo-docs-site-goal-guide.md)
 - [Evaluator quickstart](docs/evaluator-quickstart.md)
 - [Package entrypoints](docs/package-entrypoints.md)
 - [Example workflows](docs/example-workflows.md)

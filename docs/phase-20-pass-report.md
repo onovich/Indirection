@@ -54,3 +54,9 @@ git diff --check
 - Example workflow reference: `docs/example-workflows.md`
 - Release-candidate owner blockers remain documented in `docs/release-candidate-handoff.md`.
 - No next-phase guide was selected by the executor during Phase 20 completion.
+
+## Next Phase
+
+Planner selection after PASS: Phase 21 Public Website, Demo Packaging, And Docs Site Rehearsal.
+
+Guide: `docs/indirection-phase-21-public-demo-docs-site-goal-guide.md`
