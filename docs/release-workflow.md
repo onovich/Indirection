@@ -40,6 +40,8 @@ All workspace packages remain `private: true` during Phase 10. The visibility ta
 - Package versioning and protocol versioning remain separate decisions.
 - A later real-publish phase must decide whether to remove `private: true`, keep selected packages private, or defer individual packages.
 
+Versioning decision: Phase 10 uses the lightweight policy in `docs/release-versioning-adr.md` instead of adding Changesets. Revisit Changesets only after npm visibility, permissions, and public license decisions are accepted.
+
 ## Package Metadata Rules
 
 Every workspace package must define:

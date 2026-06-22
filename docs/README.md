@@ -12,6 +12,7 @@ This index points to the current Phase 0-10 release-candidate, release-hardening
 - [Phase 9 Real Browser E2E Goal guide](indirection-phase-9-browser-e2e-goal-guide.md)
 - [Phase 10 Release Workflow Goal guide](indirection-phase-10-release-workflow-goal-guide.md)
 - [Release workflow dry-run policy](release-workflow.md)
+- [Release versioning ADR](release-versioning-adr.md)
 - [Browser E2E validation](browser-e2e.md)
 - [Phase 9 PASS report](phase-9-pass-report.md)
 - [Phase 8 PASS report](phase-8-pass-report.md)
