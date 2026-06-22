@@ -338,6 +338,35 @@ assert(await cache.match({ catalogVersion: result.catalog.catalogVersion, source
 
 const gltfLoader = createThreeGltfLoader();
 assert(gltfLoader.types.includes("model/gltf"), "three loader boundary failed");
+const parsedGltfLoader = createThreeGltfLoader({
+  basePath: "packed/",
+  parser: {
+    async parseAsync(input, basePath) {
+      return { basePath, byteLength: input.byteLength };
+    }
+  }
+});
+const gltfAssetId = normalizeAssetId("pack:model.hero");
+const gltfManager = createAssetManager({
+  catalog: {
+    protocolVersion: result.catalog.protocolVersion,
+    catalogVersion: "sha256-pack-gltf",
+    assets: {
+      [gltfAssetId]: {
+        type: "model/gltf",
+        sources: [{ url: "models/hero.glb" }]
+      }
+    }
+  },
+  transport: new InMemoryTransport({ "models/hero.glb": new Uint8Array([1, 2, 3]) }),
+  loaders: [parsedGltfLoader]
+});
+const gltfScope = gltfManager.createScope("pack-gltf-smoke");
+const gltfHandle = await gltfScope.acquire(gltfAssetId);
+assert(gltfHandle.value.basePath === "packed/", "three parser basePath failed");
+assert(gltfHandle.value.byteLength === 3, "three parser bytes failed");
+gltfHandle.release();
+await gltfScope.dispose();
 
 const plugin = createIndirectionVitePlugin({ model });
 assert(plugin.resolveId(virtualCatalogModuleId) === resolvedVirtualCatalogModuleId, "vite resolve failed");
