@@ -10,6 +10,15 @@
       <h1>Indirection E2E Fixture</h1>
       <output data-testid="status">booting</output>
     </main>
+    <script type="importmap">
+      {
+        "imports": {
+          "@indirection/loaders-web": "/packages/loaders-web/dist/index.js",
+          "@indirection/protocol": "/packages/protocol/dist/index.js",
+          "@indirection/runtime": "/packages/runtime/dist/index.js"
+        }
+      }
+    </script>
     <script type="module" src="/minimal-app.js"></script>
   </body>
 </html>

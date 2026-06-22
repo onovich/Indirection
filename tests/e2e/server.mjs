@@ -1,7 +1,7 @@
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
-import { extname, join, resolve } from "node:path";
+import { extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
@@ -18,17 +18,16 @@ const contentTypes = new Map([
 
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
-  const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
-  const absolutePath = resolve(join(fixtureRoot, pathname));
+  const resolvedRequest = resolveRequestPath(url.pathname);
 
-  if (!absolutePath.startsWith(fixtureRoot)) {
+  if (!isWithinRoot(resolvedRequest.root, resolvedRequest.absolutePath)) {
     response.writeHead(403);
     response.end("Forbidden");
     return;
   }
 
   try {
-    const fileStat = await stat(absolutePath);
+    const fileStat = await stat(resolvedRequest.absolutePath);
     if (!fileStat.isFile()) {
       response.writeHead(404);
       response.end("Not found");
@@ -36,9 +35,10 @@ const server = createServer(async (request, response) => {
     }
 
     response.writeHead(200, {
-      "content-type": contentTypes.get(extname(absolutePath)) ?? "application/octet-stream"
+      "content-type":
+        contentTypes.get(extname(resolvedRequest.absolutePath)) ?? "application/octet-stream"
     });
-    createReadStream(absolutePath).pipe(response);
+    createReadStream(resolvedRequest.absolutePath).pipe(response);
   } catch (error) {
     response.writeHead(404);
     response.end("Not found");
@@ -53,4 +53,28 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
   process.on(signal, () => {
     server.close(() => process.exit(0));
   });
+}
+
+function resolveRequestPath(pathname) {
+  if (pathname.startsWith("/packages/")) {
+    return {
+      absolutePath: resolve(repoRoot, stripLeadingSlash(pathname)),
+      root: repoRoot
+    };
+  }
+
+  const fixturePath = pathname === "/" ? "index.html" : stripLeadingSlash(pathname);
+  return {
+    absolutePath: resolve(join(fixtureRoot, fixturePath)),
+    root: fixtureRoot
+  };
+}
+
+function stripLeadingSlash(pathname) {
+  return pathname.replace(/^\/+/, "");
+}
+
+function isWithinRoot(root, absolutePath) {
+  const relativePath = relative(root, absolutePath);
+  return relativePath === "" || (!relativePath.startsWith("..") && !isAbsolute(relativePath));
 }
