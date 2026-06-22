@@ -47,6 +47,7 @@ Use this path when you want a quick but meaningful tour before the full matrix:
 
 ```powershell
 corepack pnpm check:docs
+corepack pnpm smoke:site-demo
 corepack pnpm typecheck
 corepack pnpm smoke:cli
 corepack pnpm smoke:phase7
@@ -54,8 +55,27 @@ corepack pnpm pack:check
 ```
 
 - `smoke:cli` builds the CLI and exercises `validate`, `build`, `report`, and `inspect` against `fixtures/vanilla/indirection.manifest.json`.
+- `smoke:site-demo` assembles and validates the local public demo site rehearsal, then removes the smoke output.
 - `smoke:phase7` runs `examples/phase7-advanced-loaders.mjs`, covering manifest import, catalog compilation, runtime loading, browser-style loaders, cache adapter behavior, Vite virtual catalog output, and the Three GLTF adapter boundary.
 - `pack:check` packs all 9 workspace packages into temporary tarballs, installs them into a temporary consumer, imports every package entrypoint, runs a packaged CLI smoke, and removes generated artifacts on success.
+
+## Local Public Demo Site
+
+Build the local static docs-site rehearsal:
+
+```powershell
+corepack pnpm site:demo
+```
+
+Open `build/public-demo-site/index.html` from the checkout to inspect the local evaluator page. It links back to source docs, summarizes the validation commands, lists package entrypoints, and keeps no-deploy/no-publish boundaries visible.
+
+For CI-style validation without leaving output behind:
+
+```powershell
+corepack pnpm smoke:site-demo
+```
+
+See [Public demo site rehearsal](public-demo-site.md) at `docs/public-demo-site.md` for the generated artifact policy and cleanup command.
 
 ## CLI Tour
 
@@ -135,6 +155,7 @@ Real npm publish remains blocked until owner decisions in [Release candidate han
 Do not commit generated local artifacts:
 
 - package tarballs and temporary consumers;
+- local public demo site output under `build/public-demo-site/` or `build/public-demo-site-smoke/`;
 - generated RC or provenance JSON output;
 - `dist/` and `.tsbuildinfo`;
 - `playwright-report/`, `test-results/`, traces, screenshots, and videos;

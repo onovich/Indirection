@@ -32,6 +32,7 @@ function checkValidateFull() {
     "pnpm lint",
     "pnpm format",
     "pnpm check:docs",
+    "pnpm smoke:site-demo",
     "pnpm typecheck",
     "pnpm test",
     "pnpm test:browser",
@@ -455,6 +456,9 @@ function checkPublicOnboarding() {
 }
 
 function checkPublicDemoDocsSitePlan() {
+  assertScriptIncludes("site:demo", "scripts/public-demo-site.mjs --out build/public-demo-site");
+  assertScriptIncludes("smoke:site-demo", "scripts/public-demo-site.mjs --smoke");
+
   const guide = readText("docs/indirection-phase-21-public-demo-docs-site-goal-guide.md");
   for (const text of [
     "Public Website, Demo Packaging, And Docs Site Rehearsal",
@@ -469,6 +473,142 @@ function checkPublicDemoDocsSitePlan() {
   ]) {
     if (!guide.includes(text)) {
       issues.push(`docs/indirection-phase-21-public-demo-docs-site-goal-guide.md: missing '${text}'`);
+    }
+  }
+
+  const demoScript = readText("scripts/public-demo-site.mjs");
+  for (const text of [
+    "public-demo-site built",
+    "public-demo-site smoke passed",
+    "build/public-demo-site",
+    "build/public-demo-site-smoke",
+    "No GitHub Pages",
+    "Vercel",
+    "Netlify",
+    "custom hosting",
+    "npm CDN",
+    "No real npm publish",
+    "generatedBy: \"scripts/public-demo-site.mjs\"",
+    "packageEntrypoints.length !== 9"
+  ]) {
+    if (!demoScript.includes(text)) {
+      issues.push(`scripts/public-demo-site.mjs: missing '${text}'`);
+    }
+  }
+
+  const demoDocs = readText("docs/public-demo-site.md");
+  for (const text of [
+    "corepack pnpm site:demo",
+    "corepack pnpm smoke:site-demo",
+    "build/public-demo-site/index.html",
+    "GitHub Pages",
+    "Vercel",
+    "Netlify",
+    "custom hosting",
+    "npm CDN",
+    "Do not add deployment secrets",
+    "All workspace packages remain `private: true`",
+    "Generated Artifact Policy",
+    "Remove-Item -Recurse -Force build/public-demo-site"
+  ]) {
+    if (!demoDocs.includes(text)) {
+      issues.push(`docs/public-demo-site.md: missing '${text}'`);
+    }
+  }
+
+  const readme = readText("README.md");
+  for (const text of [
+    "corepack pnpm smoke:site-demo",
+    "docs/public-demo-site.md",
+    "docs/phase-21-pass-report.md"
+  ]) {
+    if (!readme.includes(text)) {
+      issues.push(`README.md: missing '${text}'`);
+    }
+  }
+
+  const docsIndex = readText("docs/README.md");
+  for (const text of [
+    "public-demo-site.md",
+    "phase-21-pass-report.md",
+    "corepack pnpm smoke:site-demo",
+    "no-publish and no-deploy boundaries"
+  ]) {
+    if (!docsIndex.includes(text)) {
+      issues.push(`docs/README.md: missing '${text}'`);
+    }
+  }
+
+  const quickstart = readText("docs/evaluator-quickstart.md");
+  for (const text of [
+    "Local Public Demo Site",
+    "corepack pnpm site:demo",
+    "corepack pnpm smoke:site-demo",
+    "build/public-demo-site/index.html",
+    "docs/public-demo-site.md"
+  ]) {
+    if (!quickstart.includes(text)) {
+      issues.push(`docs/evaluator-quickstart.md: missing '${text}'`);
+    }
+  }
+
+  const packageEntrypoints = readText("docs/package-entrypoints.md");
+  if (!packageEntrypoints.includes("corepack pnpm smoke:site-demo")) {
+    issues.push("docs/package-entrypoints.md: missing 'corepack pnpm smoke:site-demo'");
+  }
+
+  const examples = readText("docs/example-workflows.md");
+  for (const text of [
+    "Local Public Demo Site",
+    "corepack pnpm site:demo",
+    "corepack pnpm smoke:site-demo",
+    "public-demo-site.md"
+  ]) {
+    if (!examples.includes(text)) {
+      issues.push(`docs/example-workflows.md: missing '${text}'`);
+    }
+  }
+
+  const releaseReadiness = readText("docs/release-readiness.md");
+  for (const text of [
+    "smoke:site-demo",
+    "docs/public-demo-site.md",
+    "docs/phase-21-pass-report.md",
+    "Phase 21 local public demo site rehearsal"
+  ]) {
+    if (!releaseReadiness.includes(text)) {
+      issues.push(`docs/release-readiness.md: missing '${text}'`);
+    }
+  }
+
+  const passReport = readText("docs/phase-21-pass-report.md");
+  for (const text of [
+    "Status: PASS",
+    "corepack pnpm smoke:site-demo",
+    "docs/public-demo-site.md",
+    "GitHub Pages",
+    "Vercel",
+    "Netlify",
+    "custom hosting",
+    "npm CDN",
+    "Real npm publish",
+    "generated artifact policy"
+  ]) {
+    if (!passReport.includes(text)) {
+      issues.push(`docs/phase-21-pass-report.md: missing '${text}'`);
+    }
+  }
+
+  const changelog = readText("CHANGELOG.md");
+  for (const text of [
+    "0.0.0-phase-21-public-demo-docs-site",
+    "site:demo",
+    "smoke:site-demo",
+    "GitHub Pages",
+    "corepack pnpm validate:full"
+  ]) {
+    if (!changelog.includes(text)) {
+      issues.push(`CHANGELOG.md: missing '${text}'`);
     }
   }
 
@@ -671,6 +811,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/public-demo-site.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-21-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-20-pass-report.md"
     },
     {
@@ -844,6 +992,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "example-workflows.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "public-demo-site.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-21-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -1068,6 +1224,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/public-demo-site.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-21-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -2051,6 +2215,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "CHANGELOG.md",
+      text: "0.0.0-phase-21-public-demo-docs-site"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "corepack pnpm smoke:site-demo"
+    },
+    {
+      file: "CHANGELOG.md",
       text: "corepack pnpm release:rc-check"
     },
     {
@@ -2128,6 +2300,26 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-20-pass-report.md",
       text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "docs/public-demo-site.md"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "corepack pnpm smoke:site-demo"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "Real npm publish"
     },
     {
       file: "docs/phase-17-pass-report.md",

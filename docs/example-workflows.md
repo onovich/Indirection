@@ -138,6 +138,22 @@ corepack pnpm release:rc-check
 
 The release-candidate gates keep `private: true`, `UNLICENSED`, no-publish, no-tag, no-GitHub-Release, no-signing, no-upload, no-OIDC, and read-only workflow boundaries visible. The owner decision blockers are documented in [Release candidate handoff](release-candidate-handoff.md).
 
+## Local Public Demo Site
+
+The Phase 21 local public demo site rehearsal assembles this evaluator workflow into a generated static page without deploying it:
+
+```powershell
+corepack pnpm site:demo
+```
+
+The smoke gate validates the generated page and manifest, then cleans the smoke output:
+
+```powershell
+corepack pnpm smoke:site-demo
+```
+
+The generated page is presentation only. `README.md`, [Evaluator quickstart](evaluator-quickstart.md), [Package entrypoints](package-entrypoints.md), this page, and release docs remain the source of truth. See [Public demo site rehearsal](public-demo-site.md).
+
 ## Full Evaluation
 
 The complete local evaluator command is:

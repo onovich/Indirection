@@ -4,6 +4,8 @@ This document summarizes the 9 workspace package entrypoints for local checkout 
 
 Use packages from the workspace or from `pack:check` temporary tarballs only. Do not run npm install instructions for these packages from the public registry until a real publish phase accepts package visibility, license, versioning, npm account/scope, and release ownership decisions.
 
+The local public demo site rehearsal links to this page as the package-boundary source of truth. `corepack pnpm site:demo` may present the package list for evaluators, but it must not redefine package ownership or imply that the packages are published.
+
 ## Entrypoint Matrix
 
 | Package | Entrypoint | Owns | Must not own | Evaluation path |
@@ -58,4 +60,10 @@ Run the packaged-entrypoint smoke before claiming consumer readiness:
 
 ```powershell
 corepack pnpm pack:check
+```
+
+Run the local public demo site smoke when changing the evaluator presentation around package entrypoints:
+
+```powershell
+corepack pnpm smoke:site-demo
 ```

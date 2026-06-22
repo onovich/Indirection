@@ -155,6 +155,27 @@ corepack pnpm release:rc-check
 git diff --check
 ```
 
+## 0.0.0-phase-21-public-demo-docs-site - 2026-06-23
+
+- Added a zero-dependency local public demo site rehearsal through `site:demo`, generating `build/public-demo-site/index.html` and `demo-manifest.json` from repository source docs.
+- Added `smoke:site-demo` and wired it into `validate:full` so the local docs-site rehearsal, source-doc anchors, package-entrypoint evidence, and no-deploy/no-publish messaging are checked automatically.
+- Added public demo site docs and connected the rehearsal path from README, docs index, evaluator quickstart, package entrypoints, example workflows, release readiness, and release candidate handoff.
+- Extended docs drift guards and the Phase 21 PASS report while keeping generated site output ignored and preserving no GitHub Pages, Vercel, Netlify, custom hosting, npm CDN, npm publish, registry write, Git tag, GitHub Release, signing, OIDC, workflow write permission, `private: true`, and `UNLICENSED` boundaries.
+
+Validation:
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm smoke:site-demo
+corepack pnpm validate:full
+corepack pnpm release:ci-check
+corepack pnpm release:provenance
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+corepack pnpm release:rc-check
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

@@ -34,10 +34,11 @@ Indirection is ready for technical evaluation from a local checkout, but the wor
 
 ```powershell
 corepack pnpm install --frozen-lockfile
+corepack pnpm smoke:site-demo
 corepack pnpm validate:full
 ```
 
-For the guided path through CLI commands, package entrypoints, browser checks, example workflows, and no-publish release-readiness gates, start with [Evaluator quickstart](docs/evaluator-quickstart.md), [Package entrypoints](docs/package-entrypoints.md), and [Example workflows](docs/example-workflows.md).
+For the guided path through CLI commands, package entrypoints, browser checks, example workflows, local site rehearsal, and no-publish release-readiness gates, start with [Evaluator quickstart](docs/evaluator-quickstart.md), [Package entrypoints](docs/package-entrypoints.md), [Example workflows](docs/example-workflows.md), and [Public demo site rehearsal](docs/public-demo-site.md).
 
 ## Validation
 
@@ -45,6 +46,7 @@ For the guided path through CLI commands, package entrypoints, browser checks, e
 corepack pnpm lint
 corepack pnpm format
 corepack pnpm check:docs
+corepack pnpm smoke:site-demo
 corepack pnpm typecheck
 corepack pnpm test
 corepack pnpm test:browser
@@ -98,12 +100,14 @@ git diff --check
 - [Evaluator quickstart](docs/evaluator-quickstart.md)
 - [Package entrypoints](docs/package-entrypoints.md)
 - [Example workflows](docs/example-workflows.md)
+- [Public demo site rehearsal](docs/public-demo-site.md)
 - [Release CI policy](docs/release-ci-policy.md)
 - [Release provenance](docs/release-provenance.md)
 - [Release candidate handoff](docs/release-candidate-handoff.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 21 PASS report](docs/phase-21-pass-report.md)
 - [Phase 20 PASS report](docs/phase-20-pass-report.md)
 - [Phase 19 PASS report](docs/phase-19-pass-report.md)
 - [Phase 18 PASS report](docs/phase-18-pass-report.md)

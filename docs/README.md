@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-20 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, and selected Phase 21 public website/demo docs-site rehearsal plan.
+This index points to the current Phase 0-21 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, and local public website/demo docs-site rehearsal.
 
 ## Core Project
 
@@ -25,12 +25,14 @@ This index points to the current Phase 0-20 release-candidate, release-hardening
 - [Evaluator quickstart](evaluator-quickstart.md)
 - [Package entrypoints](package-entrypoints.md)
 - [Example workflows](example-workflows.md)
+- [Public demo site rehearsal](public-demo-site.md)
 - [Release CI policy](release-ci-policy.md)
 - [Release provenance](release-provenance.md)
 - [Release candidate handoff](release-candidate-handoff.md)
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 21 PASS report](phase-21-pass-report.md)
 - [Phase 20 PASS report](phase-20-pass-report.md)
 - [Phase 19 PASS report](phase-19-pass-report.md)
 - [Phase 18 PASS report](phase-18-pass-report.md)
@@ -67,6 +69,7 @@ This index points to the current Phase 0-20 release-candidate, release-hardening
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm smoke:site-demo
 corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
@@ -75,8 +78,8 @@ corepack pnpm release:rc-check
 git diff --check
 ```
 
-`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
+`validate:full` runs lint, format, docs drift checks, local public demo site smoke, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
 
 `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` remain explicit release-readiness gates because they audit workflow permissions, package artifacts, publish, registry, tag side effects, and owner decision handoff separately from the main validation matrix.
 
-The public evaluator path starts at [Evaluator quickstart](evaluator-quickstart.md). It keeps the no-publish boundary visible: all packages remain `private: true`, `UNLICENSED`, and local-checkout-only until a dedicated owner-approved publish phase changes that policy.
+The public evaluator path starts at [Evaluator quickstart](evaluator-quickstart.md) and can be previewed locally with [Public demo site rehearsal](public-demo-site.md). It keeps the no-publish and no-deploy boundaries visible: all packages remain `private: true`, `UNLICENSED`, local-checkout-only, and not deployed until a dedicated owner-approved phase changes that policy.
