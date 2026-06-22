@@ -187,6 +187,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-14-three-lifecycle-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/three-gltf-adapter.md"
     },
     {
@@ -256,6 +260,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-14-three-lifecycle-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -356,6 +364,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-14-three-lifecycle-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 14 Three Adapter Lifecycle"
     },
     {
       file: "docs/release-readiness.md",
@@ -479,11 +495,15 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/phase-13-pass-report.md",
+      text: "docs/indirection-phase-14-three-lifecycle-goal-guide.md"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
       text: "corepack pnpm publish:preflight"
     },
     {
       file: "docs/phase-13-pass-report.md",
-      text: "No executor-side Phase 14 guide is selected"
+      text: "Planner selection after PASS: Phase 14 Three Adapter Lifecycle Contract"
     },
     {
       file: "docs/phase-0-7-pass-report.md",
@@ -555,6 +575,30 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
+      text: "LoadedAsset.dispose"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
+      text: "owned-resource disposer"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
+      text: "animation metadata"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-14-three-lifecycle-goal-guide.md",
       text: "corepack pnpm publish:preflight"
     },
     {

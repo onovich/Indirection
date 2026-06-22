@@ -73,6 +73,7 @@ git diff --check
 - [Phase 11 Publish Preflight Goal guide](docs/indirection-phase-11-publish-preflight-goal-guide.md)
 - [Phase 12 Browser Matrix Goal guide](docs/indirection-phase-12-browser-matrix-goal-guide.md)
 - [Phase 13 Three GLTF Goal guide](docs/indirection-phase-13-three-gltf-goal-guide.md)
+- [Phase 14 Three Lifecycle Goal guide](docs/indirection-phase-14-three-lifecycle-goal-guide.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
 - [Phase 13 PASS report](docs/phase-13-pass-report.md)
 - [Phase 12 PASS report](docs/phase-12-pass-report.md)

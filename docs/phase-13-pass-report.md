@@ -64,7 +64,11 @@ Expected final push target: `origin/main`.
 
 ## Next Phase
 
-No executor-side Phase 14 guide is selected by this report. The architect/strategist flow must choose and dispatch the next approved goal guide after Phase 13 acceptance.
+Planner selection after PASS: Phase 14 Three Adapter Lifecycle Contract.
+
+Selected Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
+
+Rationale: real npm publish still needs owner acceptance, and live Sinan Engine integration still depends on a real host integration surface. Phase 13 proved real GLTF parsing but intentionally left runtime disposer execution, Three owned-resource disposer, instantiate helper, and animation metadata as future lifecycle work. Phase 14 is the safest self-contained next phase that strengthens Indirection's core scope/handle promise without pulling Three.js into runtime core.
 
 ## Risks And Recommendations
 
