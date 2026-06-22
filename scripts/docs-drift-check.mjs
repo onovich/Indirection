@@ -199,6 +199,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-14-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-10-pass-report.md"
     },
     {
@@ -276,6 +280,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "three-gltf-adapter.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-14-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -384,6 +392,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/runtime-lifecycle.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-14-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -574,6 +586,42 @@ function checkRequiredDocPointers() {
       text: "Planner selection after PASS: Phase 14 Three Adapter Lifecycle Contract"
     },
     {
+      file: "docs/phase-14-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "LoadedAsset.dispose"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "createThreeOwnedResourceDisposer"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "instantiateThreeGltf"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "extractThreeAnimationMetadata"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/phase-14-pass-report.md",
+      text: "Real npm publish"
+    },
+    {
       file: "docs/phase-0-7-pass-report.md",
       text: "docs/indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -724,6 +772,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-13-three-gltf"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-14-three-lifecycle"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

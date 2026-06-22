@@ -116,3 +116,21 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
 ```
+
+## 0.0.0-phase-14-three-lifecycle - 2026-06-22
+
+- Made runtime `LoadedAsset.dispose` executable through final handle release and `AssetScope.dispose()`.
+- Added disposer coverage for double release, shared handles, in-flight dedup, fallback, loader failure, and disposer failure states.
+- Documented runtime snapshot lifecycle semantics for `hasDisposer`, `released`, `evictable`, and `disposed`.
+- Added `@indirection/three` lifecycle helpers for explicit owned-resource disposal, host-injected instantiation, and read-only animation metadata extraction.
+- Extended Three adapter docs, docs drift checks, and package smoke to cover the lifecycle API surface from packed tarballs.
+- Added the Phase 14 PASS report while keeping Three.js out of runtime core and avoiding real npm publish, login, registry writes, Git tags, and GitHub Releases.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```

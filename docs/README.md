@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-14 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, and Three lifecycle planning documentation.
+This index points to the current Phase 0-14 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, and Three lifecycle documentation.
 
 ## Core Project
 
@@ -17,6 +17,7 @@ This index points to the current Phase 0-14 release-candidate, release-hardening
 - [Phase 14 Three Lifecycle Goal guide](indirection-phase-14-three-lifecycle-goal-guide.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 14 PASS report](phase-14-pass-report.md)
 - [Phase 13 PASS report](phase-13-pass-report.md)
 - [Phase 12 PASS report](phase-12-pass-report.md)
 - [Phase 11 PASS report](phase-11-pass-report.md)

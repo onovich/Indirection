@@ -155,9 +155,11 @@ Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
 Three adapter lifecycle docs: `docs/three-gltf-adapter.md`
 
+Phase 14 PASS report: `docs/phase-14-pass-report.md`
+
 ## Recommended Next Steps
 
-1. Complete Phase 14 final validation and PASS reporting using `docs/indirection-phase-14-three-lifecycle-goal-guide.md`.
+1. Wait for the architect/strategist flow to select the next approved phase guide.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -176,7 +178,9 @@ Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 
 Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
-Phase 13 adapter docs: `docs/three-gltf-adapter.md`
+Three adapter docs: `docs/three-gltf-adapter.md`
+
+Phase 14 PASS report: `docs/phase-14-pass-report.md`
 
 Phase 13 PASS report: `docs/phase-13-pass-report.md`
 
