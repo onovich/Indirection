@@ -14,6 +14,7 @@ const packages = await readWorkspacePackages();
 
 assertRootPolicy(rootManifest);
 assertPackagePolicy(packages);
+await assertWorkflowPolicy();
 await assertPreflightDocs(packages);
 assertNoRealPublishScripts([rootManifest, ...packages.map((entry) => entry.manifest)]);
 await assertNoNpmCredentialsTracked();
@@ -63,6 +64,14 @@ function assertRootPolicy(manifest) {
   assert(manifest.private === true, "root package must stay private");
   assert(manifest.version === "0.0.0", "root package version must stay 0.0.0");
   assert(manifest.license === "UNLICENSED", "root package must stay UNLICENSED");
+  assert(
+    manifest.scripts?.["release:dry-run"] === "node scripts/release-dry-run.mjs",
+    "release:dry-run must run scripts/release-dry-run.mjs"
+  );
+  assert(
+    manifest.scripts?.["publish:preflight"] === "node scripts/publish-preflight.mjs",
+    "publish:preflight must run scripts/publish-preflight.mjs"
+  );
 }
 
 function assertPackagePolicy(packages) {
@@ -115,6 +124,7 @@ async function assertPreflightDocs(packages) {
     "Phase 11 must not",
     "Decision Status Model",
     "Workspace Publish Candidate Matrix",
+    "| Package | Phase 11 decision status | Future v0.1 candidacy | Owner decision needed before real publish |",
     "License Policy",
     "Npm Scope, Account, And Permission Policy",
     "Git Tag And GitHub Release Policy",
@@ -129,6 +139,10 @@ async function assertPreflightDocs(packages) {
     assert(
       policy.includes(`\`${manifest.name}\``),
       `publish preflight policy missing ${manifest.name}`
+    );
+    assert(
+      policy.includes(`| \`${manifest.name}\` | \`pending\` |`),
+      `publish preflight policy must mark ${manifest.name} as pending`
     );
   }
 
@@ -148,6 +162,37 @@ async function assertPreflightDocs(packages) {
     readiness.includes("docs/publish-preflight-policy.md"),
     "release readiness must point at publish preflight policy"
   );
+}
+
+async function assertWorkflowPolicy() {
+  const releaseDryRunWorkflow = await readText(
+    join(repoRoot, ".github/workflows/release-dry-run.yml")
+  );
+
+  for (const text of [
+    "workflow_dispatch:",
+    "permissions:",
+    "contents: read",
+    "corepack pnpm release:dry-run"
+  ]) {
+    assert(
+      releaseDryRunWorkflow.includes(text),
+      `release dry-run workflow missing '${text}'`
+    );
+  }
+
+  for (const forbidden of [
+    "npm publish",
+    "pnpm publish",
+    "git tag",
+    "gh release",
+    "contents: write"
+  ]) {
+    assert(
+      !releaseDryRunWorkflow.includes(forbidden),
+      `release dry-run workflow must not include '${forbidden}'`
+    );
+  }
 }
 
 function assertNoRealPublishScripts(manifests) {
