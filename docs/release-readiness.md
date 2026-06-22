@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening and Phase 9 browser E2E posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, and Phase 11 publish preflight posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -84,16 +84,24 @@ Phase 10 records the v0.1 package visibility policy in `docs/release-workflow.md
 
 The manual GitHub Actions `Release Dry Run` workflow runs `corepack pnpm release:dry-run` with read-only repository permissions. It is a dry-run gate only and does not publish packages or create tags.
 
+## Phase 11 Publish Preflight Plan
+
+The next planned phase is `docs/indirection-phase-11-publish-preflight-goal-guide.md`.
+
+Phase 11 should keep the Phase 10 no-publish posture while creating the policy and safety gates required before any real v0.1 package release. It should document package visibility acceptance, npm scope/account preflight, license policy, versioning policy, Git tag and GitHub Release policy, rollback policy, and a local `publish:preflight` or equivalent gate that does not publish, login to npm, write to the registry, or create tags.
+
 ## Recommended Next Steps
 
-1. Execute Phase 10 as release workflow dry-run and package readiness, because it is the safest remaining v0.1 release-readiness risk that can be solved inside this repository without npm publish permissions.
+1. Execute Phase 11 as publish preflight policy and release decision gates, because Phase 10 has already proven release dry-run/package readiness and the remaining v0.1 release risk is decision acceptance before any real publish.
 2. Keep `validate:full` as the local and CI release gate.
-3. Add real npm publishing only after package visibility, names, and versioning policy are accepted.
+3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
 
 Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
+
+Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
 

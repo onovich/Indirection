@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-10 release-candidate, release-hardening, browser E2E, and release workflow documentation.
+This index points to the current Phase 0-11 release-candidate, release-hardening, browser E2E, release workflow, and publish preflight planning documentation.
 
 ## Core Project
 
@@ -11,6 +11,7 @@ This index points to the current Phase 0-10 release-candidate, release-hardening
 - [Phase 8 Release Hardening Goal guide](indirection-phase-8-release-hardening-goal-guide.md)
 - [Phase 9 Real Browser E2E Goal guide](indirection-phase-9-browser-e2e-goal-guide.md)
 - [Phase 10 Release Workflow Goal guide](indirection-phase-10-release-workflow-goal-guide.md)
+- [Phase 11 Publish Preflight Goal guide](indirection-phase-11-publish-preflight-goal-guide.md)
 - [Phase 10 PASS report](phase-10-pass-report.md)
 - [Release workflow dry-run policy](release-workflow.md)
 - [Release versioning ADR](release-versioning-adr.md)

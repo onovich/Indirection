@@ -10,5 +10,6 @@ test-results/
 trace.zip
 *.tsbuildinfo
 *.log
+Role.md
 .DS_Store
 Thumbs.db

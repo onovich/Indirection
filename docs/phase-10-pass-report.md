@@ -59,6 +59,14 @@ Expected final push target: `origin/main`.
 - Real npm publish permission preflight, public SPDX license selection, package visibility acceptance, and release tag automation remain future work.
 - Live Sinan Engine integration, real Three.js GLTF parser integration, and Firefox/WebKit browser matrix expansion remain future phase candidates.
 
+## Next Phase
+
+The selected next phase is Phase 11: Publish Preflight Policy & Release Decision Gates.
+
+Guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
+
+Phase 11 should keep all packages private and avoid real publish/tag creation while documenting and gating npm scope/account, package visibility, license, versioning, Git tag, GitHub Release, and rollback decisions.
+
 ## Risks And Recommendations
 
 - Keep `corepack pnpm release:dry-run` separate from real publish commands until package visibility, npm permissions, license, and tag policy are accepted.
