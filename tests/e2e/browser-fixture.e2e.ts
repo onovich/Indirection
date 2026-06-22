@@ -19,6 +19,33 @@ test("serves the browser E2E fixture", async ({ page }) => {
         staleHit: "stale-cache-value",
         staleStillIsolated: true
       },
+      fallback: {
+        broken: {
+          errorName: "Error",
+          resource: {
+            causeCode: "IND_DECODE_FAILED",
+            fallbackAssetId: undefined,
+            refCount: 0,
+            state: "failed"
+          }
+        },
+        fallback: {
+          fallbackResource: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 1,
+            state: "ready"
+          },
+          handleReleased: true,
+          primaryResource: {
+            causeCode: "IND_DECODE_FAILED",
+            fallbackAssetId: "browser:fallback.text",
+            refCount: 1,
+            state: "fallback-ready"
+          },
+          value: "fallback-from-chromium"
+        }
+      },
       fixture: "loaders-web-browser",
       loaderCount: 3,
       loaders: {

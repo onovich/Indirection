@@ -18,10 +18,12 @@ try {
   const text = await load("text/plain", "payload.txt");
   const binary = await load("binary/array-buffer", "payload.bin");
   const cache = await runCacheStorageProbe();
+  const fallback = await runFallbackDiagnosticsProbe();
   const runtime = await runRuntimeLifecycleProbe();
 
   const result = {
     cache,
+    fallback,
     fixture: "loaders-web-browser",
     loaderCount: loaders.length,
     loaders: {
@@ -161,7 +163,68 @@ async function runRuntimeLifecycleProbe() {
 function resourceSummary(snapshot, assetId) {
   const resource = snapshot.resources.find((candidate) => candidate.assetId === assetId);
   return {
+    causeCode: resource?.causeCode,
+    fallbackAssetId: resource?.fallbackAssetId,
     refCount: resource?.refCount,
     state: resource?.state
+  };
+}
+
+async function runFallbackDiagnosticsProbe() {
+  const primaryAssetId = "browser:primary.missing";
+  const fallbackAssetId = "browser:fallback.text";
+  const brokenAssetId = "browser:broken.missing";
+  const manager = createAssetManager({
+    catalog: {
+      assets: {
+        [brokenAssetId]: {
+          sources: [{ url: "broken-missing.txt" }],
+          type: "text/plain"
+        },
+        [fallbackAssetId]: {
+          sources: [{ url: "fallback.txt" }],
+          type: "text/plain"
+        },
+        [primaryAssetId]: {
+          fallback: fallbackAssetId,
+          sources: [{ url: "primary-missing.txt" }],
+          type: "text/plain"
+        }
+      },
+      catalogVersion: "phase-9-fallback",
+      protocolVersion
+    },
+    loaders,
+    transport: new InMemoryTransport({
+      "fallback.txt": "fallback-from-chromium"
+    })
+  });
+  const scope = manager.createScope("browser-fallback-scope");
+
+  const fallbackHandle = await scope.acquire(primaryAssetId);
+  const fallbackSnapshot = manager.snapshot();
+  fallbackHandle.release();
+
+  let brokenErrorName = "none";
+  try {
+    await scope.acquire(brokenAssetId);
+  } catch (error) {
+    brokenErrorName = error instanceof Error ? error.name : "unknown";
+  }
+
+  const failedSnapshot = manager.snapshot();
+  await scope.dispose();
+
+  return {
+    broken: {
+      errorName: brokenErrorName,
+      resource: resourceSummary(failedSnapshot, brokenAssetId)
+    },
+    fallback: {
+      handleReleased: fallbackHandle.released,
+      primaryResource: resourceSummary(fallbackSnapshot, primaryAssetId),
+      fallbackResource: resourceSummary(fallbackSnapshot, fallbackAssetId),
+      value: fallbackHandle.value
+    }
   };
 }
