@@ -184,6 +184,16 @@ Future rollback decisions must be accepted before real publish:
 - whether a bad Git tag is deleted or superseded;
 - whether package consumers receive a follow-up patch release.
 
+## Versioning And Release Notes Policy
+
+Phase 11 reaffirms `docs/release-versioning-adr.md`:
+
+- package versions stay `0.0.0`;
+- workspace dependency ranges stay `workspace:*`;
+- `CHANGELOG.md` remains the human release-notes source;
+- Changesets is not added in Phase 11;
+- real publish cannot start until the release owner accepts either Changesets or the lightweight release notes policy for a real versioned release.
+
 ## Safe Local Gates
 
 The safe local gates are:
