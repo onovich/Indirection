@@ -18,6 +18,8 @@ corepack pnpm release:dry-run
 
 The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, and no Git status or tag side effects.
 
+The same core gate is available in GitHub Actions through the manual `Release Dry Run` workflow. It uses read-only repository permissions and does not publish packages or create tags.
+
 ## Package Visibility Policy
 
 All workspace packages remain `private: true` during Phase 10. The visibility target below describes release intent for dry-run validation only.
