@@ -824,14 +824,95 @@ function checkRendererTextureE2ePlan() {
     }
   }
 
+  const rendererDocs = readText("docs/renderer-texture-e2e.md");
+  for (const text of [
+    "createThreeTextureFromImageBitmap",
+    "WebGL2",
+    "samplePixel: [255, 0, 0, 255]",
+    "AssetScope.dispose()",
+    "Browser, DOM, ImageBitmap, canvas, WebGL, Three texture/material/geometry/renderer"
+  ]) {
+    if (!rendererDocs.includes(text)) {
+      issues.push(`docs/renderer-texture-e2e.md: missing '${text}'`);
+    }
+  }
+
+  const threeSource = readText("packages/three/src/index.ts");
+  for (const text of [
+    "createThreeTextureFromImageBitmap",
+    "ThreeTextureResource",
+    "ThreeTextureOwnedResources"
+  ]) {
+    if (!threeSource.includes(text)) {
+      issues.push(`packages/three/src/index.ts: missing '${text}'`);
+    }
+  }
+  if (threeSource.includes("from \"three\"") || threeSource.includes("from 'three'")) {
+    issues.push("packages/three/src/index.ts: must not import Three.js directly");
+  }
+
+  const fixture = readText("tests/e2e/fixtures/minimal-app.js");
+  for (const text of [
+    "createThreeTextureFromImageBitmap",
+    "rendererTexture",
+    "browser:renderer.texture",
+    "phase-23-renderer-texture",
+    "new THREE.WebGLRenderer",
+    "readPixels",
+    "pixelMatchesRed"
+  ]) {
+    if (!fixture.includes(text)) {
+      issues.push(`tests/e2e/fixtures/minimal-app.js: missing '${text}'`);
+    }
+  }
+
+  const fixtureAssert = readText("tests/e2e/browser-fixture.e2e.ts");
+  for (const text of [
+    "rendererTexture",
+    "samplePixel: [255, 0, 0, 255]",
+    "disposeCountsAfter",
+    "textureIsTexture: true"
+  ]) {
+    if (!fixtureAssert.includes(text)) {
+      issues.push(`tests/e2e/browser-fixture.e2e.ts: missing '${text}'`);
+    }
+  }
+
+  const packCheck = readText("scripts/pack-check.mjs");
+  for (const text of [
+    "createThreeTextureFromImageBitmap",
+    "three texture resource disposer idempotency failed",
+    "pack:image.pixel"
+  ]) {
+    if (!packCheck.includes(text)) {
+      issues.push(`scripts/pack-check.mjs: missing '${text}'`);
+    }
+  }
+
   for (const pointer of [
     {
       file: "README.md",
       text: "docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md"
     },
     {
+      file: "README.md",
+      text: "docs/renderer-texture-e2e.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-23-pass-report.md"
+    },
+    {
       file: "docs/README.md",
       text: "indirection-phase-23-renderer-texture-e2e-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "renderer-texture-e2e.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-23-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -840,6 +921,50 @@ function checkRendererTextureE2ePlan() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/renderer-texture-e2e.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-23-pass-report.md"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "renderer/Three texture E2E"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "createThreeTextureFromImageBitmap"
+    },
+    {
+      file: "docs/package-entrypoints.md",
+      text: "host-injected texture resource helper"
+    },
+    {
+      file: "docs/evaluator-quickstart.md",
+      text: "renderer/Three texture probe"
+    },
+    {
+      file: "docs/example-workflows.md",
+      text: "Renderer And Three Texture E2E"
+    },
+    {
+      file: "docs/image-bitmap-lifecycle.md",
+      text: "Phase 23 builds on this source lifecycle"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-23-renderer-texture-e2e"
+    },
+    {
+      file: "docs/phase-23-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-23-pass-report.md",
+      text: "createThreeTextureFromImageBitmap"
     },
     {
       file: "docs/phase-22-pass-report.md",

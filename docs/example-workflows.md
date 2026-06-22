@@ -64,6 +64,8 @@ The E2E fixture validates browser loader imports, Cache Storage isolation/cleanu
 
 Phase 22 also covers browser image-source lifecycle through `createImageBitmapLoader`. The browser fixture decodes a tiny deterministic PNG with real `createImageBitmap`, then proves shared handles and `AssetScope.dispose()` close the wrapped bitmap exactly once through runtime `LoadedAsset.dispose`. See [Browser ImageBitmap lifecycle](image-bitmap-lifecycle.md).
 
+Phase 23 builds on that image source with a bounded renderer/Three texture E2E. The fixture creates a host-owned Three texture, material, geometry, and WebGL renderer in browser test code, renders a 2x2 deterministic scene, samples the red pixel, and releases all owned resources through `AssetScope.dispose()`. See [Renderer And Three Texture E2E](renderer-texture-e2e.md).
+
 ## Phase 7 Integrated Example
 
 `examples/phase7-advanced-loaders.mjs` is the compact end-to-end local example. It covers:
@@ -104,7 +106,7 @@ const loader = createThreeGltfLoader({
 });
 ```
 
-Tests and package smoke also use parser stubs to validate raw bytes, basePath, source context, explicit owned-resource disposal, instantiate hooks, and animation metadata without requiring renderer E2E or decoder packages.
+Tests and package smoke also use parser and texture-resource stubs to validate raw bytes, basePath, source context, explicit owned-resource disposal, host-injected texture resource creation, instantiate hooks, and animation metadata without requiring decoder packages or a production renderer framework.
 
 See [Three GLTF adapter](three-gltf-adapter.md).
 

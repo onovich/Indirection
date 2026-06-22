@@ -53,6 +53,14 @@ The helper `createThreeOwnedResourceDisposer(resources)` deduplicates resources 
 
 This contract is intentionally conservative. It proves the release path without guessing whether a resource belongs to the loaded asset, a renderer, another asset, or the host application.
 
+## Texture Resource Helper
+
+Phase 23 adds `createThreeTextureFromImageBitmap(options)` as a small adapter-side helper for host-owned texture resources. The helper accepts structural input only: an image-like value, positive `width` and `height`, optional `assetId` and `sourceUrl`, a host-injected `createTexture(input)` factory, and optional `ownedResources(texture, input)`.
+
+The helper does not import `three` or create renderer state. Host code decides how to construct the real `Texture`, `Material`, `Geometry`, or `WebGLRenderer`, then declares which of those resources are exclusively owned by the loaded asset. The helper deduplicates those disposables through `createThreeOwnedResourceDisposer` and returns an idempotent `dispose()` function suitable for runtime `LoadedAsset.dispose`.
+
+The browser E2E fixture uses this helper with real Three.js in test/host code only. See [Renderer And Three Texture E2E](renderer-texture-e2e.md).
+
 ## Instantiate Hook
 
 `instantiateThreeGltf(value, instantiate, context)` is a host-injected clone or instantiate hook. It passes the loaded value plus optional `assetId`, `sourceUrl`, and `basePath` to the host callback and returns the callback result.
@@ -120,14 +128,14 @@ The adapter tests cover both a minimal valid glTF parse through `GLTFLoader.pars
 
 `three` remains an optional peer of `@indirection/three`. The workspace uses it as a package dev dependency for adapter tests, but core packages and runtime code must not import Three.js.
 
-The package smoke test imports the packed `@indirection/three` package without requiring a real Three parser. It uses a parser stub to verify the packaged parser API, raw bytes, basePath behavior, owned-resource disposal, instantiate hook, and animation metadata extraction.
+The package smoke test imports the packed `@indirection/three` package without requiring a real Three parser or renderer. It uses parser and texture-resource stubs to verify the packaged parser API, raw bytes, basePath behavior, owned-resource disposal, texture helper export, instantiate hook, and animation metadata extraction.
 
 ## Non-Scope
 
 The current adapter intentionally does not implement:
 
 - Draco, KTX2, or meshopt decoder wiring.
-- A texture pipeline or renderer E2E scene.
+- A production texture pipeline or renderer framework beyond the bounded local E2E fixture.
 - Automatic deep GPU disposal for every reachable Three geometry, texture, material, or renderer-owned resource.
 - Scene attach, renderer attach, camera/light management, or gameplay object factory behavior.
 - Live Sinan Engine repository integration.

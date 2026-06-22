@@ -68,6 +68,13 @@ Phase 22 adds bounded browser image-source lifecycle coverage to the same fixtur
 - the decoded bitmap is wrapped to count `close()` calls without creating Three textures, WebGL renderer state, screenshots, or visual approval artifacts;
 - shared runtime handles and `AssetScope.dispose()` prove that the ImageBitmap closes exactly once after final release through `LoadedAsset.dispose`.
 
+Phase 23 adds bounded renderer/Three texture E2E coverage to the same fixture:
+
+- the Phase 22 ImageBitmap source is reused as the host image for `createThreeTextureFromImageBitmap`;
+- the fixture imports real `three`, creates a `Texture`, `MeshBasicMaterial`, `PlaneGeometry`, and `WebGLRenderer` in host/test code, then renders a 2x2 WebGL2 scene;
+- `readPixels` verifies the deterministic red pixel `[255, 0, 0, 255]` without screenshot approval artifacts;
+- `AssetScope.dispose()` releases the host-owned texture, material, geometry, renderer, and dependent ImageBitmap exactly once through runtime `LoadedAsset.dispose`.
+
 The fixture data and assertions must stay browser-neutral. Names such as `chromium` belong to Playwright project labels and should not appear in loader payload values, runtime fixture values, or diagnostic expectations.
 
 The older Node `test:browser` smoke remains as a fast browser-facing loader smoke. It does not replace `test:e2e`.
@@ -95,7 +102,7 @@ The Firefox project sets `MOZ_DISABLE_CONTENT_SANDBOX=1` in Playwright launch op
 
 `playwright.config.ts` starts `tests/e2e/server.mjs` with `--idle-exit-ms=5000` so Windows webServer child processes exit after the fixture has gone idle. The server remains reusable for manual debugging when run without that flag.
 
-If a stress assertion fails, inspect `window.__indirectionE2E.diagnostics` in the assertion output or open the attached `indirection-e2e-result.json` under `test-results/`. The sections list localizes the failure to loaders, cache, runtime, fallback, stress cache, stress capability selection, stress runtime lifecycle, or virtual catalog consumption.
+If a stress assertion fails, inspect `window.__indirectionE2E.diagnostics` in the assertion output or open the attached `indirection-e2e-result.json` under `test-results/`. The sections list localizes the failure to loaders, cache, runtime, fallback, ImageBitmap lifecycle, renderer texture lifecycle, stress cache, stress capability selection, stress runtime lifecycle, or virtual catalog consumption.
 
 If a Cache Storage stress assertion fails, rerun the affected browser project after clearing local Playwright artifacts and browser cache state:
 

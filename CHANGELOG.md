@@ -197,6 +197,27 @@ corepack pnpm publish:preflight
 git diff --check
 ```
 
+## 0.0.0-phase-23-renderer-texture-e2e - 2026-06-23
+
+- Added `createThreeTextureFromImageBitmap` in `@indirection/three` for host-injected texture resource creation and idempotent owned-resource disposal without importing Three.js constructors in adapter source.
+- Extended Chromium/Firefox/WebKit E2E with a bounded real Three/WebGL2 texture render probe using the Phase 22 ImageBitmap source, deterministic red-pixel sampling, dependency retention, and `AssetScope.dispose()` lifecycle verification.
+- Extended packed package smoke to import and exercise the texture helper from the installed `@indirection/three` package.
+- Added Renderer And Three Texture E2E docs, docs drift guards, and the Phase 23 PASS report while keeping real decoder dependencies, production renderer framework, GPU memory estimation, live Sinan integration, publishing, deployment, tags, GitHub Releases, signing, OIDC, workflow write permission, `private: true`, and `UNLICENSED` boundaries unchanged.
+
+Validation:
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm test -- --run packages/three/test/three-boundary.test.ts
+corepack pnpm test:e2e:chromium
+corepack pnpm test:e2e
+corepack pnpm pack:check
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

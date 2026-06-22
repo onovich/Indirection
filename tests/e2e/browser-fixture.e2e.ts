@@ -58,6 +58,7 @@ test("serves the browser E2E fixture", async ({ page }) => {
           "runtime",
           "fallback",
           "imageBitmap",
+          "rendererTexture",
           "stress.cacheStorage",
           "stress.capabilitySelection",
           "stress.runtimeLifecycle",
@@ -67,6 +68,8 @@ test("serves the browser E2E fixture", async ({ page }) => {
           cacheVersionCount: 3,
           capabilityCases: ["declarationOrder", "defaultSource", "ktx2"],
           imageBitmapCloseCount: 1,
+          rendererTextureAvailable: true,
+          rendererTexturePixelMatches: true,
           runtimeRepeatedCount: 4
         }
       },
@@ -144,6 +147,85 @@ test("serves the browser E2E fixture", async ({ page }) => {
         text: "text-from-browser"
       },
       packageName: "@indirection/loaders-web",
+      rendererTexture: {
+        assetId: "browser:renderer.texture",
+        available: true,
+        catalogVersion: "phase-23-renderer-texture",
+        canvasSize: [2, 2],
+        disposeCountsAfter: {
+          geometry: 1,
+          material: 1,
+          renderer: 1,
+          texture: 1
+        },
+        disposeCountsBefore: {
+          geometry: 0,
+          material: 0,
+          renderer: 0,
+          texture: 0
+        },
+        imageAssetId: "browser:image.pixel",
+        imageCloseCount: 1,
+        imageDimensions: [1, 1],
+        imageHandleReleased: true,
+        materialHasMap: true,
+        pixelMatchesRed: true,
+        renderer: "three-webgl",
+        samplePixel: [255, 0, 0, 255],
+        scopeBeforeDispose: {
+          assetIds: ["browser:renderer.texture"],
+          disposed: false,
+          handleCount: 1,
+          id: "browser-renderer-texture-scope"
+        },
+        scopeDisposed: true,
+        snapshotAfterDispose: {
+          image: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 0,
+            state: "disposed"
+          },
+          texture: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 0,
+            state: "disposed"
+          }
+        },
+        snapshotAfterImageRelease: {
+          image: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 1,
+            state: "ready"
+          },
+          texture: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 1,
+            state: "ready"
+          }
+        },
+        snapshotWhileHeld: {
+          image: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 2,
+            state: "ready"
+          },
+          texture: {
+            causeCode: undefined,
+            fallbackAssetId: undefined,
+            refCount: 1,
+            state: "ready"
+          }
+        },
+        sourceByteLength: 88,
+        textureDimensions: [1, 1],
+        textureHandleReleased: true,
+        textureIsTexture: true
+      },
       runtime: {
         catalogVersion: "phase-9-runtime",
         firstHandleReleased: true,

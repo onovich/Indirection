@@ -2,14 +2,16 @@ import { readFileSync } from "node:fs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { describe, expect, it } from "vitest";
 import { normalizeAssetId, protocolVersion, type CompiledCatalog } from "@indirection/protocol";
-import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
+import { InMemoryTransport, createAssetManager, type AssetLoader } from "@indirection/runtime";
 import {
   createThreeGltfLoader,
   createThreeOwnedResourceDisposer,
+  createThreeTextureFromImageBitmap,
   extractThreeAnimationMetadata,
   instantiateThreeGltf,
   threePackageName,
-  type ThreeGltfParseInput
+  type ThreeGltfParseInput,
+  type ThreeTextureResource
 } from "@indirection/three";
 
 const packageJsonUrl = new URL("../package.json", import.meta.url);
@@ -47,6 +49,63 @@ describe("three adapter", () => {
     await dispose?.();
 
     expect(calls).toEqual(["geometry", "material"]);
+  });
+
+  it("creates host-injected texture resources without importing Three constructors", async () => {
+    const calls: string[] = [];
+    const image = { tag: "image-bitmap-like" };
+    const texture = createDisposableResource("texture", calls);
+    const material = createDisposableResource("material", calls);
+    const geometry = createDisposableResource("geometry", calls);
+
+    const resource = createThreeTextureFromImageBitmap({
+      image,
+      width: 1,
+      height: 1,
+      assetId: "three:image.pixel",
+      sourceUrl: "textures/pixel.png",
+      createTexture(input) {
+        expect(input).toEqual({
+          image,
+          width: 1,
+          height: 1,
+          assetId: "three:image.pixel",
+          sourceUrl: "textures/pixel.png"
+        });
+        return texture;
+      },
+      ownedResources(createdTexture, input) {
+        expect(createdTexture).toBe(texture);
+        expect(input.image).toBe(image);
+        return [material, geometry, material];
+      }
+    });
+
+    expect(resource).toMatchObject({
+      texture,
+      width: 1,
+      height: 1,
+      assetId: "three:image.pixel",
+      sourceUrl: "textures/pixel.png"
+    });
+
+    await resource.dispose();
+    await resource.dispose();
+
+    expect(calls).toEqual(["texture", "material", "geometry"]);
+  });
+
+  it("rejects invalid texture dimensions before calling the host factory", () => {
+    expect(() =>
+      createThreeTextureFromImageBitmap({
+        image: {},
+        width: 0,
+        height: 1,
+        createTexture() {
+          throw new Error("unexpected factory call");
+        }
+      })
+    ).toThrow("Three texture width must be a positive finite number");
   });
 
   it("uses a host injected instantiate hook without mutating the loaded value", async () => {
@@ -249,6 +308,78 @@ describe("three adapter", () => {
 
     expect(calls).toEqual(["geometry", "material"]);
     expect(manager.resourceTable.snapshot(hero)[0]).toMatchObject({
+      refCount: 0,
+      state: "disposed",
+      hasValue: false,
+      hasDisposer: false
+    });
+  });
+
+  it("lets runtime scopes dispose host-owned texture resources after final release", async () => {
+    const calls: string[] = [];
+    const textureAssetId = normalizeAssetId("three:texture.pixel");
+    const textureLoader: AssetLoader<ThreeTextureResource> = {
+      id: "three-texture-resource-test",
+      types: ["renderer/three-texture"],
+      async load(context) {
+        await context.transport.read(context);
+        const texture = createDisposableResource("texture", calls);
+        const material = createDisposableResource("material", calls);
+        const geometry = createDisposableResource("geometry", calls);
+        const resource = createThreeTextureFromImageBitmap({
+          image: { label: "image-bitmap-like" },
+          width: 1,
+          height: 1,
+          assetId: context.assetId,
+          sourceUrl: context.source.source.url,
+          createTexture() {
+            return texture;
+          },
+          ownedResources() {
+            return [material, geometry];
+          }
+        });
+
+        return {
+          value: resource,
+          dispose: resource.dispose
+        };
+      }
+    };
+    const manager = createAssetManager({
+      catalog: {
+        protocolVersion,
+        catalogVersion: "sha256-three-texture",
+        assets: {
+          [textureAssetId]: {
+            type: "renderer/three-texture",
+            sources: [{ url: "textures/pixel.png" }]
+          }
+        }
+      },
+      loaders: [textureLoader],
+      transport: new InMemoryTransport({
+        "textures/pixel.png": new Uint8Array([255, 0, 0, 255])
+      })
+    });
+    const scope = manager.createScope("three-texture-scope");
+
+    const handle = await scope.acquire<ThreeTextureResource>(textureAssetId);
+
+    expect(handle.value.width).toBe(1);
+    expect(handle.value.height).toBe(1);
+    expect(manager.resourceTable.snapshot(textureAssetId)[0]).toMatchObject({
+      refCount: 1,
+      state: "ready",
+      hasDisposer: true
+    });
+
+    await scope.dispose();
+    await scope.dispose();
+
+    expect(handle.released).toBe(true);
+    expect(calls).toEqual(["texture", "material", "geometry"]);
+    expect(manager.resourceTable.snapshot(textureAssetId)[0]).toMatchObject({
       refCount: 0,
       state: "disposed",
       hasValue: false,

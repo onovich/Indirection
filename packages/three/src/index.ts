@@ -30,6 +30,42 @@ export interface ThreeDisposableResource {
   dispose(): void | Promise<void>;
 }
 
+export interface ThreeTextureSourceInput {
+  readonly image: unknown;
+  readonly width: number;
+  readonly height: number;
+  readonly assetId?: string;
+  readonly sourceUrl?: string;
+}
+
+export type ThreeTextureFactory<TTexture extends ThreeDisposableResource> = (
+  input: ThreeTextureSourceInput
+) => TTexture;
+
+export type ThreeTextureOwnedResources<TTexture extends ThreeDisposableResource> = (
+  texture: TTexture,
+  input: ThreeTextureSourceInput
+) => Iterable<ThreeDisposableResource> | undefined;
+
+export interface CreateThreeTextureFromImageBitmapOptions<
+  TTexture extends ThreeDisposableResource
+> extends ThreeTextureSourceInput {
+  readonly createTexture: ThreeTextureFactory<TTexture>;
+  readonly ownedResources?: ThreeTextureOwnedResources<TTexture>;
+}
+
+export interface ThreeTextureResource<
+  TTexture extends ThreeDisposableResource = ThreeDisposableResource
+> {
+  readonly texture: TTexture;
+  readonly width: number;
+  readonly height: number;
+  readonly assetId?: string;
+  readonly sourceUrl?: string;
+
+  dispose(): Promise<void>;
+}
+
 export type ThreeGltfOwnedResources<TValue = unknown> = (
   value: TValue,
   input: ThreeGltfParseInput
@@ -130,6 +166,30 @@ export function instantiateThreeGltf<TValue, TInstance = TValue>(
   });
 }
 
+export function createThreeTextureFromImageBitmap<
+  TTexture extends ThreeDisposableResource
+>(
+  options: CreateThreeTextureFromImageBitmapOptions<TTexture>
+): ThreeTextureResource<TTexture> {
+  assertTextureDimension("width", options.width);
+  assertTextureDimension("height", options.height);
+
+  const textureInput = definedTextureSourceInput(options);
+  const texture = options.createTexture(textureInput);
+  const ownedResources = options.ownedResources?.(texture, textureInput) ?? [];
+  const dispose =
+    createThreeOwnedResourceDisposer([texture, ...ownedResources]) ?? noopDispose;
+
+  return {
+    texture,
+    width: textureInput.width,
+    height: textureInput.height,
+    ...(textureInput.assetId === undefined ? {} : { assetId: textureInput.assetId }),
+    ...(textureInput.sourceUrl === undefined ? {} : { sourceUrl: textureInput.sourceUrl }),
+    dispose
+  };
+}
+
 export function createThreeOwnedResourceDisposer(
   resources: Iterable<ThreeDisposableResource>
 ): (() => Promise<void>) | undefined {
@@ -193,6 +253,10 @@ async function disposeOwnedResources(resources: readonly ThreeDisposableResource
   }
 }
 
+async function noopDispose(): Promise<void> {
+  return undefined;
+}
+
 function isAnimationClipArray(
   input: ThreeAnimationSourceLike | readonly ThreeAnimationClipLike[]
 ): input is readonly ThreeAnimationClipLike[] {
@@ -201,6 +265,24 @@ function isAnimationClipArray(
 
 function normalizeAnimationDuration(duration: number | undefined): number {
   return typeof duration === "number" && Number.isFinite(duration) ? duration : 0;
+}
+
+function assertTextureDimension(name: "width" | "height", value: number): void {
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new TypeError(`Three texture ${name} must be a positive finite number`);
+  }
+}
+
+function definedTextureSourceInput(
+  input: ThreeTextureSourceInput
+): ThreeTextureSourceInput {
+  return {
+    image: input.image,
+    width: input.width,
+    height: input.height,
+    ...(input.assetId === undefined ? {} : { assetId: input.assetId }),
+    ...(input.sourceUrl === undefined ? {} : { sourceUrl: input.sourceUrl })
+  };
 }
 
 function definedInstantiateContext(

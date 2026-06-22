@@ -2,6 +2,8 @@
 
 Phase 22 adds a bounded browser image-source loader in `@indirection/loaders-web`. The contract proves that browser-created `ImageBitmap` resources can be decoded, shared through runtime handles, and closed through the existing `LoadedAsset.dispose` final-release path without moving browser APIs into core packages.
 
+Phase 23 builds on this source lifecycle in a separate renderer/Three texture E2E boundary. The ImageBitmap loader still owns only image decode and final `close()` behavior; Three texture creation, WebGL rendering, and renderer-resource disposal stay in `@indirection/three` adapter tests and browser fixture host code.
+
 ## Loader Contract
 
 `createImageBitmapLoader()` registers the `image/bitmap` type by default:

@@ -42,7 +42,7 @@ For the guided path through CLI commands, package entrypoints, browser checks, e
 
 Browser image-source lifecycle coverage is documented in [Browser ImageBitmap lifecycle](docs/image-bitmap-lifecycle.md). It stays in `@indirection/loaders-web` and uses runtime `LoadedAsset.dispose` without adding browser APIs to core packages.
 
-The next internal candidate is [Phase 23 Renderer And Three Texture E2E](docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md): a local browser/Three/WebGL proof built on the Phase 22 ImageBitmap lifecycle, without real decoder dependencies, live Sinan integration, publishing, or deployment.
+Renderer texture E2E coverage is documented in [Renderer And Three Texture E2E](docs/renderer-texture-e2e.md). It proves a local browser/Three/WebGL texture path on top of the Phase 22 ImageBitmap lifecycle while keeping production renderer framework work, real decoder dependencies, live Sinan integration, publishing, and deployment out of scope.
 
 ## Validation
 
@@ -104,6 +104,7 @@ git diff --check
 - [Phase 22 ImageBitmap Lifecycle Goal guide](docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md)
 - [Phase 23 Renderer And Three Texture E2E Goal guide](docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md)
 - [Browser ImageBitmap lifecycle](docs/image-bitmap-lifecycle.md)
+- [Renderer And Three Texture E2E](docs/renderer-texture-e2e.md)
 - [Evaluator quickstart](docs/evaluator-quickstart.md)
 - [Package entrypoints](docs/package-entrypoints.md)
 - [Example workflows](docs/example-workflows.md)
@@ -114,6 +115,7 @@ git diff --check
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 23 PASS report](docs/phase-23-pass-report.md)
 - [Phase 22 PASS report](docs/phase-22-pass-report.md)
 - [Phase 21 PASS report](docs/phase-21-pass-report.md)
 - [Phase 20 PASS report](docs/phase-20-pass-report.md)

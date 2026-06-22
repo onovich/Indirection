@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-22 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, local public website/demo docs-site rehearsal, browser ImageBitmap lifecycle documentation, and the selected Phase 23 renderer/Three texture E2E plan.
+This index points to the current Phase 0-23 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, local public website/demo docs-site rehearsal, browser ImageBitmap lifecycle documentation, and renderer/Three texture E2E documentation.
 
 ## Core Project
 
@@ -25,6 +25,7 @@ This index points to the current Phase 0-22 release-candidate, release-hardening
 - [Phase 22 ImageBitmap Lifecycle Goal guide](indirection-phase-22-image-bitmap-lifecycle-goal-guide.md)
 - [Phase 23 Renderer And Three Texture E2E Goal guide](indirection-phase-23-renderer-texture-e2e-goal-guide.md)
 - [Browser ImageBitmap lifecycle](image-bitmap-lifecycle.md)
+- [Renderer And Three Texture E2E](renderer-texture-e2e.md)
 - [Evaluator quickstart](evaluator-quickstart.md)
 - [Package entrypoints](package-entrypoints.md)
 - [Example workflows](example-workflows.md)
@@ -35,6 +36,7 @@ This index points to the current Phase 0-22 release-candidate, release-hardening
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 23 PASS report](phase-23-pass-report.md)
 - [Phase 22 PASS report](phase-22-pass-report.md)
 - [Phase 21 PASS report](phase-21-pass-report.md)
 - [Phase 20 PASS report](phase-20-pass-report.md)
@@ -82,7 +84,7 @@ corepack pnpm release:rc-check
 git diff --check
 ```
 
-`validate:full` runs lint, format, docs drift checks, local public demo site smoke, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
+`validate:full` runs lint, format, docs drift checks, local public demo site smoke, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke. Browser E2E includes the Phase 23 renderer/Three texture probe without committing renderer artifacts.
 
 `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` remain explicit release-readiness gates because they audit workflow permissions, package artifacts, publish, registry, tag side effects, and owner decision handoff separately from the main validation matrix.
 

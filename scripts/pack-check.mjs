@@ -276,6 +276,7 @@ import {
   threePackageName,
   createThreeGltfLoader,
   createThreeOwnedResourceDisposer,
+  createThreeTextureFromImageBitmap,
   extractThreeAnimationMetadata,
   instantiateThreeGltf
 } from "@indirection/three";
@@ -517,6 +518,48 @@ assert(directThreeDispose !== undefined, "three direct disposer missing");
 await directThreeDispose();
 await directThreeDispose();
 assert(directDisposals.join(",") === "geometry,material", "three direct disposer idempotency failed");
+
+const textureDisposals = [];
+const textureResource = createThreeTextureFromImageBitmap({
+  image: { tag: "pack-image-bitmap-like" },
+  width: 1,
+  height: 1,
+  assetId: "pack:image.pixel",
+  sourceUrl: "images/pixel.png",
+  createTexture(input) {
+    assert(input.width === 1, "three texture width input failed");
+    assert(input.height === 1, "three texture height input failed");
+    assert(input.sourceUrl === "images/pixel.png", "three texture source url input failed");
+    return {
+      dispose() {
+        textureDisposals.push("texture");
+      }
+    };
+  },
+  ownedResources() {
+    return [
+      {
+        dispose() {
+          textureDisposals.push("material");
+        }
+      },
+      {
+        dispose() {
+          textureDisposals.push("geometry");
+        }
+      }
+    ];
+  }
+});
+assert(textureResource.width === 1, "three texture resource width failed");
+assert(textureResource.height === 1, "three texture resource height failed");
+assert(textureResource.assetId === "pack:image.pixel", "three texture resource asset id failed");
+await textureResource.dispose();
+await textureResource.dispose();
+assert(
+  textureDisposals.join(",") === "texture,material,geometry",
+  "three texture resource disposer idempotency failed"
+);
 
 const plugin = createIndirectionVitePlugin({ model });
 assert(plugin.resolveId(virtualCatalogModuleId) === resolvedVirtualCatalogModuleId, "vite resolve failed");

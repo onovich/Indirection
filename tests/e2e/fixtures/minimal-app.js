@@ -6,6 +6,8 @@ import {
 } from "@indirection/loaders-web";
 import { protocolVersion } from "@indirection/protocol";
 import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
+import { createThreeTextureFromImageBitmap } from "@indirection/three";
+import * as THREE from "three";
 import virtualCatalog from "/virtual/indirection/catalog.js";
 
 let imageBitmapCloseCount = 0;
@@ -15,20 +17,15 @@ const imageBitmapLoader = createImageBitmapLoader({
       throw new Error("createImageBitmap is not available");
     }
 
-    const bitmap = await createImageBitmap(
+    return createImageBitmap(
       new Blob([input.arrayBuffer], {
         type: input.contentType
       })
     );
-
-    return {
-      width: bitmap.width,
-      height: bitmap.height,
-      close() {
-        imageBitmapCloseCount += 1;
-        bitmap.close();
-      }
-    };
+  },
+  dispose({ resource }) {
+    imageBitmapCloseCount += 1;
+    resource.bitmap.close?.();
   }
 });
 const loaders = [...createWebDataLoaders(), imageBitmapLoader];
@@ -46,6 +43,7 @@ try {
   const cache = await runCacheStorageProbe();
   const fallback = await runFallbackDiagnosticsProbe();
   const imageBitmap = await runImageBitmapLifecycleProbe();
+  const rendererTexture = await runRendererTextureProbe();
   const runtime = await runRuntimeLifecycleProbe();
   const stress = {
     cacheStorage: await runCacheStorageStressProbe(),
@@ -56,7 +54,7 @@ try {
 
   const result = {
     cache,
-    diagnostics: createSuccessDiagnostics(stress, imageBitmap),
+    diagnostics: createSuccessDiagnostics(stress, imageBitmap, rendererTexture),
     fallback,
     fixture: "loaders-web-browser",
     imageBitmap,
@@ -67,6 +65,7 @@ try {
       text
     },
     packageName: loadersWebPackageName,
+    rendererTexture,
     runtime,
     status: "ready",
     stress,
@@ -111,7 +110,7 @@ async function load(type, url) {
   return loaded.value;
 }
 
-function createSuccessDiagnostics(stress, imageBitmap) {
+function createSuccessDiagnostics(stress, imageBitmap, rendererTexture) {
   return {
     artifactName: "indirection-e2e-result.json",
     schemaVersion: 1,
@@ -121,6 +120,7 @@ function createSuccessDiagnostics(stress, imageBitmap) {
       "runtime",
       "fallback",
       "imageBitmap",
+      "rendererTexture",
       "stress.cacheStorage",
       "stress.capabilitySelection",
       "stress.runtimeLifecycle",
@@ -130,6 +130,8 @@ function createSuccessDiagnostics(stress, imageBitmap) {
       cacheVersionCount: stress.cacheStorage.versions.length,
       capabilityCases: Object.keys(stress.capabilitySelection).sort(),
       imageBitmapCloseCount: imageBitmap.closeCount,
+      rendererTextureAvailable: rendererTexture.available,
+      rendererTexturePixelMatches: rendererTexture.pixelMatchesRed,
       runtimeRepeatedCount: stress.runtimeLifecycle.repeated.length
     }
   };
@@ -183,6 +185,196 @@ async function runImageBitmapLifecycleProbe() {
     snapshotAfterDispose: resourceSummary(snapshotAfterDispose, assetId),
     snapshotAfterFirstRelease: resourceSummary(snapshotAfterFirstRelease, assetId),
     snapshotWhileHeld: resourceSummary(snapshotWhileHeld, assetId)
+  };
+}
+
+async function runRendererTextureProbe() {
+  const imageAssetId = "browser:image.pixel";
+  const textureAssetId = "browser:renderer.texture";
+  imageBitmapCloseCount = 0;
+
+  let imageResource;
+  const rendererTextureLoader = {
+    id: "browser-three-renderer-texture",
+    types: ["renderer/three-texture"],
+    async load(context) {
+      if (imageResource === undefined) {
+        throw new Error("ImageBitmap resource must be acquired before renderer texture load");
+      }
+
+      const response = await context.transport.read(context);
+      const rendererContext = createWebGlRendererContext();
+      if (!rendererContext.available) {
+        return {
+          value: {
+            available: false,
+            disposeCounts: createDisposeCounts(),
+            imageDimensions: [imageResource.width, imageResource.height],
+            renderer: "three-webgl",
+            unavailableReason: rendererContext.unavailableReason
+          }
+        };
+      }
+
+      const disposeCounts = createDisposeCounts();
+      let material;
+      let geometry;
+      let renderer;
+      const textureResource = createThreeTextureFromImageBitmap({
+        image: imageResource.bitmap,
+        width: imageResource.width,
+        height: imageResource.height,
+        assetId: context.assetId,
+        sourceUrl: context.source.source.url,
+        createTexture(input) {
+          const texture = new THREE.Texture(input.image);
+          texture.needsUpdate = true;
+          if ("colorSpace" in texture && "SRGBColorSpace" in THREE) {
+            texture.colorSpace = THREE.SRGBColorSpace;
+          }
+          return trackDisposableResource(texture, "texture", disposeCounts);
+        },
+        ownedResources(texture) {
+          material = trackDisposableResource(
+            new THREE.MeshBasicMaterial({ map: texture, toneMapped: false }),
+            "material",
+            disposeCounts
+          );
+          geometry = trackDisposableResource(
+            new THREE.PlaneGeometry(2, 2),
+            "geometry",
+            disposeCounts
+          );
+          renderer = trackDisposableResource(
+            new THREE.WebGLRenderer({
+              alpha: true,
+              antialias: false,
+              canvas: rendererContext.canvas,
+              context: rendererContext.gl,
+              depth: false,
+              preserveDrawingBuffer: true,
+              stencil: false
+            }),
+            "renderer",
+            disposeCounts
+          );
+          return [material, geometry, renderer];
+        }
+      });
+
+      if (material === undefined || geometry === undefined || renderer === undefined) {
+        throw new Error("Three renderer texture resources were not initialized");
+      }
+
+      renderer.setPixelRatio(1);
+      renderer.setSize(2, 2, false);
+      renderer.setClearColor(0x000000, 1);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+      camera.position.z = 1;
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+      renderer.render(scene, camera);
+
+      const samplePixel = new Uint8Array(4);
+      rendererContext.gl.readPixels(
+        0,
+        0,
+        1,
+        1,
+        rendererContext.gl.RGBA,
+        rendererContext.gl.UNSIGNED_BYTE,
+        samplePixel
+      );
+
+      return {
+        value: {
+          available: true,
+          canvasSize: [renderer.domElement.width, renderer.domElement.height],
+          disposeCounts,
+          imageDimensions: [imageResource.width, imageResource.height],
+          materialHasMap: material.map === textureResource.texture,
+          pixelMatchesRed: pixelMatchesRed(samplePixel),
+          renderer: "three-webgl",
+          samplePixel: Array.from(samplePixel),
+          sourceByteLength: bodyByteLength(response.body),
+          textureDimensions: [textureResource.width, textureResource.height],
+          textureIsTexture: textureResource.texture.isTexture === true
+        },
+        dispose: textureResource.dispose
+      };
+    }
+  };
+
+  const manager = createAssetManager({
+    catalog: {
+      assets: {
+        [imageAssetId]: {
+          sources: [{ url: "pixel.png" }],
+          type: "image/bitmap"
+        },
+        [textureAssetId]: {
+          dependencies: [imageAssetId],
+          sources: [{ url: "pixel.png" }],
+          type: "renderer/three-texture"
+        }
+      },
+      catalogVersion: "phase-23-renderer-texture",
+      protocolVersion
+    },
+    loaders: [...loaders, rendererTextureLoader],
+    transport
+  });
+  const scope = manager.createScope("browser-renderer-texture-scope");
+
+  const imageHandle = await scope.acquire(imageAssetId);
+  imageResource = imageHandle.value;
+  const textureHandle = await scope.acquire(textureAssetId);
+  const snapshotWhileHeld = manager.snapshot();
+
+  await imageHandle.release();
+  const snapshotAfterImageRelease = manager.snapshot();
+  const scopeBeforeDispose = scope.snapshot();
+  const disposeCountsBefore = { ...textureHandle.value.disposeCounts };
+
+  await scope.dispose();
+  await scope.dispose();
+  const snapshotAfterDispose = manager.snapshot();
+
+  return {
+    assetId: textureAssetId,
+    available: textureHandle.value.available,
+    catalogVersion: snapshotAfterDispose.catalogVersion,
+    canvasSize: textureHandle.value.canvasSize,
+    disposeCountsAfter: { ...textureHandle.value.disposeCounts },
+    disposeCountsBefore,
+    imageAssetId,
+    imageCloseCount: imageBitmapCloseCount,
+    imageDimensions: textureHandle.value.imageDimensions,
+    imageHandleReleased: imageHandle.released,
+    materialHasMap: textureHandle.value.materialHasMap,
+    pixelMatchesRed: textureHandle.value.pixelMatchesRed,
+    renderer: textureHandle.value.renderer,
+    samplePixel: textureHandle.value.samplePixel,
+    scopeBeforeDispose,
+    scopeDisposed: scope.disposed,
+    snapshotAfterDispose: {
+      image: resourceSummary(snapshotAfterDispose, imageAssetId),
+      texture: resourceSummary(snapshotAfterDispose, textureAssetId)
+    },
+    snapshotAfterImageRelease: {
+      image: resourceSummary(snapshotAfterImageRelease, imageAssetId),
+      texture: resourceSummary(snapshotAfterImageRelease, textureAssetId)
+    },
+    snapshotWhileHeld: {
+      image: resourceSummary(snapshotWhileHeld, imageAssetId),
+      texture: resourceSummary(snapshotWhileHeld, textureAssetId)
+    },
+    sourceByteLength: textureHandle.value.sourceByteLength,
+    textureDimensions: textureHandle.value.textureDimensions,
+    textureHandleReleased: textureHandle.released,
+    textureIsTexture: textureHandle.value.textureIsTexture
   };
 }
 
@@ -529,6 +721,82 @@ async function acquireCapabilitySelection({
     sourceUrl: resolved.source.url,
     value: handle.value
   };
+}
+
+function bodyByteLength(body) {
+  if (body instanceof Uint8Array) {
+    return body.byteLength;
+  }
+
+  if (body instanceof ArrayBuffer) {
+    return body.byteLength;
+  }
+
+  return new TextEncoder().encode(
+    typeof body === "string" ? body : JSON.stringify(body)
+  ).byteLength;
+}
+
+function createDisposeCounts() {
+  return {
+    geometry: 0,
+    material: 0,
+    renderer: 0,
+    texture: 0
+  };
+}
+
+function createWebGlRendererContext() {
+  if (typeof document === "undefined") {
+    return {
+      available: false,
+      unavailableReason: "document-unavailable"
+    };
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 2;
+  canvas.height = 2;
+  const gl = canvas.getContext("webgl2", {
+    alpha: true,
+    antialias: false,
+    depth: false,
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: true,
+    stencil: false
+  });
+
+  if (gl === null) {
+    return {
+      available: false,
+      unavailableReason: "webgl2-unavailable"
+    };
+  }
+
+  return {
+    available: true,
+    canvas,
+    gl
+  };
+}
+
+function pixelMatchesRed(pixel) {
+  return pixel[0] >= 200 && pixel[1] <= 40 && pixel[2] <= 40 && pixel[3] >= 200;
+}
+
+function trackDisposableResource(resource, name, counts) {
+  const dispose = resource.dispose.bind(resource);
+  let disposed = false;
+  resource.dispose = () => {
+    if (!disposed) {
+      disposed = true;
+      counts[name] += 1;
+    }
+
+    return dispose();
+  };
+
+  return resource;
 }
 
 function resourceSummary(snapshot, assetId) {
