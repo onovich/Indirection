@@ -26,6 +26,7 @@
     "test:browser": "node scripts/browser-smoke.mjs",
     "test:e2e": "pnpm build && playwright test",
     "pack:check": "node scripts/pack-check.mjs",
+    "release:dry-run": "node scripts/release-dry-run.mjs",
     "check:docs": "node scripts/docs-drift-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
     "smoke:cli": "pnpm build && node scripts/cli-smoke.mjs",

@@ -10,6 +10,14 @@ This document records the Phase 10 release dry-run policy for v0.1 package readi
 - Keep package manifests private until a later publish-preflight phase explicitly accepts public visibility.
 - Keep generated tarballs, temporary consumers, release archives, npm caches, Playwright artifacts, `dist/`, and `*.tsbuildinfo` out of git.
 
+Run the local dry-run gate with:
+
+```powershell
+corepack pnpm release:dry-run
+```
+
+The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, package build, package tarball contents, temporary consumer imports, and no Git status or tag side effects.
+
 ## Package Visibility Policy
 
 All workspace packages remain `private: true` during Phase 10. The visibility target below describes release intent for dry-run validation only.
