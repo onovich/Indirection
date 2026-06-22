@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, and Phase 12 browser matrix posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, and Phase 13 Three GLTF adapter planning posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -132,9 +132,15 @@ Phase 12 expands the existing Playwright E2E gate from Chromium-only to Chromium
 
 Phase 12 PASS report: `docs/phase-12-pass-report.md`
 
+## Phase 13 Real Three GLTF Adapter
+
+Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
+
+Phase 13 has been selected as the next architect/strategist-owned implementation phase. It should turn `@indirection/three` from a peer-boundary skeleton into a real GLTF parser adapter through parser injection while keeping Three.js out of runtime core and keeping real npm publish, live Sinan Engine integration, Draco/KTX2/meshopt, and GPU disposal out of scope.
+
 ## Recommended Next Steps
 
-1. Keep the Phase 12 browser matrix in `validate:full` and CI.
+1. Execute Phase 13 Real Three GLTF Adapter using `docs/indirection-phase-13-three-gltf-goal-guide.md`.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -146,6 +152,8 @@ Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
 Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
 
 Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
+
+Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
 

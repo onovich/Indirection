@@ -183,6 +183,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-10-pass-report.md"
     },
     {
@@ -240,6 +244,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-12-browser-matrix-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-13-three-gltf-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -327,6 +335,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 13 Real Three GLTF Adapter"
+    },
+    {
+      file: "docs/release-readiness.md",
       text: "Phase 12 Browser Matrix Expansion"
     },
     {
@@ -390,6 +406,10 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/phase-12-pass-report.md",
+      text: "docs/indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
       file: "docs/phase-0-7-pass-report.md",
       text: "docs/indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -439,6 +459,26 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
+      text: "createThreeGltfLoader"
+    },
+    {
+      file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
+      text: "GLTFLoader.parseAsync"
+    },
+    {
+      file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-13-three-gltf-goal-guide.md",
       text: "corepack pnpm publish:preflight"
     },
     {

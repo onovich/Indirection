@@ -63,6 +63,14 @@ Expected final push target: `origin/main`.
 - Real npm publish remains blocked until package visibility, npm account/scope, public license, versioning, tag, GitHub Release, and rollback decisions are explicitly accepted.
 - Live Sinan Engine integration and real Three.js GLTF parser integration remain future phase candidates.
 
+## Next Phase
+
+Planner selection after PASS: Phase 13 Real Three GLTF Adapter Integration.
+
+Selected Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
+
+Rationale: real npm publish still needs owner acceptance, and live Sinan Engine integration still depends on a real host integration surface. The Three adapter is already present as a peer-boundary skeleton, so real GLTF parser integration is the safest self-contained next phase that increases product value without weakening core boundaries.
+
 ## Risks And Recommendations
 
 - Keep `corepack pnpm test:e2e` in `validate:full` so release validation keeps the three-browser matrix by default.
