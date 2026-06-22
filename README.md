@@ -59,6 +59,7 @@ corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
+corepack pnpm release:rc-check
 git diff --check
 ```
 
@@ -83,9 +84,11 @@ git diff --check
 - [Phase 19 Release Candidate Rehearsal Goal guide](docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Release CI policy](docs/release-ci-policy.md)
 - [Release provenance](docs/release-provenance.md)
+- [Release candidate handoff](docs/release-candidate-handoff.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 19 PASS report](docs/phase-19-pass-report.md)
 - [Phase 18 PASS report](docs/phase-18-pass-report.md)
 - [Phase 17 PASS report](docs/phase-17-pass-report.md)
 - [Phase 16 PASS report](docs/phase-16-pass-report.md)

@@ -16,6 +16,7 @@ Run the local dry-run gate with:
 corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
+corepack pnpm release:rc-check
 ```
 
 The CI policy gate statically audits release-related GitHub Actions workflows for `permissions: contents: read`, forbidden publish/tag/release/upload actions, and release command parity.
@@ -23,6 +24,8 @@ The CI policy gate statically audits release-related GitHub Actions workflows fo
 The standalone provenance gate packs every workspace package in temporary directories, records tarball filenames, sha256 hashes, byte sizes, file lists, exports, CLI bin entries, and no-publish policy evidence, then verifies repeated canonical JSON output is deterministic.
 
 The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, local release provenance, and no Git status or tag side effects.
+
+The RC rehearsal gate summarizes package candidacy, validation evidence, owner decision blockers, blocked real-publish actions, rollback policy, and release ownership handoff. It does not publish, login to npm, write to the registry, create tags, create GitHub Releases, upload packages or artifacts, sign packages, upload npm provenance, or add workflow write permissions.
 
 The same core gates are available in GitHub Actions through the manual `Release Dry Run` and `Publish Preflight` workflows. They use read-only repository permissions, run `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `git diff --check`, and do not publish packages, upload artifacts, create tags, or create GitHub Releases.
 
@@ -82,6 +85,7 @@ A package can move from dry-run candidate to real publish candidate only when:
 - `pack:check` verifies exports, files, tarball contents, CLI bin paths, and temporary consumer imports.
 - `release:provenance` records deterministic dry-run package artifact evidence without committing generated reports.
 - `release:dry-run` confirms no real publish, no tag creation, no registry write, no provenance upload, and no dirty workspace artifacts.
+- `release:rc-check` records no-publish package candidacy and owner decision handoff evidence without committing generated reports.
 - `validate:full` and browser E2E still pass.
 - Package visibility, npm permissions, and release tag policy have been accepted outside the implementation executor lane.
 
@@ -96,6 +100,7 @@ corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
+corepack pnpm release:rc-check
 git diff --check
 git status --short --branch
 ```
@@ -107,6 +112,7 @@ Expected result:
 - `release:provenance` reports 9 packages audited with deterministic sha256 provenance.
 - `release:dry-run` reports 9 packages audited, packed, and verified with 9 deterministic provenance records and without publish or tag side effects.
 - `publish:preflight` reports 9 packages audited without publish, npm login, registry write, or tag side effects.
+- `release:rc-check` reports 9 package candidates rehearsed with owner decision blockers, blocked real-publish actions, and no publish side effects.
 - `git diff --check` is clean.
 - `git status --short --branch` has no tracked or untracked release artifacts.
 

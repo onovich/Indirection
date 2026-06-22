@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, and selected Phase 19 no-publish release-candidate rehearsal plan before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, and Phase 19 no-publish release-candidate rehearsal posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -12,6 +12,7 @@ corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
+corepack pnpm release:rc-check
 git diff --check
 ```
 
@@ -30,6 +31,7 @@ git diff --check
 - `pack:check`: tarball file whitelist plus temporary consumer import smoke, including the packaged Three GLTF parser API with a parser stub.
 - `release:ci-check`: static GitHub Actions release policy parity check for read-only permissions, forbidden publish/tag/release/upload actions, and release workflow command order.
 - `release:provenance`: deterministic local tarball provenance for all 9 packed workspace packages, including sha256, byte size, file list, exports, bin, validation command evidence, and no-publish policy evidence.
+- `release:rc-check`: deterministic no-publish release-candidate rehearsal for package candidacy, validation evidence, owner decision blockers, blocked real-publish actions, rollback policy, and release ownership handoff.
 
 ## Current Release Candidate Status
 
@@ -47,6 +49,7 @@ git diff --check
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 - Phase 17 release provenance, local `release:provenance`, deterministic report guards, docs drift guards, and release dry-run integration are in place without publishing, uploading provenance, signing, creating tags, or creating GitHub Releases.
 - Phase 18 release CI policy, local `release:ci-check`, workflow read-only permission guards, command parity guards, docs drift guards, and release dry-run/publish-preflight integration are in place without workflow write permissions, package uploads, signing, OIDC publish permissions, npm provenance upload, tags, or GitHub Releases.
+- Phase 19 release-candidate rehearsal, local `release:rc-check`, handoff docs, report shape docs, docs drift guards, and PASS report are in place without publishing, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, package uploads, artifact uploads, OIDC publish permissions, or workflow write permissions.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -206,13 +209,17 @@ Phase 18 PASS report: `docs/phase-18-pass-report.md`
 
 Phase 19 guide: `docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md`
 
-Phase 19 is selected to rehearse a v0.1 release-candidate handoff without publishing. It should summarize package candidacy, validation gate evidence, unresolved owner decisions, real-publish blockers, rollback policy, and release ownership handoff while keeping all publish, tag, release, upload, signing, OIDC, and workflow write-permission actions out of scope.
+Phase 19 rehearses a v0.1 release-candidate handoff without publishing. `release:rc-check` summarizes package candidacy, validation gate evidence, unresolved owner decision blockers, blocked real-publish actions, rollback policy, and release ownership handoff while keeping all publish, tag, release, upload, signing, OIDC, npm provenance upload, and workflow write-permission actions out of scope.
+
+Release candidate handoff docs: `docs/release-candidate-handoff.md`
+
+Phase 19 PASS report: `docs/phase-19-pass-report.md`
 
 ## Recommended Next Steps
 
-1. Keep `validate:full`, `release:ci-check`, `release:provenance`, `release:dry-run`, and `publish:preflight` as the local release-readiness gates.
-2. Execute the selected Phase 19 no-publish release-candidate rehearsal before adding any real publishing workflow.
-3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, workflow permissions, package upload, release ownership, and rollback decisions are accepted.
+1. Keep `validate:full`, `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` as the local release-readiness gates.
+2. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, workflow permissions, package upload, release ownership, and rollback decisions are accepted.
+3. Keep the Phase 19 owner decision blockers visible until a dedicated owner-approved publish phase changes them.
 4. Keep read-only release workflow policy checks in place until a dedicated approved publish phase changes them.
 5. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
@@ -237,6 +244,10 @@ Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
 Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
 
 Phase 19 guide: `docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md`
+
+Release candidate handoff docs: `docs/release-candidate-handoff.md`
+
+Phase 19 PASS report: `docs/phase-19-pass-report.md`
 
 Release CI policy docs: `docs/release-ci-policy.md`
 

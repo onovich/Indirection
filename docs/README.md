@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-18 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, and selected Phase 19 no-publish release-candidate rehearsal plan.
+This index points to the current Phase 0-19 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, and no-publish release-candidate rehearsal handoff.
 
 ## Core Project
 
@@ -22,9 +22,11 @@ This index points to the current Phase 0-18 release-candidate, release-hardening
 - [Phase 19 Release Candidate Rehearsal Goal guide](indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Release CI policy](release-ci-policy.md)
 - [Release provenance](release-provenance.md)
+- [Release candidate handoff](release-candidate-handoff.md)
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 19 PASS report](phase-19-pass-report.md)
 - [Phase 18 PASS report](phase-18-pass-report.md)
 - [Phase 17 PASS report](phase-17-pass-report.md)
 - [Phase 16 PASS report](phase-16-pass-report.md)
@@ -63,9 +65,10 @@ corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
+corepack pnpm release:rc-check
 git diff --check
 ```
 
 `validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
 
-`release:ci-check`, `release:provenance`, `release:dry-run`, and `publish:preflight` remain explicit release-readiness gates because they audit workflow permissions, package artifacts, publish, registry, and tag side effects separately from the main validation matrix.
+`release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` remain explicit release-readiness gates because they audit workflow permissions, package artifacts, publish, registry, tag side effects, and owner decision handoff separately from the main validation matrix.

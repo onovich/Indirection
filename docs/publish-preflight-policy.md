@@ -203,6 +203,7 @@ corepack pnpm validate:full
 corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
+corepack pnpm release:rc-check
 git diff --check
 ```
 
@@ -233,3 +234,9 @@ This remains a local gate only. It must not run npm login, npm whoami, npm acces
 Phase 18 adds `release:ci-check` as a static workflow policy and parity gate. `publish:preflight` invokes the same checker so preflight and manual GitHub Actions release workflows agree on read-only permissions, command order, and forbidden publish/tag/release/upload/provenance actions.
 
 This remains no-publish release hardening only. It must not add workflow write permissions, package upload, artifact upload, OIDC publish permissions, signing, Sigstore, npm provenance upload, Git tags, or GitHub Releases.
+
+## Relationship To Phase 19
+
+Phase 19 adds `release:rc-check` as a local no-publish release-candidate rehearsal and handoff gate. It summarizes package candidacy, validation evidence, owner decision blockers, blocked real-publish actions, rollback policy, and release ownership handoff from the same no-publish posture defined here.
+
+This remains a decision handoff only. It must not remove `private: true`, change `UNLICENSED`, run npm login, run npm publish, write to the registry, create Git tags, create GitHub Releases, upload packages or artifacts, sign packages, upload npm provenance, add OIDC publish workflows, or add workflow write permissions.

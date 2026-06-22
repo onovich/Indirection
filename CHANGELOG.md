@@ -116,6 +116,25 @@ corepack pnpm publish:preflight
 git diff --check
 ```
 
+## 0.0.0-phase-19-release-candidate-rehearsal - 2026-06-23
+
+- Added `release:rc-check` for deterministic no-publish release-candidate rehearsal and owner decision handoff.
+- Summarized package candidacy, validation gate evidence, owner decision blockers, blocked real-publish actions, rollback policy, and release ownership handoff without committing generated RC JSON.
+- Reused release CI policy and release provenance helper reports while keeping `release:dry-run` and `publish:preflight` as source-of-truth gates.
+- Added release candidate handoff docs, report shape documentation, docs drift guards, and the Phase 19 PASS report while keeping real npm publish, npm login, registry writes, Git tags, GitHub Releases, package uploads, artifact uploads, signing, Sigstore, npm provenance upload, OIDC publish, and workflow write permissions out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:ci-check
+corepack pnpm release:provenance
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+corepack pnpm release:rc-check
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

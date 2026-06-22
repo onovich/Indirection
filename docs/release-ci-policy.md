@@ -17,6 +17,12 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 ```
 
+The Phase 19 release-candidate rehearsal also consumes the CI policy report as handoff evidence:
+
+```powershell
+corepack pnpm release:rc-check
+```
+
 Use JSON output only for local inspection or tests:
 
 ```powershell
@@ -43,6 +49,8 @@ The gate verifies:
 ## Local And CI Parity
 
 Local and CI parity rule: local release commands remain the semantic source of truth. GitHub Actions workflows orchestrate those commands; they do not redefine package publishability, provenance, preflight, versioning, license, tag, or release semantics.
+
+`release:rc-check` stays local in Phase 19. It summarizes CI policy evidence for owner handoff without adding workflow write permissions, package uploads, artifact uploads, signing, OIDC, tags, GitHub Releases, or publish commands.
 
 The manual release workflows use this order:
 

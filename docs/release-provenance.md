@@ -16,6 +16,12 @@ The release dry-run gate invokes the same provenance verification:
 corepack pnpm release:dry-run
 ```
 
+The Phase 19 release-candidate rehearsal also consumes the provenance report as package candidacy evidence:
+
+```powershell
+corepack pnpm release:rc-check
+```
+
 Use JSON output only for local inspection or tests:
 
 ```powershell
@@ -143,5 +149,7 @@ This is a hand-authored shape example, not generated local output:
 ## Boundaries
 
 Phase 17 provenance remains in scripts, docs, and release workflow policy. It does not move npm, tarball hashing, signing, registry, GitHub Release, or provenance-upload behavior into protocol, schema, compiler, or runtime core.
+
+Phase 19 RC rehearsal reuses this local dry-run evidence for owner handoff only. It does not commit generated provenance or RC JSON output and does not convert local sha256 evidence into npm provenance upload permission.
 
 The gate must not run `npm publish`, `pnpm publish`, npm login, npm whoami, npm access, npm token, npm owner, npm dist-tag, registry writes, Git tag creation, GitHub Release creation, signing, Sigstore, npm `--provenance`, or OIDC publish workflows.

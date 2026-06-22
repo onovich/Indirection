@@ -400,6 +400,187 @@ interface ReleaseCiPolicyForbiddenCommand {
 
 Release CI policy reports must not include workflow write permissions, secrets, registry credentials, npm publish commands, package uploads, artifact uploads, Git tag creation, Git tag pushes, GitHub Release creation, signing, Sigstore, npm provenance uploads, or OIDC publish workflow state.
 
+## Release Candidate Rehearsal Report
+
+`scripts/release-candidate-rehearsal.mjs` emits a local no-publish release-candidate handoff report when run with `--json`. The generated output is for local inspection and test assertions only; do not commit generated RC reports.
+
+Run the local gate with:
+
+```powershell
+corepack pnpm release:rc-check
+```
+
+The report summarizes `release:ci-check` and `release:provenance` helper reports, then records required command evidence for `validate:full`, `release:dry-run`, `publish:preflight`, and `release:rc-check`.
+
+```ts
+interface ReleaseCandidateRehearsalReport {
+  schemaVersion: 1;
+  generatedBy: "scripts/release-candidate-rehearsal.mjs";
+  releaseCandidate: ReleaseCandidateSummary;
+  policy: ReleaseCandidatePolicy;
+  validation: ReleaseCandidateValidation;
+  packageCount: number;
+  packageCandidates: readonly ReleaseCandidatePackage[];
+  ownerDecisionBlockerCount: number;
+  ownerDecisionBlockers: readonly ReleaseCandidateOwnerDecisionBlocker[];
+  blockedActionCount: number;
+  blockedActions: readonly ReleaseCandidateBlockedAction[];
+  rollback: ReleaseCandidateRollback;
+  handoff: ReleaseCandidateHandoff;
+}
+```
+
+Summary and policy:
+
+```ts
+interface ReleaseCandidateSummary {
+  name: "indirection-v0.1-local-rc";
+  packageArtifacts: "dry-run-only";
+  publishState: "blocked-pending-owner-decisions";
+  targetPackageVersion: "0.1-owner-decision-pending";
+  currentManifestVersion: "0.0.0";
+}
+
+interface ReleaseCandidatePolicy {
+  localCommandsAreSourceOfTruth: true;
+  packageArtifacts: "dry-run-only";
+  privatePackagesRequired: true;
+  licensePolicy: "UNLICENSED-private-only";
+  publish: false;
+  npmLogin: false;
+  registryWrite: false;
+  gitTag: false;
+  tagPush: false;
+  githubRelease: false;
+  signing: false;
+  sigstore: false;
+  npmProvenanceUpload: false;
+  oidcPublish: false;
+  packageUpload: false;
+  artifactUpload: false;
+  workflowWritePermissions: false;
+}
+```
+
+Validation evidence:
+
+```ts
+interface ReleaseCandidateValidation {
+  gates: readonly ReleaseCandidateValidationGate[];
+  sourceReports: readonly ReleaseCandidateSourceReport[];
+  determinism: {
+    canonicalJsonVersion: 1;
+    hashAlgorithm: "sha256";
+    excludes: readonly [
+      "absolutePaths",
+      "environmentVariables",
+      "gitSha",
+      "npmTokens",
+      "registryCredentials",
+      "timestamps",
+      "usernames"
+    ];
+    verification: "canonical-rc-rehearsal-json";
+  };
+}
+
+interface ReleaseCandidateValidationGate {
+  name: string;
+  command:
+    | "corepack pnpm validate:full"
+    | "corepack pnpm release:ci-check"
+    | "corepack pnpm release:provenance"
+    | "corepack pnpm release:dry-run"
+    | "corepack pnpm publish:preflight"
+    | "corepack pnpm release:rc-check";
+  evidence: string;
+  required: true;
+}
+
+interface ReleaseCandidateSourceReport {
+  name: "release-ci-policy" | "release-provenance";
+  command: "corepack pnpm release:ci-check" | "corepack pnpm release:provenance";
+  generatedBy: "scripts/release-ci-check.mjs" | "scripts/release-provenance.mjs";
+  workflowCount?: number;
+  packageCount?: number;
+}
+```
+
+Package entries:
+
+```ts
+interface ReleaseCandidatePackage {
+  name: string;
+  version: "0.0.0";
+  private: true;
+  license: "UNLICENSED";
+  packageDirectory: string;
+  candidacy: string;
+  decisionStatus: "pending";
+  requiredOwnerDecision: string;
+  dryRunArtifact: {
+    sha256: string;
+    byteSize: number;
+    fileCount: number;
+    exportCount: number;
+    binCount: number;
+  };
+  validation: {
+    provenanceCommand: "corepack pnpm release:provenance";
+    packageSmokeCommand: "corepack pnpm pack:check";
+    dryRunGateCommand: "corepack pnpm release:dry-run";
+    publishPreflightCommand: "corepack pnpm publish:preflight";
+  };
+}
+```
+
+Owner decision blockers and blocked actions:
+
+```ts
+interface ReleaseCandidateOwnerDecisionBlocker {
+  id: string;
+  status: "pending";
+  blocks: "real-publish";
+  requiredBefore: string;
+  summary: string;
+}
+
+interface ReleaseCandidateBlockedAction {
+  id: string;
+  action: string;
+  status: "blocked";
+  boundary: string;
+}
+```
+
+Rollback and release-candidate handoff:
+
+```ts
+interface ReleaseCandidateRollback {
+  currentState: "no-publish-no-registry-artifact-no-tag";
+  repositoryOnlyRollback: string;
+  accidentalPublishResponse: string;
+  npmUnpublish: false;
+  githubReleaseRollback: false;
+  registryArtifactRollback: false;
+}
+
+interface ReleaseCandidateHandoff {
+  releaseOwner: "pending-owner-decision";
+  approvers: "pending-owner-decision";
+  recommendedNextDecision: string;
+  nextAllowedPhase: string;
+  docs: readonly [
+    "docs/release-candidate-handoff.md",
+    "docs/report-json-shapes.md",
+    "docs/release-workflow.md",
+    "docs/publish-preflight-policy.md"
+  ];
+}
+```
+
+Release candidate rehearsal reports must not include timestamps, absolute paths, local usernames, environment variable values, npm tokens, registry credentials, Git SHAs, generated artifact paths, real publish permission, workflow write permissions, package uploads, artifact uploads, Git tags, GitHub Releases, signing evidence, Sigstore attestations, npm provenance uploads, or OIDC publish workflow state.
+
 ## Validation
 
 Report shape changes must update:
@@ -408,4 +589,5 @@ Report shape changes must update:
 - Sinan report contract tests for the compatibility fixture.
 - release provenance guard tests and `docs/release-provenance.md` when provenance fields change.
 - release CI policy guard tests and `docs/release-ci-policy.md` when workflow policy fields change.
+- release candidate rehearsal guard tests and `docs/release-candidate-handoff.md` when RC handoff fields change.
 - this document when adding, removing, or changing machine-readable fields.

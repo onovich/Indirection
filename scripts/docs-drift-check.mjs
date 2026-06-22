@@ -10,6 +10,7 @@ checkBrowserMatrix();
 checkReleaseDryRun();
 checkReleaseProvenance();
 checkReleaseCiPolicy();
+checkReleaseCandidateRehearsal();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -236,6 +237,104 @@ function checkReleaseCiPolicy() {
   }
 }
 
+function checkReleaseCandidateRehearsal() {
+  const command = packageJson.scripts?.["release:rc-check"];
+  if (
+    typeof command !== "string" ||
+    !command.includes("scripts/release-candidate-rehearsal.mjs")
+  ) {
+    issues.push("package.json: release:rc-check must run scripts/release-candidate-rehearsal.mjs");
+  }
+
+  const rcScript = readText("scripts/release-candidate-rehearsal.mjs");
+  for (const text of [
+    "createReleaseCandidateRehearsalReport",
+    "canonicalReleaseCandidateRehearsalJson",
+    "ownerDecisionBlockers",
+    "blockedActions",
+    "corepack pnpm release:ci-check",
+    "corepack pnpm release:provenance",
+    "corepack pnpm release:dry-run",
+    "corepack pnpm publish:preflight",
+    "corepack pnpm release:rc-check",
+    "npmProvenanceUpload",
+    "workflowWritePermissions",
+    "release-rc-check passed"
+  ]) {
+    if (!rcScript.includes(text)) {
+      issues.push(`scripts/release-candidate-rehearsal.mjs: missing '${text}'`);
+    }
+  }
+
+  const rcTest = readText("scripts/release-candidate-rehearsal.test.mjs");
+  for (const text of [
+    "release candidate rehearsal report guards",
+    "accepted owner decisions",
+    "unblocked real-publish actions",
+    "absolute local paths",
+    "registry credential assignments"
+  ]) {
+    if (!rcTest.includes(text)) {
+      issues.push(`scripts/release-candidate-rehearsal.test.mjs: missing '${text}'`);
+    }
+  }
+
+  const handoffDocs = readText("docs/release-candidate-handoff.md");
+  for (const text of [
+    "corepack pnpm release:rc-check",
+    "owner decision blockers",
+    "No real npm publish",
+    "blocked real-publish actions",
+    "rollback",
+    "release ownership",
+    "ReleaseCandidateRehearsalReport"
+  ]) {
+    if (!handoffDocs.includes(text)) {
+      issues.push(`docs/release-candidate-handoff.md: missing '${text}'`);
+    }
+  }
+
+  const reportShapes = readText("docs/report-json-shapes.md");
+  for (const text of [
+    "ReleaseCandidateRehearsalReport",
+    "ReleaseCandidatePackage",
+    "ownerDecisionBlockers",
+    "blockedActions",
+    "release-candidate handoff",
+    "corepack pnpm release:rc-check"
+  ]) {
+    if (!reportShapes.includes(text)) {
+      issues.push(`docs/report-json-shapes.md: missing '${text}'`);
+    }
+  }
+
+  const passReport = readText("docs/phase-19-pass-report.md");
+  for (const text of [
+    "Status: PASS",
+    "corepack pnpm release:rc-check",
+    "owner decision blockers",
+    "blocked real-publish actions",
+    "ReleaseCandidateRehearsalReport",
+    "Real npm publish"
+  ]) {
+    if (!passReport.includes(text)) {
+      issues.push(`docs/phase-19-pass-report.md: missing '${text}'`);
+    }
+  }
+
+  const changelog = readText("CHANGELOG.md");
+  for (const text of [
+    "0.0.0-phase-19-release-candidate-rehearsal",
+    "release:rc-check",
+    "owner decision blockers",
+    "corepack pnpm release:rc-check"
+  ]) {
+    if (!changelog.includes(text)) {
+      issues.push(`CHANGELOG.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -404,6 +503,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/release-candidate-handoff.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-19-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/release-ci-policy.md"
     },
     {
@@ -425,6 +532,10 @@ function checkRequiredDocPointers() {
     {
       file: "README.md",
       text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "README.md",
+      text: "corepack pnpm release:rc-check"
     },
     {
       file: "README.md",
@@ -544,6 +655,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/README.md",
+      text: "release-candidate-handoff.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-19-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
       text: "release-ci-policy.md"
     },
     {
@@ -621,6 +740,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "docs/README.md",
+      text: "corepack pnpm release:rc-check"
     },
     {
       file: "docs/README.md",
@@ -733,6 +856,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/release-candidate-handoff.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-19-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "corepack pnpm release:rc-check"
     },
     {
       file: "docs/release-readiness.md",
@@ -1560,6 +1695,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/publish-preflight-policy.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/publish-preflight-policy.md",
       text: "Publish Preflight"
     },
     {
@@ -1573,6 +1712,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-workflow.md",
       text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/release-workflow.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/release-ci-policy.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/release-provenance.md",
+      text: "corepack pnpm release:rc-check"
     },
     {
       file: "docs/release-versioning-adr.md",

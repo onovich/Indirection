@@ -32,6 +32,7 @@
     "release:ci-check": "node scripts/release-ci-check.mjs",
     "release:dry-run": "node scripts/release-dry-run.mjs",
     "release:provenance": "node scripts/release-provenance.mjs",
+    "release:rc-check": "node scripts/release-candidate-rehearsal.mjs",
     "publish:preflight": "node scripts/publish-preflight.mjs",
     "check:docs": "node scripts/docs-drift-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
