@@ -211,6 +211,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-16-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-15-pass-report.md"
     },
     {
@@ -308,6 +312,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "three-gltf-adapter.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-16-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -436,6 +444,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-16-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -751,6 +763,54 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/phase-15-pass-report.md",
+      text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "repeated runtime lifecycle"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "Cache Storage isolation/cleanup"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "compressed capability source selection"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "indirection-e2e-result.json"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm test:e2e:chromium"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm test:e2e:firefox"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm test:e2e:webkit"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
       text: "Real npm publish"
     },
     {
@@ -1084,6 +1144,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-15-compressed-capability"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-16-browser-e2e-stress"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

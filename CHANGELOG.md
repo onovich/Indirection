@@ -152,3 +152,24 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
 ```
+
+## 0.0.0-phase-16-browser-e2e-stress - 2026-06-22
+
+- Added bounded Chromium, Firefox, and WebKit E2E stress coverage for repeated runtime acquire/release and multi-handle `AssetScope.dispose()`.
+- Added browser Cache Storage stress coverage for catalog-version isolation, selective cleanup, retained entries, and final cleanup.
+- Added browser E2E coverage for compressed capability source selection with tiny text fixture data.
+- Added structured `window.__indirectionE2E.diagnostics` and the `indirection-e2e-result.json` Playwright attachment for failure inspection.
+- Documented Playwright artifact diagnostics and extended docs drift guards for browser stress coverage.
+- Added the Phase 16 PASS report while keeping renderer E2E, real decoder packages, live Sinan Engine integration, real npm publish, login, registry writes, Git tags, and GitHub Releases out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm test:e2e:chromium
+corepack pnpm test:e2e:firefox
+corepack pnpm test:e2e:webkit
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```

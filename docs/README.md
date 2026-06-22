@@ -20,6 +20,7 @@ This index points to the current Phase 0-15 release-candidate, release-hardening
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 16 PASS report](phase-16-pass-report.md)
 - [Phase 15 PASS report](phase-15-pass-report.md)
 - [Phase 14 PASS report](phase-14-pass-report.md)
 - [Phase 13 PASS report](phase-13-pass-report.md)

@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, and Phase 15 compressed capability source-selection posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, and Phase 16 browser E2E stress posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -106,7 +106,7 @@ At this checkpoint, `test:e2e` runs the same browser fixture in Chromium, Firefo
 - No real npm publishing workflow has been created yet.
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
-- Browser E2E stress and artifact diagnostics remain future hardening candidates.
+- Browser E2E stress and artifact diagnostics are now covered in the Chromium, Firefox, and WebKit fixture gate.
 - The Three adapter intentionally does not cover real Draco/KTX2/meshopt decoder wiring, texture pipeline, renderer E2E, automatic deep GPU disposal, scene attach, renderer attach, or gameplay object factories.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
@@ -172,11 +172,13 @@ Phase 15 PASS report: `docs/phase-15-pass-report.md`
 
 Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
 
-Phase 16 is selected as the next in-repository phase after Phase 15 PASS. It should strengthen the Chromium, Firefox, and WebKit browser E2E gate with bounded stress coverage and better artifact diagnostics while keeping renderer E2E, real decoder integration, live Sinan Engine integration, and real npm publishing out of scope.
+Phase 16 strengthens the Chromium, Firefox, and WebKit browser E2E gate with bounded runtime lifecycle stress, Cache Storage isolation/cleanup stress, compressed capability source selection, structured browser diagnostics, and documented Playwright artifact policy while keeping renderer E2E, real decoder integration, live Sinan Engine integration, and real npm publishing out of scope.
+
+Phase 16 PASS report: `docs/phase-16-pass-report.md`
 
 ## Recommended Next Steps
 
-1. Execute the selected Phase 16 browser E2E stress and artifact diagnostics guide before starting real publish or live Sinan integration.
+1. Wait for the architect/strategist flow to select and dispatch the next approved guide before starting Phase 17.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -196,6 +198,8 @@ Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 
 Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
+
+Phase 16 PASS report: `docs/phase-16-pass-report.md`
 
 Compressed capability docs: `docs/compressed-capability-source-selection.md`
 
