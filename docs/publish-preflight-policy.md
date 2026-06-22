@@ -212,6 +212,8 @@ Run the local publish preflight gate with:
 corepack pnpm publish:preflight
 ```
 
+The same gate is available in GitHub Actions through the manual `Publish Preflight` workflow. It uses read-only repository permissions and runs `publish:preflight`, `release:dry-run`, and `git diff --check`.
+
 ## Relationship To Phase 10
 
 Phase 10 proved package readiness and release dry-run safety. Phase 11 adds the policy gate that says which human decisions are still required before a later real publish phase can start.

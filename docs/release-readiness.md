@@ -92,6 +92,8 @@ Phase 11 should keep the Phase 10 no-publish posture while creating the policy a
 
 Initial publish preflight policy: `docs/publish-preflight-policy.md`
 
+The manual GitHub Actions `Publish Preflight` workflow runs `corepack pnpm publish:preflight`, `corepack pnpm release:dry-run`, and `git diff --check` with read-only repository permissions.
+
 ## Recommended Next Steps
 
 1. Execute Phase 11 as publish preflight policy and release decision gates, because Phase 10 has already proven release dry-run/package readiness and the remaining v0.1 release risk is decision acceptance before any real publish.

@@ -168,29 +168,37 @@ async function assertWorkflowPolicy() {
   const releaseDryRunWorkflow = await readText(
     join(repoRoot, ".github/workflows/release-dry-run.yml")
   );
+  const publishPreflightWorkflow = await readText(
+    join(repoRoot, ".github/workflows/publish-preflight.yml")
+  );
 
-  for (const text of [
-    "workflow_dispatch:",
-    "permissions:",
-    "contents: read",
+  assertSafeWorkflow(releaseDryRunWorkflow, "release dry-run workflow", [
     "corepack pnpm release:dry-run"
-  ]) {
-    assert(
-      releaseDryRunWorkflow.includes(text),
-      `release dry-run workflow missing '${text}'`
-    );
-  }
+  ]);
+  assertSafeWorkflow(publishPreflightWorkflow, "publish preflight workflow", [
+    "corepack pnpm publish:preflight",
+    "corepack pnpm release:dry-run",
+    "git diff --check"
+  ]);
+}
 
+function assertSafeWorkflow(text, label, requiredCommands) {
+  for (const required of ["workflow_dispatch:", "permissions:", "contents: read"]) {
+    assert(text.includes(required), `${label} missing '${required}'`);
+  }
+  for (const command of requiredCommands) {
+    assert(text.includes(command), `${label} missing '${command}'`);
+  }
   for (const forbidden of [
-    "npm publish",
-    "pnpm publish",
-    "git tag",
-    "gh release",
-    "contents: write"
+    /\bnpm\s+publish(?:\s|$)/,
+    /\bpnpm\s+publish(?:\s|$)/,
+    /\bgit\s+tag(?:\s|$)/,
+    /\bgh\s+release(?:\s|$)/,
+    /\bcontents:\s+write\b/
   ]) {
     assert(
-      !releaseDryRunWorkflow.includes(forbidden),
-      `release dry-run workflow must not include '${forbidden}'`
+      !forbidden.test(text),
+      `${label} must not match ${forbidden}`
     );
   }
 }

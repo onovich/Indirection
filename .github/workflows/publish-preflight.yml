@@ -1,0 +1,35 @@
+name: Publish Preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Publish Preflight
+        run: corepack pnpm publish:preflight
+
+      - name: Release Dry Run
+        run: corepack pnpm release:dry-run
+
+      - name: Diff Check
+        run: git diff --check
