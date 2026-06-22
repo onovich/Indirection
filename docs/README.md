@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-19 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, and selected Phase 20 public docs/onboarding polish plan.
+This index points to the current Phase 0-20 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, and public evaluator onboarding docs.
 
 ## Core Project
 
@@ -21,12 +21,16 @@ This index points to the current Phase 0-19 release-candidate, release-hardening
 - [Phase 18 Release CI Policy Goal guide](indirection-phase-18-release-ci-policy-goal-guide.md)
 - [Phase 19 Release Candidate Rehearsal Goal guide](indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Phase 20 Public Docs Onboarding Goal guide](indirection-phase-20-public-docs-onboarding-goal-guide.md)
+- [Evaluator quickstart](evaluator-quickstart.md)
+- [Package entrypoints](package-entrypoints.md)
+- [Example workflows](example-workflows.md)
 - [Release CI policy](release-ci-policy.md)
 - [Release provenance](release-provenance.md)
 - [Release candidate handoff](release-candidate-handoff.md)
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 20 PASS report](phase-20-pass-report.md)
 - [Phase 19 PASS report](phase-19-pass-report.md)
 - [Phase 18 PASS report](phase-18-pass-report.md)
 - [Phase 17 PASS report](phase-17-pass-report.md)
@@ -73,3 +77,5 @@ git diff --check
 `validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
 
 `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` remain explicit release-readiness gates because they audit workflow permissions, package artifacts, publish, registry, tag side effects, and owner decision handoff separately from the main validation matrix.
+
+The public evaluator path starts at [Evaluator quickstart](evaluator-quickstart.md). It keeps the no-publish boundary visible: all packages remain `private: true`, `UNLICENSED`, and local-checkout-only until a dedicated owner-approved publish phase changes that policy.

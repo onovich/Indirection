@@ -28,6 +28,17 @@ Early milestones:
 4. Runtime adapter behind Sinan's existing `WebRuntime.loadModel(assetId, url)` boundary.
 5. Scene scope/group preload, followed later by Web/Three loaders, variant, compression, cache strategy, Vite integration, and CLI polish.
 
+## Evaluate Locally
+
+Indirection is ready for technical evaluation from a local checkout, but the workspace packages are still private and unpublished. Do not install them from npm, run real publish commands, create release tags, create GitHub Releases, or remove `private: true` / `UNLICENSED` until a later owner-approved publish phase changes that policy.
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm validate:full
+```
+
+For the guided path through CLI commands, package entrypoints, browser checks, example workflows, and no-publish release-readiness gates, start with [Evaluator quickstart](docs/evaluator-quickstart.md), [Package entrypoints](docs/package-entrypoints.md), and [Example workflows](docs/example-workflows.md).
+
 ## Validation
 
 ```powershell
@@ -83,12 +94,16 @@ git diff --check
 - [Phase 18 Release CI Policy Goal guide](docs/indirection-phase-18-release-ci-policy-goal-guide.md)
 - [Phase 19 Release Candidate Rehearsal Goal guide](docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Phase 20 Public Docs Onboarding Goal guide](docs/indirection-phase-20-public-docs-onboarding-goal-guide.md)
+- [Evaluator quickstart](docs/evaluator-quickstart.md)
+- [Package entrypoints](docs/package-entrypoints.md)
+- [Example workflows](docs/example-workflows.md)
 - [Release CI policy](docs/release-ci-policy.md)
 - [Release provenance](docs/release-provenance.md)
 - [Release candidate handoff](docs/release-candidate-handoff.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 20 PASS report](docs/phase-20-pass-report.md)
 - [Phase 19 PASS report](docs/phase-19-pass-report.md)
 - [Phase 18 PASS report](docs/phase-18-pass-report.md)
 - [Phase 17 PASS report](docs/phase-17-pass-report.md)

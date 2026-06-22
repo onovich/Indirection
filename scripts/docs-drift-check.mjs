@@ -11,6 +11,7 @@ checkReleaseDryRun();
 checkReleaseProvenance();
 checkReleaseCiPolicy();
 checkReleaseCandidateRehearsal();
+checkPublicOnboarding();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -335,6 +336,123 @@ function checkReleaseCandidateRehearsal() {
   }
 }
 
+function checkPublicOnboarding() {
+  const quickstart = readText("docs/evaluator-quickstart.md");
+  for (const text of [
+    "local checkout",
+    "private and unpublished",
+    "do not install them from npm",
+    "corepack pnpm install --frozen-lockfile",
+    "corepack pnpm validate:full",
+    "corepack pnpm smoke:cli",
+    "corepack pnpm smoke:phase7",
+    "corepack pnpm pack:check",
+    "corepack pnpm test:e2e:firefox",
+    "corepack pnpm release:rc-check",
+    "corepack pnpm publish:preflight",
+    "Do not commit generated local artifacts"
+  ]) {
+    if (!quickstart.includes(text)) {
+      issues.push(`docs/evaluator-quickstart.md: missing '${text}'`);
+    }
+  }
+
+  const packageEntrypoints = readText("docs/package-entrypoints.md");
+  for (const text of [
+    "@indirection/protocol",
+    "@indirection/schema",
+    "@indirection/compiler",
+    "@indirection/runtime",
+    "@indirection/loaders-web",
+    "@indirection/three",
+    "@indirection/vite",
+    "@indirection/cli",
+    "@indirection/testkit",
+    "Must not own",
+    "Do not run npm install instructions",
+    "private: true",
+    "UNLICENSED",
+    "corepack pnpm pack:check"
+  ]) {
+    if (!packageEntrypoints.includes(text)) {
+      issues.push(`docs/package-entrypoints.md: missing '${text}'`);
+    }
+  }
+
+  const examples = readText("docs/example-workflows.md");
+  for (const text of [
+    "Manifest To Catalog",
+    "Runtime Loading And Lifecycle",
+    "Browser Loaders And Cache",
+    "Phase 7 Integrated Example",
+    "Vite Virtual Catalog",
+    "Three GLTF Adapter",
+    "Compressed Capability Selection",
+    "Release-Candidate Gates",
+    "corepack pnpm smoke:phase7",
+    "corepack pnpm release:rc-check"
+  ]) {
+    if (!examples.includes(text)) {
+      issues.push(`docs/example-workflows.md: missing '${text}'`);
+    }
+  }
+
+  const readme = readText("README.md");
+  for (const text of [
+    "docs/evaluator-quickstart.md",
+    "docs/package-entrypoints.md",
+    "docs/example-workflows.md",
+    "docs/phase-20-pass-report.md",
+    "private and unpublished",
+    "corepack pnpm install --frozen-lockfile"
+  ]) {
+    if (!readme.includes(text)) {
+      issues.push(`README.md: missing '${text}'`);
+    }
+  }
+
+  const docsIndex = readText("docs/README.md");
+  for (const text of [
+    "evaluator-quickstart.md",
+    "package-entrypoints.md",
+    "example-workflows.md",
+    "phase-20-pass-report.md",
+    "public evaluator path"
+  ]) {
+    if (!docsIndex.includes(text)) {
+      issues.push(`docs/README.md: missing '${text}'`);
+    }
+  }
+
+  const passReport = readText("docs/phase-20-pass-report.md");
+  for (const text of [
+    "Status: PASS",
+    "evaluator guide",
+    "package entrypoint docs",
+    "example workflow docs",
+    "corepack pnpm validate:full",
+    "corepack pnpm release:rc-check",
+    "Real npm publish"
+  ]) {
+    if (!passReport.includes(text)) {
+      issues.push(`docs/phase-20-pass-report.md: missing '${text}'`);
+    }
+  }
+
+  const changelog = readText("CHANGELOG.md");
+  for (const text of [
+    "0.0.0-phase-20-public-docs-onboarding",
+    "evaluator quickstart",
+    "package entrypoint",
+    "example workflow",
+    "corepack pnpm release:rc-check"
+  ]) {
+    if (!changelog.includes(text)) {
+      issues.push(`CHANGELOG.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -507,6 +625,22 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/evaluator-quickstart.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/package-entrypoints.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/example-workflows.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-20-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/release-candidate-handoff.md"
     },
     {
@@ -660,6 +794,22 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "evaluator-quickstart.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "package-entrypoints.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "example-workflows.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-20-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -872,6 +1022,22 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/evaluator-quickstart.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/package-entrypoints.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/example-workflows.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-20-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1814,6 +1980,14 @@ function checkRequiredDocPointers() {
       text: "0.0.0-phase-18-release-ci-policy"
     },
     {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-20-public-docs-onboarding"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
       file: "docs/phase-18-pass-report.md",
       text: "Status: PASS"
     },
@@ -1852,6 +2026,34 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-19-pass-report.md",
       text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "docs/evaluator-quickstart.md"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "docs/package-entrypoints.md"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "docs/example-workflows.md"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/phase-20-pass-report.md",
+      text: "Real npm publish"
     },
     {
       file: "docs/phase-17-pass-report.md",

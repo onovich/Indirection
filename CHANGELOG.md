@@ -135,6 +135,26 @@ corepack pnpm release:rc-check
 git diff --check
 ```
 
+## 0.0.0-phase-20-public-docs-onboarding - 2026-06-23
+
+- Added the evaluator quickstart for fresh local checkout evaluation, CLI tours, browser E2E, fast smoke commands, generated artifact policy, and no-publish release-readiness gates.
+- Added package entrypoint documentation for all 9 workspace packages, including ownership boundaries, local consumption guidance, focused package tests, and `pack:check` consumer-readiness smoke.
+- Added example workflow documentation connecting manifest validation, catalog compilation, runtime loading and lifecycle, browser loaders/cache, Vite virtual catalogs, Three GLTF parser injection, compressed capability selection, and release-candidate gates.
+- Updated README, docs index, release readiness, release candidate handoff, docs drift guards, and the Phase 20 PASS report while keeping real npm publish, npm login, registry writes, Git tags, GitHub Releases, package uploads, signing, Sigstore, npm provenance upload, OIDC publish, workflow write permissions, `private: true`, and `UNLICENSED` unchanged.
+
+Validation:
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm validate:full
+corepack pnpm release:ci-check
+corepack pnpm release:provenance
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+corepack pnpm release:rc-check
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

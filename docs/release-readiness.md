@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, Phase 19 no-publish release-candidate rehearsal posture, and selected Phase 20 public docs/onboarding polish plan before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, Phase 19 no-publish release-candidate rehearsal posture, and Phase 20 public docs/onboarding posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -50,6 +50,7 @@ git diff --check
 - Phase 17 release provenance, local `release:provenance`, deterministic report guards, docs drift guards, and release dry-run integration are in place without publishing, uploading provenance, signing, creating tags, or creating GitHub Releases.
 - Phase 18 release CI policy, local `release:ci-check`, workflow read-only permission guards, command parity guards, docs drift guards, and release dry-run/publish-preflight integration are in place without workflow write permissions, package uploads, signing, OIDC publish permissions, npm provenance upload, tags, or GitHub Releases.
 - Phase 19 release-candidate rehearsal, local `release:rc-check`, handoff docs, report shape docs, docs drift guards, and PASS report are in place without publishing, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, package uploads, artifact uploads, OIDC publish permissions, or workflow write permissions.
+- Phase 20 public onboarding docs, evaluator quickstart, package entrypoint documentation, example workflow documentation, docs drift guards, and PASS report are in place without changing package visibility, license policy, publish permissions, release ownership blockers, or protocol/schema/compiler/runtime semantics.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -219,12 +220,20 @@ Phase 19 PASS report: `docs/phase-19-pass-report.md`
 
 Phase 20 guide: `docs/indirection-phase-20-public-docs-onboarding-goal-guide.md`
 
-Phase 20 is selected to make the repository easier for technical evaluators to understand and run from a local checkout while real npm publishing remains blocked. It should polish the README, quickstart/evaluator path, package entrypoint docs, example workflow docs, and no-publish messaging without changing package visibility, license, publish permissions, or core runtime semantics.
+Phase 20 makes the repository easier for technical evaluators to understand and run from a local checkout while real npm publishing remains blocked. It polishes the README, quickstart/evaluator path, package entrypoint docs, example workflow docs, validation guidance, and no-publish messaging without changing package visibility, license, publish permissions, or core runtime semantics.
+
+Evaluator quickstart: `docs/evaluator-quickstart.md`
+
+Package entrypoint docs: `docs/package-entrypoints.md`
+
+Example workflow docs: `docs/example-workflows.md`
+
+Phase 20 PASS report: `docs/phase-20-pass-report.md`
 
 ## Recommended Next Steps
 
 1. Keep `validate:full`, `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` as the local release-readiness gates.
-2. Execute the selected Phase 20 public docs/onboarding polish before adding any real publishing workflow.
+2. Keep the Phase 20 evaluator docs current when package entrypoints, examples, validation gates, or release blockers change.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, workflow permissions, package upload, release ownership, and rollback decisions are accepted.
 4. Keep the Phase 19 owner decision blockers visible until a dedicated owner-approved publish phase changes them.
 5. Keep read-only release workflow policy checks in place until a dedicated approved publish phase changes them.
@@ -253,6 +262,14 @@ Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
 Phase 19 guide: `docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md`
 
 Phase 20 guide: `docs/indirection-phase-20-public-docs-onboarding-goal-guide.md`
+
+Evaluator quickstart: `docs/evaluator-quickstart.md`
+
+Package entrypoint docs: `docs/package-entrypoints.md`
+
+Example workflow docs: `docs/example-workflows.md`
+
+Phase 20 PASS report: `docs/phase-20-pass-report.md`
 
 Release candidate handoff docs: `docs/release-candidate-handoff.md`
 

@@ -2,6 +2,8 @@
 
 This document records the Phase 19 no-publish release-candidate handoff. It is a human decision package for a future v0.1 release, not permission to publish packages, create tags, create GitHub Releases, upload artifacts, sign packages, or upload npm provenance.
 
+For local checkout evaluation, start with [Evaluator quickstart](evaluator-quickstart.md), then use [Package entrypoints](package-entrypoints.md) and [Example workflows](example-workflows.md) to inspect package boundaries and runnable examples. These Phase 20 onboarding docs explain how to evaluate the repository locally; they do not change the owner decision blockers or grant publish permission.
+
 ## Commands
 
 Run the local release-candidate rehearsal gate with:
