@@ -55,7 +55,9 @@ At this checkpoint, the full matrix passes without requiring buffer-round fixes.
 
 ## Recommended Next Steps
 
-1. Choose whether Phase 9 should focus on real browser E2E, npm release workflow, or live Sinan integration.
+1. Execute Phase 9 as real browser E2E, because it is the safest remaining release-readiness risk that does not depend on package publishing decisions or an external Sinan repository.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, and versioning policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
+
+Phase 9 guide: `docs/indirection-phase-9-browser-e2e-goal-guide.md`

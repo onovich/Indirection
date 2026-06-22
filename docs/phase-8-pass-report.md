@@ -60,3 +60,13 @@ Expected final push target: `origin/main`.
 - Keep `validate:full` as the local and CI release gate.
 - Do not publish npm packages until package visibility, scope, versioning, and release workflow are explicitly accepted.
 - Keep host adapters out of core packages unless a dedicated adapter package is approved.
+
+## Next Phase
+
+Phase 9 should focus on the safest remaining release-readiness risk that can be solved inside this repository: real browser E2E coverage.
+
+- Add a true browser runner and repeatable fixture.
+- Verify loaders-web, persistent cache, runtime lifecycle, fallback, diagnostics, and compiler/Vite browser consumption in at least Chromium.
+- Keep npm publishing, live Sinan integration, and real Three.js GLTF parsing out of this phase.
+
+Guide: `docs/indirection-phase-9-browser-e2e-goal-guide.md`
