@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createReleaseCiPolicyReport } from "./release-ci-check.mjs";
 import { createReleaseProvenance } from "./release-provenance.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -20,6 +21,7 @@ await assertChangelogPolicy();
 assertNoRealPublishScripts([rootManifest, ...packages.map((entry) => entry.manifest)]);
 assertNoForbiddenTrackedArtifacts();
 
+const ciPolicyReport = await createReleaseCiPolicyReport();
 runPnpm(["build"]);
 runPnpm(["pack:check"]);
 const provenanceReport = await createReleaseProvenance();
@@ -39,7 +41,7 @@ assertEqual(
 );
 
 console.log(
-  `release-dry-run passed: ${packages.length} packages audited, packed, and verified with ${provenanceReport.packageCount} deterministic provenance records and without publish or tag side effects`
+  `release-dry-run passed: ${packages.length} packages audited, packed, and verified with ${provenanceReport.packageCount} deterministic provenance records plus ${ciPolicyReport.workflowCount} CI policy workflow records and without publish or tag side effects`
 );
 
 async function readWorkspacePackages() {

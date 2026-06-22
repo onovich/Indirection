@@ -9,6 +9,7 @@ checkValidateFull();
 checkBrowserMatrix();
 checkReleaseDryRun();
 checkReleaseProvenance();
+checkReleaseCiPolicy();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -109,6 +110,132 @@ function checkReleaseProvenance() {
   }
 }
 
+function checkReleaseCiPolicy() {
+  const command = packageJson.scripts?.["release:ci-check"];
+  if (typeof command !== "string" || !command.includes("scripts/release-ci-check.mjs")) {
+    issues.push("package.json: release:ci-check must run scripts/release-ci-check.mjs");
+  }
+
+  const releaseDryRun = readText("scripts/release-dry-run.mjs");
+  for (const text of [
+    "createReleaseCiPolicyReport",
+    "CI policy workflow records"
+  ]) {
+    if (!releaseDryRun.includes(text)) {
+      issues.push(`scripts/release-dry-run.mjs: missing '${text}'`);
+    }
+  }
+
+  const publishPreflight = readText("scripts/publish-preflight.mjs");
+  for (const text of [
+    "createReleaseCiPolicyReport",
+    "read-only CI policy workflow records"
+  ]) {
+    if (!publishPreflight.includes(text)) {
+      issues.push(`scripts/publish-preflight.mjs: missing '${text}'`);
+    }
+  }
+
+  const ciPolicyScript = readText("scripts/release-ci-check.mjs");
+  for (const text of [
+    "canonicalReleaseCiPolicyJson",
+    "workflowWritePermissions",
+    "localCommandsAreSourceOfTruth",
+    "corepack pnpm release:ci-check",
+    "corepack pnpm release:provenance",
+    "corepack pnpm release:dry-run",
+    "corepack pnpm publish:preflight",
+    "release-ci-check passed"
+  ]) {
+    if (!ciPolicyScript.includes(text)) {
+      issues.push(`scripts/release-ci-check.mjs: missing '${text}'`);
+    }
+  }
+
+  const validateWorkflow = readText(".github/workflows/validate.yml");
+  for (const text of [
+    "permissions:",
+    "contents: read",
+    "corepack pnpm validate:full",
+    "git diff --check"
+  ]) {
+    if (!validateWorkflow.includes(text)) {
+      issues.push(`.github/workflows/validate.yml: missing '${text}'`);
+    }
+  }
+  for (const forbidden of [
+    "corepack pnpm release:ci-check",
+    "corepack pnpm release:provenance",
+    "corepack pnpm release:dry-run",
+    "corepack pnpm publish:preflight"
+  ]) {
+    if (validateWorkflow.includes(forbidden)) {
+      issues.push(`.github/workflows/validate.yml: must not include '${forbidden}'`);
+    }
+  }
+
+  for (const workflowFile of [
+    ".github/workflows/release-dry-run.yml",
+    ".github/workflows/publish-preflight.yml"
+  ]) {
+    const workflow = readText(workflowFile);
+    for (const text of [
+      "workflow_dispatch:",
+      "permissions:",
+      "contents: read",
+      "corepack pnpm install --frozen-lockfile",
+      "corepack pnpm release:ci-check",
+      "corepack pnpm release:provenance",
+      "corepack pnpm release:dry-run",
+      "corepack pnpm publish:preflight",
+      "git diff --check"
+    ]) {
+      if (!workflow.includes(text)) {
+        issues.push(`${workflowFile}: missing '${text}'`);
+      }
+    }
+  }
+
+  const ciPolicyDocs = readText("docs/release-ci-policy.md");
+  for (const text of [
+    "corepack pnpm release:ci-check",
+    "permissions: contents: read",
+    "local release commands remain the semantic source of truth",
+    "Release CI policy reports",
+    "npm `--provenance`"
+  ]) {
+    if (!ciPolicyDocs.includes(text)) {
+      issues.push(`docs/release-ci-policy.md: missing '${text}'`);
+    }
+  }
+
+  const reportShapes = readText("docs/report-json-shapes.md");
+  for (const text of [
+    "ReleaseCiPolicyReport",
+    "ReleaseCiPolicy",
+    "workflowWritePermissions: false",
+    "ReleaseCiPolicyWorkflow",
+    "corepack pnpm release:ci-check"
+  ]) {
+    if (!reportShapes.includes(text)) {
+      issues.push(`docs/report-json-shapes.md: missing '${text}'`);
+    }
+  }
+
+  const passReport = readText("docs/phase-18-pass-report.md");
+  for (const text of [
+    "Status: PASS",
+    "corepack pnpm release:ci-check",
+    "3 workflows audited with read-only permissions",
+    "workflow write permissions",
+    "Real npm publish"
+  ]) {
+    if (!passReport.includes(text)) {
+      issues.push(`docs/phase-18-pass-report.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -169,8 +296,10 @@ function checkPublishPreflight() {
     "permissions:",
     "contents: read",
     "corepack pnpm install --frozen-lockfile",
-    "corepack pnpm publish:preflight",
+    "corepack pnpm release:ci-check",
+    "corepack pnpm release:provenance",
     "corepack pnpm release:dry-run",
+    "corepack pnpm publish:preflight",
     "git diff --check"
   ];
 
@@ -268,6 +397,18 @@ function checkRequiredDocPointers() {
     {
       file: "README.md",
       text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/release-ci-policy.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-18-pass-report.md"
+    },
+    {
+      file: "README.md",
+      text: "corepack pnpm release:ci-check"
     },
     {
       file: "README.md",
@@ -392,6 +533,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "release-ci-policy.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-18-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "corepack pnpm release:ci-check"
     },
     {
       file: "docs/README.md",
@@ -564,6 +717,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/release-ci-policy.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-18-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "corepack pnpm release:ci-check"
     },
     {
       file: "docs/release-readiness.md",
@@ -1202,6 +1367,22 @@ function checkRequiredDocPointers() {
       text: "npm `--provenance`"
     },
     {
+      file: "docs/release-ci-policy.md",
+      text: "Release CI Policy"
+    },
+    {
+      file: "docs/release-ci-policy.md",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: "docs/release-ci-policy.md",
+      text: "permissions: contents: read"
+    },
+    {
+      file: "docs/report-json-shapes.md",
+      text: "ReleaseCiPolicyReport"
+    },
+    {
       file: "docs/compressed-capability-source-selection.md",
       text: "Compressed Capability Source Selection"
     },
@@ -1327,11 +1508,19 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/publish-preflight-policy.md",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: "docs/publish-preflight-policy.md",
       text: "Publish Preflight"
     },
     {
       file: "docs/release-workflow.md",
       text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/release-workflow.md",
+      text: "corepack pnpm release:ci-check"
     },
     {
       file: "docs/release-workflow.md",
@@ -1378,6 +1567,22 @@ function checkRequiredDocPointers() {
       text: "0.0.0-phase-17-release-provenance"
     },
     {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-18-release-ci-policy"
+    },
+    {
+      file: "docs/phase-18-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-18-pass-report.md",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: "docs/phase-18-pass-report.md",
+      text: "Real npm publish"
+    },
+    {
       file: "docs/phase-17-pass-report.md",
       text: "Status: PASS"
     },
@@ -1407,11 +1612,31 @@ function checkRequiredDocPointers() {
     },
     {
       file: ".github/workflows/release-dry-run.yml",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: ".github/workflows/release-dry-run.yml",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: ".github/workflows/release-dry-run.yml",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: ".github/workflows/release-dry-run.yml",
       text: "contents: read"
     },
     {
       file: ".github/workflows/publish-preflight.yml",
       text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: ".github/workflows/publish-preflight.yml",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: ".github/workflows/publish-preflight.yml",
+      text: "corepack pnpm release:provenance"
     },
     {
       file: ".github/workflows/publish-preflight.yml",

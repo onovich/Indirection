@@ -25,11 +25,17 @@ jobs:
       - name: Install
         run: corepack pnpm install --frozen-lockfile
 
-      - name: Publish Preflight
-        run: corepack pnpm publish:preflight
+      - name: Release CI Policy Check
+        run: corepack pnpm release:ci-check
+
+      - name: Release Provenance
+        run: corepack pnpm release:provenance
 
       - name: Release Dry Run
         run: corepack pnpm release:dry-run
+
+      - name: Publish Preflight
+        run: corepack pnpm publish:preflight
 
       - name: Diff Check
         run: git diff --check

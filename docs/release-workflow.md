@@ -13,15 +13,18 @@ This document records the Phase 10 release dry-run policy for v0.1 package readi
 Run the local dry-run gate with:
 
 ```powershell
+corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 ```
+
+The CI policy gate statically audits release-related GitHub Actions workflows for `permissions: contents: read`, forbidden publish/tag/release/upload actions, and release command parity.
 
 The standalone provenance gate packs every workspace package in temporary directories, records tarball filenames, sha256 hashes, byte sizes, file lists, exports, CLI bin entries, and no-publish policy evidence, then verifies repeated canonical JSON output is deterministic.
 
 The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, local release provenance, and no Git status or tag side effects.
 
-The same core gate is available in GitHub Actions through the manual `Release Dry Run` workflow. It uses read-only repository permissions and does not publish packages or create tags.
+The same core gates are available in GitHub Actions through the manual `Release Dry Run` and `Publish Preflight` workflows. They use read-only repository permissions, run `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `git diff --check`, and do not publish packages, upload artifacts, create tags, or create GitHub Releases.
 
 ## Package Visibility Policy
 
@@ -89,8 +92,10 @@ Run this checklist before any release-readiness handoff:
 ```powershell
 corepack pnpm install --frozen-lockfile
 corepack pnpm validate:full
+corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
+corepack pnpm publish:preflight
 git diff --check
 git status --short --branch
 ```
@@ -98,8 +103,10 @@ git status --short --branch
 Expected result:
 
 - `validate:full` passes, including browser E2E and package smoke.
+- `release:ci-check` reports 3 workflows audited with read-only permissions and release command parity.
 - `release:provenance` reports 9 packages audited with deterministic sha256 provenance.
 - `release:dry-run` reports 9 packages audited, packed, and verified with 9 deterministic provenance records and without publish or tag side effects.
+- `publish:preflight` reports 9 packages audited without publish, npm login, registry write, or tag side effects.
 - `git diff --check` is clean.
 - `git status --short --branch` has no tracked or untracked release artifacts.
 

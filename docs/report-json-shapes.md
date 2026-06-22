@@ -300,6 +300,106 @@ interface ReleaseProvenanceBin {
 
 Release provenance reports must not include timestamps, absolute paths, local usernames, environment variable values, npm tokens, registry credentials, Git tags, GitHub Releases, signing evidence, Sigstore attestations, npm provenance uploads, or OIDC publish workflow state.
 
+## Release CI Policy Report
+
+`scripts/release-ci-check.mjs` emits a local static workflow policy report when run with `--json`. The generated output is for local inspection and test assertions only; do not commit generated CI policy reports.
+
+```ts
+interface ReleaseCiPolicyReport {
+  schemaVersion: 1;
+  generatedBy: "scripts/release-ci-check.mjs";
+  workflowCount: number;
+  policy: ReleaseCiPolicy;
+  validation: ReleaseCiPolicyValidation;
+  workflows: readonly ReleaseCiPolicyWorkflow[];
+}
+```
+
+Policy fields must stay no-publish and read-only while release workflows are validation gates:
+
+```ts
+interface ReleaseCiPolicy {
+  repositoryPermissions: "read-only";
+  localCommandsAreSourceOfTruth: true;
+  publish: false;
+  npmLogin: false;
+  registryWrite: false;
+  gitTag: false;
+  githubRelease: false;
+  signing: false;
+  sigstore: false;
+  npmProvenanceUpload: false;
+  oidcPublish: false;
+  packageUpload: false;
+  workflowWritePermissions: false;
+}
+```
+
+Validation evidence:
+
+```ts
+interface ReleaseCiPolicyValidation {
+  releaseCommandOrder: readonly [
+    "corepack pnpm install --frozen-lockfile",
+    "corepack pnpm release:ci-check",
+    "corepack pnpm release:provenance",
+    "corepack pnpm release:dry-run",
+    "corepack pnpm publish:preflight",
+    "git diff --check"
+  ];
+  forbiddenActions: readonly string[];
+  workflowPermissions: {
+    required: {
+      contents: "read";
+    };
+    forbiddenWritePermissions: readonly string[];
+  };
+}
+```
+
+Workflow entries:
+
+```ts
+interface ReleaseCiPolicyWorkflow {
+  path: ".github/workflows/validate.yml" | ".github/workflows/release-dry-run.yml" | ".github/workflows/publish-preflight.yml";
+  role: "validation" | "release-gate";
+  trigger: "push-and-pull-request" | "workflow-dispatch";
+  permissions: readonly ReleaseCiPolicyPermission[];
+  commands: readonly string[];
+  requiredCommands: readonly ReleaseCiPolicyCommandCheck[];
+  forbiddenMatches: readonly ReleaseCiPolicyForbiddenMatch[];
+  requiredText: readonly ReleaseCiPolicyTextCheck[];
+  forbiddenCommands: readonly ReleaseCiPolicyForbiddenCommand[];
+}
+
+interface ReleaseCiPolicyPermission {
+  name: string;
+  access: "read";
+}
+
+interface ReleaseCiPolicyCommandCheck {
+  command: string;
+  order: number;
+}
+
+interface ReleaseCiPolicyForbiddenMatch {
+  name: string;
+  evidence: string;
+}
+
+interface ReleaseCiPolicyTextCheck {
+  text: string;
+  present: boolean;
+}
+
+interface ReleaseCiPolicyForbiddenCommand {
+  command: string;
+  present: false;
+}
+```
+
+Release CI policy reports must not include workflow write permissions, secrets, registry credentials, npm publish commands, package uploads, artifact uploads, Git tag creation, Git tag pushes, GitHub Release creation, signing, Sigstore, npm provenance uploads, or OIDC publish workflow state.
+
 ## Validation
 
 Report shape changes must update:
@@ -307,4 +407,5 @@ Report shape changes must update:
 - compiler report tests for the vanilla fixture.
 - Sinan report contract tests for the compatibility fixture.
 - release provenance guard tests and `docs/release-provenance.md` when provenance fields change.
+- release CI policy guard tests and `docs/release-ci-policy.md` when workflow policy fields change.
 - this document when adding, removing, or changing machine-readable fields.

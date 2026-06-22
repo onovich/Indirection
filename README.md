@@ -55,6 +55,7 @@ corepack pnpm validate:full
 Release dry-run and publish preflight gates are separate from `validate:full`:
 
 ```powershell
+corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
@@ -79,10 +80,12 @@ git diff --check
 - [Phase 16 Browser E2E Stress Goal guide](docs/indirection-phase-16-browser-e2e-stress-goal-guide.md)
 - [Phase 17 Release Provenance Goal guide](docs/indirection-phase-17-release-provenance-goal-guide.md)
 - [Phase 18 Release CI Policy Goal guide](docs/indirection-phase-18-release-ci-policy-goal-guide.md)
+- [Release CI policy](docs/release-ci-policy.md)
 - [Release provenance](docs/release-provenance.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 18 PASS report](docs/phase-18-pass-report.md)
 - [Phase 17 PASS report](docs/phase-17-pass-report.md)
 - [Phase 16 PASS report](docs/phase-16-pass-report.md)
 - [Phase 15 PASS report](docs/phase-15-pass-report.md)

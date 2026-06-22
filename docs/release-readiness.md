@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, and selected Phase 18 release CI policy plan before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, and Phase 18 release CI policy posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -8,6 +8,7 @@ Local and CI validation use the same main entrypoint:
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 corepack pnpm publish:preflight
@@ -27,6 +28,7 @@ git diff --check
 - `smoke:cli`: real CLI bin smoke for `validate`, `build`, `report`, and `inspect`.
 - `smoke:phase7`: advanced loader/cache/Vite integration example.
 - `pack:check`: tarball file whitelist plus temporary consumer import smoke, including the packaged Three GLTF parser API with a parser stub.
+- `release:ci-check`: static GitHub Actions release policy parity check for read-only permissions, forbidden publish/tag/release/upload actions, and release workflow command order.
 - `release:provenance`: deterministic local tarball provenance for all 9 packed workspace packages, including sha256, byte size, file list, exports, bin, validation command evidence, and no-publish policy evidence.
 
 ## Current Release Candidate Status
@@ -44,6 +46,7 @@ git diff --check
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 - Phase 17 release provenance, local `release:provenance`, deterministic report guards, docs drift guards, and release dry-run integration are in place without publishing, uploading provenance, signing, creating tags, or creating GitHub Releases.
+- Phase 18 release CI policy, local `release:ci-check`, workflow read-only permission guards, command parity guards, docs drift guards, and release dry-run/publish-preflight integration are in place without workflow write permissions, package uploads, signing, OIDC publish permissions, npm provenance upload, tags, or GitHub Releases.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -193,13 +196,17 @@ Phase 17 PASS report: `docs/phase-17-pass-report.md`
 
 Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
 
-Phase 18 is selected to harden the read-only GitHub Actions release gates and local release command parity after Phase 17 PASS. It must keep real npm publish, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, OIDC publish permissions, workflow write permissions, and generated release artifacts out of scope.
+Phase 18 hardens the read-only GitHub Actions release gates and local release command parity after Phase 17 PASS. `release:ci-check` statically audits `validate.yml`, `release-dry-run.yml`, and `publish-preflight.yml` for read-only permissions, forbidden publish/tag/release/upload actions, and expected command order while keeping local release commands as the semantic source of truth.
+
+Release CI policy docs: `docs/release-ci-policy.md`
+
+Phase 18 PASS report: `docs/phase-18-pass-report.md`
 
 ## Recommended Next Steps
 
-1. Keep `validate:full`, `release:provenance`, `release:dry-run`, and `publish:preflight` as the local release-readiness gates.
-2. Execute the selected Phase 18 release CI policy guide before adding any real publishing workflow.
-3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, and rollback decisions are accepted.
+1. Keep `validate:full`, `release:ci-check`, `release:provenance`, `release:dry-run`, and `publish:preflight` as the local release-readiness gates.
+2. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, workflow permissions, package upload, and rollback decisions are accepted.
+3. Keep read-only release workflow policy checks in place until a dedicated approved publish phase changes them.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
@@ -221,6 +228,10 @@ Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
 Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
 
 Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
+
+Release CI policy docs: `docs/release-ci-policy.md`
+
+Phase 18 PASS report: `docs/phase-18-pass-report.md`
 
 Release provenance docs: `docs/release-provenance.md`
 

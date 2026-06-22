@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createReleaseCiPolicyReport } from "./release-ci-check.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packagesRoot = join(repoRoot, "packages");
@@ -14,7 +15,7 @@ const packages = await readWorkspacePackages();
 
 assertRootPolicy(rootManifest);
 assertPackagePolicy(packages);
-await assertWorkflowPolicy();
+const ciPolicyReport = await createReleaseCiPolicyReport();
 await assertPreflightDocs(packages);
 assertNoRealPublishScripts([rootManifest, ...packages.map((entry) => entry.manifest)]);
 await assertNoNpmCredentialsTracked();
@@ -36,7 +37,7 @@ assertEqual(
 );
 
 console.log(
-  `publish-preflight passed: ${packages.length} packages audited without publish, npm login, registry write, or tag side effects`
+  `publish-preflight passed: ${packages.length} packages audited with ${ciPolicyReport.workflowCount} read-only CI policy workflow records and without publish, npm login, registry write, or tag side effects`
 );
 
 async function readWorkspacePackages() {
@@ -162,45 +163,6 @@ async function assertPreflightDocs(packages) {
     readiness.includes("docs/publish-preflight-policy.md"),
     "release readiness must point at publish preflight policy"
   );
-}
-
-async function assertWorkflowPolicy() {
-  const releaseDryRunWorkflow = await readText(
-    join(repoRoot, ".github/workflows/release-dry-run.yml")
-  );
-  const publishPreflightWorkflow = await readText(
-    join(repoRoot, ".github/workflows/publish-preflight.yml")
-  );
-
-  assertSafeWorkflow(releaseDryRunWorkflow, "release dry-run workflow", [
-    "corepack pnpm release:dry-run"
-  ]);
-  assertSafeWorkflow(publishPreflightWorkflow, "publish preflight workflow", [
-    "corepack pnpm publish:preflight",
-    "corepack pnpm release:dry-run",
-    "git diff --check"
-  ]);
-}
-
-function assertSafeWorkflow(text, label, requiredCommands) {
-  for (const required of ["workflow_dispatch:", "permissions:", "contents: read"]) {
-    assert(text.includes(required), `${label} missing '${required}'`);
-  }
-  for (const command of requiredCommands) {
-    assert(text.includes(command), `${label} missing '${command}'`);
-  }
-  for (const forbidden of [
-    /\bnpm\s+publish(?:\s|$)/,
-    /\bpnpm\s+publish(?:\s|$)/,
-    /\bgit\s+tag(?:\s|$)/,
-    /\bgh\s+release(?:\s|$)/,
-    /\bcontents:\s+write\b/
-  ]) {
-    assert(
-      !forbidden.test(text),
-      `${label} must not match ${forbidden}`
-    );
-  }
 }
 
 function assertNoRealPublishScripts(manifests) {

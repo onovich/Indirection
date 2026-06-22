@@ -98,6 +98,24 @@ corepack pnpm publish:preflight
 git diff --check
 ```
 
+## 0.0.0-phase-18-release-ci-policy - 2026-06-23
+
+- Added `release:ci-check` for static GitHub Actions release policy parity across validate, release dry-run, and publish preflight workflows.
+- Hardened workflows with explicit read-only repository permissions and documented command parity for install, CI policy, provenance, dry-run, preflight, and diff checks.
+- Integrated the CI policy checker into `release:dry-run` and `publish:preflight`.
+- Added release CI policy docs, report shape documentation, docs drift guards, and the Phase 18 PASS report while keeping real npm publish, login, registry writes, Git tags, GitHub Releases, package uploads, signing, Sigstore, npm provenance upload, OIDC publish, and workflow write permissions out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:ci-check
+corepack pnpm release:provenance
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

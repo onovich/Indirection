@@ -29,6 +29,7 @@
     "test:e2e:firefox": "pnpm build && playwright test --project=firefox",
     "test:e2e:webkit": "pnpm build && playwright test --project=webkit",
     "pack:check": "node scripts/pack-check.mjs",
+    "release:ci-check": "node scripts/release-ci-check.mjs",
     "release:dry-run": "node scripts/release-dry-run.mjs",
     "release:provenance": "node scripts/release-provenance.mjs",
     "publish:preflight": "node scripts/publish-preflight.mjs",

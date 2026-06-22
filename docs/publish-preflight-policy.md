@@ -200,6 +200,7 @@ The safe local gates are:
 
 ```powershell
 corepack pnpm validate:full
+corepack pnpm release:ci-check
 corepack pnpm release:provenance
 corepack pnpm release:dry-run
 git diff --check
@@ -213,7 +214,7 @@ Run the local publish preflight gate with:
 corepack pnpm publish:preflight
 ```
 
-The same gate is available in GitHub Actions through the manual `Publish Preflight` workflow. It uses read-only repository permissions and runs `publish:preflight`, `release:dry-run`, and `git diff --check`.
+The same gate is available in GitHub Actions through the manual `Publish Preflight` workflow. It uses read-only repository permissions and runs `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `git diff --check`.
 
 ## Relationship To Phase 10
 
@@ -226,3 +227,9 @@ The Phase 10 `release:dry-run` gate remains required and must continue to pass.
 Phase 17 adds `release:provenance` as local dry-run artifact evidence. It records tarball sha256 values, byte sizes, file lists, exports, CLI bin entries, validation command evidence, and no-publish policy booleans for packed packages.
 
 This remains a local gate only. It must not run npm login, npm whoami, npm access, npm token, npm owner, npm dist-tag, registry writes, Git tag creation, GitHub Release creation, signing, Sigstore, npm `--provenance`, or OIDC publish workflows.
+
+## Relationship To Phase 18
+
+Phase 18 adds `release:ci-check` as a static workflow policy and parity gate. `publish:preflight` invokes the same checker so preflight and manual GitHub Actions release workflows agree on read-only permissions, command order, and forbidden publish/tag/release/upload/provenance actions.
+
+This remains no-publish release hardening only. It must not add workflow write permissions, package upload, artifact upload, OIDC publish permissions, signing, Sigstore, npm provenance upload, Git tags, or GitHub Releases.
