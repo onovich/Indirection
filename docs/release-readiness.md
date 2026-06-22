@@ -35,6 +35,7 @@ git diff --check
 - Report JSON shapes are documented and covered by contract tests.
 - CLI and package smoke are part of the full matrix.
 - Real browser E2E runs in Chromium, Firefox, and WebKit through Playwright and is part of `validate:full`.
+- Runtime `LoadedAsset.dispose` execution is documented as a generic lifecycle contract in `docs/runtime-lifecycle.md`.
 - `@indirection/three` parses `model/gltf` transport bodies through injected `GLTFLoader.parseAsync` or a host-provided parser wrapper while keeping Three.js out of runtime core.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
@@ -149,6 +150,8 @@ Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 
 Phase 14 has been selected as the next architect/strategist-owned implementation phase. It should make runtime `LoadedAsset.dispose` executable and testable, then add bounded `@indirection/three` owned-resource disposer, instantiate hook, and animation metadata contracts while keeping Three-specific lifecycle outside runtime core.
 
+Runtime lifecycle docs: `docs/runtime-lifecycle.md`
+
 ## Recommended Next Steps
 
 1. Execute Phase 14 Three Adapter Lifecycle using `docs/indirection-phase-14-three-lifecycle-goal-guide.md`.
@@ -167,6 +170,8 @@ Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 
 Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
+
+Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
 Phase 13 adapter docs: `docs/three-gltf-adapter.md`
 

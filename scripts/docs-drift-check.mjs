@@ -191,6 +191,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/runtime-lifecycle.md"
+    },
+    {
+      file: "README.md",
       text: "docs/three-gltf-adapter.md"
     },
     {
@@ -264,6 +268,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-14-three-lifecycle-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "runtime-lifecycle.md"
     },
     {
       file: "docs/README.md",
@@ -372,6 +380,34 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "Phase 14 Three Adapter Lifecycle"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/runtime-lifecycle.md"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "LoadedAsset.dispose"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "AssetHandle.release()"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "AssetScope.dispose()"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "IND_DISPOSE_FAILED"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "hasDisposer"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "evictable"
     },
     {
       file: "docs/release-readiness.md",
