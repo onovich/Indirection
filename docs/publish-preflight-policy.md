@@ -133,6 +133,57 @@ Disallowed Phase 11 checks:
 - `npm owner` mutation commands;
 - `npm publish`, `pnpm publish`, or any registry write command.
 
+## Git Tag And GitHub Release Policy
+
+Current Phase 11 tag/release state:
+
+- no real Git tag is created;
+- no GitHub Release is created;
+- no workflow has write permissions for contents or releases;
+- release tag naming remains `pending`;
+- tag signing and release notes attachment policy remain `pending`.
+
+A later real publish phase must accept:
+
+- tag name format, such as `v0.1.0` or a package-specific tag;
+- whether tags are signed;
+- which commit may be tagged;
+- whether GitHub Releases are created before or after npm publish;
+- which artifacts, if any, are attached to a GitHub Release;
+- who approves and pushes the tag;
+- how failed publish after tag creation is handled.
+
+Allowed Phase 11 checks:
+
+- inspect existing local Git tags pointing at `HEAD`;
+- verify preflight workflows do not request write permissions;
+- verify docs record that no tag/release is created in Phase 11.
+
+Disallowed Phase 11 checks:
+
+- `git tag` creation or deletion;
+- `git push --tags`;
+- GitHub Release creation, deletion, or mutation;
+- release asset upload.
+
+## Rollback And Accidental Publish Policy
+
+Phase 11 has no npm artifact and no Git tag, so rollback is repository-only:
+
+- if a preflight-only commit is wrong, fix it with a normal follow-up commit or an explicitly requested git revert;
+- if local validation fails, do not commit or push the failing change;
+- if a future real publish phase accidentally publishes a package, stop publish work and record package name, version, npm account, command, timestamp, and registry URL before choosing deprecate or unpublish behavior;
+- do not run `npm unpublish` in Phase 11;
+- do not create a GitHub Release to explain a failed Phase 11 preflight because no release exists.
+
+Future rollback decisions must be accepted before real publish:
+
+- whether accidental releases are deprecated or unpublished;
+- who owns npm incident response;
+- how to communicate a failed release candidate;
+- whether a bad Git tag is deleted or superseded;
+- whether package consumers receive a follow-up patch release.
+
 ## Safe Local Gates
 
 The safe local gates are:
