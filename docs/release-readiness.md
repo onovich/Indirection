@@ -90,6 +90,8 @@ The next planned phase is `docs/indirection-phase-11-publish-preflight-goal-guid
 
 Phase 11 should keep the Phase 10 no-publish posture while creating the policy and safety gates required before any real v0.1 package release. It should document package visibility acceptance, npm scope/account preflight, license policy, versioning policy, Git tag and GitHub Release policy, rollback policy, and a local `publish:preflight` or equivalent gate that does not publish, login to npm, write to the registry, or create tags.
 
+Initial publish preflight policy: `docs/publish-preflight-policy.md`
+
 ## Recommended Next Steps
 
 1. Execute Phase 11 as publish preflight policy and release decision gates, because Phase 10 has already proven release dry-run/package readiness and the remaining v0.1 release risk is decision acceptance before any real publish.

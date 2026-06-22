@@ -62,6 +62,7 @@ corepack pnpm validate:full
 - [Phase 10 Release Workflow Goal guide](docs/indirection-phase-10-release-workflow-goal-guide.md)
 - [Phase 11 Publish Preflight Goal guide](docs/indirection-phase-11-publish-preflight-goal-guide.md)
 - [Phase 10 PASS report](docs/phase-10-pass-report.md)
+- [Publish preflight policy](docs/publish-preflight-policy.md)
 - [Release workflow dry-run policy](docs/release-workflow.md)
 - [Release versioning ADR](docs/release-versioning-adr.md)
 - [Browser E2E validation](docs/browser-e2e.md)
