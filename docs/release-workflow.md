@@ -75,3 +75,45 @@ A package can move from dry-run candidate to real publish candidate only when:
 - `release:dry-run` confirms no real publish, no tag creation, no registry write, and no dirty workspace artifacts.
 - `validate:full` and browser E2E still pass.
 - Package visibility, npm permissions, and release tag policy have been accepted outside the implementation executor lane.
+
+## Local Release Dry-Run Checklist
+
+Run this checklist before any release-readiness handoff:
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+git diff --check
+git status --short --branch
+```
+
+Expected result:
+
+- `validate:full` passes, including browser E2E and package smoke.
+- `release:dry-run` reports 9 packages audited, packed, and verified without publish or tag side effects.
+- `git diff --check` is clean.
+- `git status --short --branch` has no tracked or untracked release artifacts.
+
+## Npm Permission Preflight For A Later Real Release
+
+Do not run these checks as part of Phase 10 unless a later publish-preflight owner explicitly requests them. They are documented so the next phase has a concrete gate before removing `private: true`.
+
+Before a real publish phase, confirm:
+
+- The npm account is known and accepted for this project.
+- The `@indirection` organization or package scope ownership is accepted.
+- The intended package visibility for each workspace package is accepted.
+- The public SPDX license and repository license file are accepted.
+- npm 2FA and token policy are accepted.
+- The release tag and GitHub Release policy are accepted.
+- `npm publish --dry-run` or `pnpm publish --dry-run` is allowed only after those decisions and must still avoid uploading to the registry.
+
+## No-Publish And Rollback Policy
+
+Phase 10 creates no npm artifact and no Git tag, so rollback is repository-only:
+
+- If local dry-run validation fails, fix the failing metadata, package smoke, docs, or script gate before committing.
+- If a bad dry-run-only commit is pushed, use a normal follow-up fix commit or an explicitly requested git revert.
+- Do not run `npm unpublish` during Phase 10 because Phase 10 must not publish anything.
+- If a future phase accidentally publishes a package, stop release work, record the package name, version, npm account, timestamp, and command output, then follow npm's current unpublish/deprecate policy under a dedicated incident decision.
