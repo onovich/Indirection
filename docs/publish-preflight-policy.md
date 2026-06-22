@@ -58,6 +58,24 @@ A later real publish phase must accept all of these decisions before any package
 | GitHub Release | `pending` | No GitHub Release is created in Phase 11. |
 | Rollback/deprecate response | `pending` | Phase 11 has no npm artifact to roll back; future accidental publish response needs owner acceptance. |
 
+## Workspace Publish Candidate Matrix
+
+Every workspace package remains `private: true` in Phase 11. The matrix below describes future publish candidacy only.
+
+| Package | Phase 11 decision status | Future v0.1 candidacy | Owner decision needed before real publish |
+|---|---|---|---|
+| `@indirection/protocol` | `pending` | First-batch public candidate | Accept public API support scope for `AssetId`, diagnostics, and shared contracts. |
+| `@indirection/schema` | `pending` | First-batch public candidate | Accept Zod-bearing tooling package as public while keeping Zod out of runtime core. |
+| `@indirection/compiler` | `pending` | First-batch public candidate | Accept compiler/report contract support and importer compatibility promise. |
+| `@indirection/runtime` | `pending` | First-batch public candidate | Accept runtime lifecycle support scope and zero-dependency boundary. |
+| `@indirection/loaders-web` | `pending` | Public adapter candidate | Accept browser/Web adapter support scope and Cache Storage surface. |
+| `@indirection/three` | `pending` | Deferred or optional-peer public candidate | Decide whether skeleton Three GLTF boundary is mature enough before real parser integration. |
+| `@indirection/vite` | `pending` | Public tooling candidate | Accept Vite peer range and virtual catalog plugin support scope. |
+| `@indirection/cli` | `pending` | Public tooling candidate | Accept CLI command contract for validate/build/report/inspect workflows. |
+| `@indirection/testkit` | `pending` | Deferred or developer-support public candidate | Decide whether testkit is public support surface or internal release fixture. |
+
+Current default: no package may move from candidate to real publish until its owner decision is `accepted` and the publish-preflight gate passes.
+
 ## Safe Local Gates
 
 The safe local gates are:
