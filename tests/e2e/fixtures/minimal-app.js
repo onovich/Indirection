@@ -5,6 +5,7 @@ import {
 } from "@indirection/loaders-web";
 import { protocolVersion } from "@indirection/protocol";
 import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
+import virtualCatalog from "/virtual/indirection/catalog.js";
 
 const loaders = createWebDataLoaders();
 const transport = new InMemoryTransport({
@@ -20,6 +21,7 @@ try {
   const cache = await runCacheStorageProbe();
   const fallback = await runFallbackDiagnosticsProbe();
   const runtime = await runRuntimeLifecycleProbe();
+  const virtualCatalogResult = consumeVirtualCatalog();
 
   const result = {
     cache,
@@ -33,7 +35,8 @@ try {
     },
     packageName: loadersWebPackageName,
     runtime,
-    status: "ready"
+    status: "ready",
+    virtualCatalog: virtualCatalogResult
   };
 
   window.__indirectionE2E = result;
@@ -167,6 +170,17 @@ function resourceSummary(snapshot, assetId) {
     fallbackAssetId: resource?.fallbackAssetId,
     refCount: resource?.refCount,
     state: resource?.state
+  };
+}
+
+function consumeVirtualCatalog() {
+  const assetIds = Object.keys(virtualCatalog.assets).sort();
+  const virtualText = virtualCatalog.assets["browser:virtual.text"];
+  return {
+    assetIds,
+    catalogVersionIsHash: virtualCatalog.catalogVersion.startsWith("sha256-"),
+    protocolVersion: virtualCatalog.protocolVersion,
+    textSourceUrl: virtualText.sources[0].url
   };
 }
 

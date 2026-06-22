@@ -83,6 +83,12 @@ test("serves the browser E2E fixture", async ({ page }) => {
         },
         value: "runtime-from-chromium"
       },
-      status: "ready"
+      status: "ready",
+      virtualCatalog: {
+        assetIds: ["browser:virtual.text"],
+        catalogVersionIsHash: true,
+        protocolVersion: 1,
+        textSourceUrl: "virtual-catalog.txt"
+      }
     });
 });

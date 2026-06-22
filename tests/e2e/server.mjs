@@ -3,10 +3,15 @@ import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  createIndirectionVitePlugin,
+  resolvedVirtualCatalogModuleId
+} from "../../packages/vite/dist/index.js";
 
 const repoRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const fixtureRoot = join(repoRoot, "tests", "e2e", "fixtures");
 const port = Number(process.env.PORT ?? 4173);
+const virtualCatalogModule = createVirtualCatalogModule();
 
 const contentTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -18,6 +23,14 @@ const contentTypes = new Map([
 
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
+  if (url.pathname === "/virtual/indirection/catalog.js") {
+    response.writeHead(200, {
+      "content-type": "text/javascript; charset=utf-8"
+    });
+    response.end(virtualCatalogModule);
+    return;
+  }
+
   const resolvedRequest = resolveRequestPath(url.pathname);
 
   if (!isWithinRoot(resolvedRequest.root, resolvedRequest.absolutePath)) {
@@ -77,4 +90,27 @@ function stripLeadingSlash(pathname) {
 function isWithinRoot(root, absolutePath) {
   const relativePath = relative(root, absolutePath);
   return relativePath === "" || (!relativePath.startsWith("..") && !isAbsolute(relativePath));
+}
+
+function createVirtualCatalogModule() {
+  const plugin = createIndirectionVitePlugin({
+    model: {
+      assets: [
+        {
+          dependencies: [],
+          id: "browser:virtual.text",
+          sources: [{ url: "virtual-catalog.txt" }],
+          type: "text/plain"
+        }
+      ],
+      diagnostics: [],
+      groups: []
+    }
+  });
+  const moduleText = plugin.load(resolvedVirtualCatalogModuleId);
+  if (moduleText === undefined) {
+    throw new Error("Indirection Vite plugin did not produce the virtual catalog module");
+  }
+
+  return moduleText;
 }
