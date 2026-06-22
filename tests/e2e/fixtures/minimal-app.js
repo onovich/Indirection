@@ -23,6 +23,7 @@ try {
   const runtime = await runRuntimeLifecycleProbe();
   const stress = {
     cacheStorage: await runCacheStorageStressProbe(),
+    capabilitySelection: await runCapabilitySelectionProbe(),
     runtimeLifecycle: await runRuntimeLifecycleStressProbe()
   };
   const virtualCatalogResult = consumeVirtualCatalog();
@@ -342,6 +343,83 @@ async function runRuntimeLifecycleStressProbe() {
     scopeResourcesAfterDispose: scopeAssetIds.map((assetId) =>
       resourceSummary(afterScopeDisposeSnapshot, assetId)
     )
+  };
+}
+
+async function runCapabilitySelectionProbe() {
+  const assetId = "browser:compressed.text";
+  const catalog = {
+    assets: {
+      [assetId]: {
+        sources: [
+          { when: { capability: ["draco"] }, url: "compressed.draco.txt" },
+          { when: { capability: ["ktx2"] }, url: "compressed.ktx2.txt" },
+          { when: { capability: ["meshopt"] }, url: "compressed.meshopt.txt" },
+          { url: "compressed.default.txt" }
+        ],
+        type: "text/plain"
+      }
+    },
+    catalogVersion: "phase-16-capability",
+    protocolVersion
+  };
+  const records = {
+    "compressed.default.txt": "default-browser-source",
+    "compressed.draco.txt": "draco-browser-source",
+    "compressed.ktx2.txt": "ktx2-browser-source",
+    "compressed.meshopt.txt": "meshopt-browser-source"
+  };
+
+  return {
+    declarationOrder: await acquireCapabilitySelection({
+      assetId,
+      catalog,
+      capability: ["meshopt", "draco", "ktx2"],
+      records,
+      scopeId: "browser-capability-declaration-order"
+    }),
+    defaultSource: await acquireCapabilitySelection({
+      assetId,
+      catalog,
+      capability: [],
+      records,
+      scopeId: "browser-capability-default"
+    }),
+    ktx2: await acquireCapabilitySelection({
+      assetId,
+      catalog,
+      capability: ["ktx2"],
+      records,
+      scopeId: "browser-capability-ktx2"
+    })
+  };
+}
+
+async function acquireCapabilitySelection({
+  assetId,
+  catalog,
+  capability,
+  records,
+  scopeId
+}) {
+  const manager = createAssetManager({
+    catalog,
+    context: capability.length === 0 ? {} : { capability },
+    loaders,
+    transport: new InMemoryTransport(records)
+  });
+  const resolved = manager.resolveSource(assetId);
+  const scope = manager.createScope(scopeId);
+  const handle = await scope.acquire(assetId);
+  await handle.release();
+  await scope.dispose();
+
+  return {
+    capability,
+    handleReleased: handle.released,
+    sourceIndex: resolved.sourceIndex,
+    sourceUrl: resolved.source.url,
+    value: handle.value
   };
 }
 

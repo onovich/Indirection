@@ -134,6 +134,29 @@ test("serves the browser E2E fixture", async ({ page }) => {
             "phase-16-cache-c"
           ]
         },
+        capabilitySelection: {
+          declarationOrder: {
+            capability: ["meshopt", "draco", "ktx2"],
+            handleReleased: true,
+            sourceIndex: 0,
+            sourceUrl: "compressed.draco.txt",
+            value: "draco-browser-source"
+          },
+          defaultSource: {
+            capability: [],
+            handleReleased: true,
+            sourceIndex: 3,
+            sourceUrl: "compressed.default.txt",
+            value: "default-browser-source"
+          },
+          ktx2: {
+            capability: ["ktx2"],
+            handleReleased: true,
+            sourceIndex: 1,
+            sourceUrl: "compressed.ktx2.txt",
+            value: "ktx2-browser-source"
+          }
+        },
         runtimeLifecycle: {
           catalogVersion: "phase-16-runtime-stress",
           leakWarningsAfterDispose: [],
