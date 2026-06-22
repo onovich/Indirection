@@ -64,6 +64,10 @@ function checkRequiredDocPointers() {
       text: "docs/phase-9-pass-report.md"
     },
     {
+      file: "README.md",
+      text: "docs/indirection-phase-10-release-workflow-goal-guide.md"
+    },
+    {
       file: "docs/README.md",
       text: "indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -84,8 +88,20 @@ function checkRequiredDocPointers() {
       text: "phase-9-pass-report.md"
     },
     {
+      file: "docs/README.md",
+      text: "indirection-phase-10-release-workflow-goal-guide.md"
+    },
+    {
       file: "docs/release-readiness.md",
       text: "`test:e2e`"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-10-release-workflow-goal-guide.md"
+    },
+    {
+      file: "docs/phase-9-pass-report.md",
+      text: "docs/indirection-phase-10-release-workflow-goal-guide.md"
     },
     {
       file: "docs/phase-0-7-pass-report.md",

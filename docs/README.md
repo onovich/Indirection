@@ -10,6 +10,7 @@ This index points to the current Phase 0-9 release-candidate, release-hardening,
 - [Phase 0-7 Big Goal execution guide](indirection-phase-0-7-big-goal-execution-guide.md)
 - [Phase 8 Release Hardening Goal guide](indirection-phase-8-release-hardening-goal-guide.md)
 - [Phase 9 Real Browser E2E Goal guide](indirection-phase-9-browser-e2e-goal-guide.md)
+- [Phase 10 Release Workflow Goal guide](indirection-phase-10-release-workflow-goal-guide.md)
 - [Browser E2E validation](browser-e2e.md)
 - [Phase 9 PASS report](phase-9-pass-report.md)
 - [Phase 8 PASS report](phase-8-pass-report.md)

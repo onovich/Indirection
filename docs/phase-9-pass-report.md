@@ -64,3 +64,13 @@ Expected final push target: `origin/main`.
 - Keep `corepack pnpm validate:full` as the local and CI release gate.
 - Keep Playwright traces, reports, and test results out of git unless a future fixture explicitly requires committed artifacts.
 - Keep browser-only APIs in adapter/test/CI boundaries; do not move Cache Storage or Playwright assumptions into runtime core.
+
+## Next Phase
+
+Phase 10 should focus on the safest remaining v0.1 release-readiness risk that can be solved inside this repository: release workflow dry-run and package readiness.
+
+- Define package visibility and metadata policy without publishing npm packages.
+- Add a repeatable release dry-run gate that does not create tags or publish artifacts.
+- Keep live Sinan integration, real Three.js GLTF parsing, and Firefox/WebKit browser expansion out of this phase.
+
+Guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`

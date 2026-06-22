@@ -68,9 +68,11 @@ At this checkpoint, Chromium E2E passes locally through `validate:full` and cove
 
 ## Recommended Next Steps
 
-1. Choose the next Phase 10 track: npm release workflow, live Sinan Engine integration, real Three.js GLTF parser integration, or Firefox/WebKit E2E expansion.
+1. Execute Phase 10 as release workflow dry-run and package readiness, because it is the safest remaining v0.1 release-readiness risk that can be solved inside this repository without npm publish permissions.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, and versioning policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
+
+Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
