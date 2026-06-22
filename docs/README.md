@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-21 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, and local public website/demo docs-site rehearsal.
+This index points to the current Phase 0-21 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, release provenance documentation, release CI policy documentation, no-publish release-candidate rehearsal handoff, public evaluator onboarding docs, local public website/demo docs-site rehearsal, and selected Phase 22 browser ImageBitmap lifecycle plan.
 
 ## Core Project
 
@@ -22,6 +22,7 @@ This index points to the current Phase 0-21 release-candidate, release-hardening
 - [Phase 19 Release Candidate Rehearsal Goal guide](indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Phase 20 Public Docs Onboarding Goal guide](indirection-phase-20-public-docs-onboarding-goal-guide.md)
 - [Phase 21 Public Demo Docs Site Goal guide](indirection-phase-21-public-demo-docs-site-goal-guide.md)
+- [Phase 22 ImageBitmap Lifecycle Goal guide](indirection-phase-22-image-bitmap-lifecycle-goal-guide.md)
 - [Evaluator quickstart](evaluator-quickstart.md)
 - [Package entrypoints](package-entrypoints.md)
 - [Example workflows](example-workflows.md)

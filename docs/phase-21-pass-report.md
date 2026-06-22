@@ -68,3 +68,9 @@ Expected final push target: `origin/main`.
 
 - Keep `smoke:site-demo` in `validate:full` so public presentation drift is caught with the normal local gate.
 - Keep generated demo output under ignored `build/` paths and never treat it as release evidence or hosted preview output.
+
+## Next Phase
+
+Planner selection after PASS: Phase 22 Browser ImageBitmap And Texture Source Lifecycle.
+
+Guide: `docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md`

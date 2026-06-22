@@ -13,6 +13,7 @@ checkReleaseCiPolicy();
 checkReleaseCandidateRehearsal();
 checkPublicOnboarding();
 checkPublicDemoDocsSitePlan();
+checkImageBitmapLifecyclePlan();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -623,6 +624,36 @@ function checkPublicDemoDocsSitePlan() {
   }
 }
 
+function checkImageBitmapLifecyclePlan() {
+  const guide = readText("docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md");
+  for (const text of [
+    "Browser ImageBitmap And Texture Source Lifecycle",
+    "ImageBitmap",
+    "image/bitmap",
+    "createImageBitmap",
+    "LoadedAsset.dispose",
+    "renderer E2E",
+    "WebGL scene smoke",
+    "corepack pnpm validate:full",
+    "corepack pnpm publish:preflight",
+    "docs/phase-22-pass-report.md"
+  ]) {
+    if (!guide.includes(text)) {
+      issues.push(`docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md: missing '${text}'`);
+    }
+  }
+
+  const phase21Pass = readText("docs/phase-21-pass-report.md");
+  for (const text of [
+    "Planner selection after PASS: Phase 22 Browser ImageBitmap And Texture Source Lifecycle",
+    "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md"
+  ]) {
+    if (!phase21Pass.includes(text)) {
+      issues.push(`docs/phase-21-pass-report.md: missing '${text}'`);
+    }
+  }
+}
+
 function checkBrowserMatrix() {
   assertScriptIncludes("test:e2e", "playwright test");
   assertScriptIncludes("test:e2e:chromium", "--project=chromium");
@@ -796,6 +827,10 @@ function checkRequiredDocPointers() {
     {
       file: "README.md",
       text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md"
     },
     {
       file: "README.md",
@@ -980,6 +1015,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-22-image-bitmap-lifecycle-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -1224,6 +1263,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-21-public-demo-docs-site-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 22 Browser ImageBitmap And Texture Source Lifecycle"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1970,6 +2017,30 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "Browser ImageBitmap And Texture Source Lifecycle"
+    },
+    {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "createImageBitmap"
+    },
+    {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "LoadedAsset.dispose"
+    },
+    {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "renderer E2E"
+    },
+    {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
       file: "docs/release-provenance.md",
       text: "Release Provenance"
     },
@@ -2320,6 +2391,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-21-pass-report.md",
       text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "Planner selection after PASS: Phase 22 Browser ImageBitmap And Texture Source Lifecycle"
+    },
+    {
+      file: "docs/phase-21-pass-report.md",
+      text: "docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md"
     },
     {
       file: "docs/phase-17-pass-report.md",
