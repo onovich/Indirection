@@ -21,6 +21,9 @@ try {
   const cache = await runCacheStorageProbe();
   const fallback = await runFallbackDiagnosticsProbe();
   const runtime = await runRuntimeLifecycleProbe();
+  const stress = {
+    runtimeLifecycle: await runRuntimeLifecycleStressProbe()
+  };
   const virtualCatalogResult = consumeVirtualCatalog();
 
   const result = {
@@ -36,6 +39,7 @@ try {
     packageName: loadersWebPackageName,
     runtime,
     status: "ready",
+    stress,
     virtualCatalog: virtualCatalogResult
   };
 
@@ -163,6 +167,84 @@ async function runRuntimeLifecycleProbe() {
   };
 }
 
+async function runRuntimeLifecycleStressProbe() {
+  const repeatedAssetId = "browser:stress.repeated";
+  const scopeAssetIds = [
+    "browser:stress.scope-a",
+    "browser:stress.scope-b",
+    "browser:stress.scope-c"
+  ];
+  const assets = {
+    [repeatedAssetId]: {
+      sources: [{ url: "stress-repeated.txt" }],
+      type: "text/plain"
+    }
+  };
+  const records = {
+    "stress-repeated.txt": "stress-repeated-value"
+  };
+
+  for (const assetId of scopeAssetIds) {
+    const slug = assetId.split(".").at(-1);
+    assets[assetId] = {
+      sources: [{ url: `${slug}.txt` }],
+      type: "text/plain"
+    };
+    records[`${slug}.txt`] = `${slug}-value`;
+  }
+
+  const manager = createAssetManager({
+    catalog: {
+      assets,
+      catalogVersion: "phase-16-runtime-stress",
+      protocolVersion
+    },
+    loaders,
+    transport: new InMemoryTransport(records)
+  });
+
+  const repeated = [];
+  for (let iteration = 1; iteration <= 4; iteration += 1) {
+    const scope = manager.createScope(`browser-stress-repeat-${iteration}`);
+    const handle = await scope.acquire(repeatedAssetId);
+    const whileHeld = resourceSummary(manager.snapshot(), repeatedAssetId);
+    await handle.release();
+    const afterRelease = resourceSummary(manager.snapshot(), repeatedAssetId);
+    await scope.dispose();
+
+    repeated.push({
+      afterRelease,
+      handleReleased: handle.released,
+      iteration,
+      value: handle.value,
+      whileHeld
+    });
+  }
+
+  const scope = manager.createScope("browser-stress-scope");
+  const scopeHandles = [];
+  for (const assetId of scopeAssetIds) {
+    scopeHandles.push(await scope.acquire(assetId));
+  }
+  const beforeScopeDispose = scope.snapshot();
+  const leakWarningsWhileHeld = manager.snapshot().leakWarnings.map(leakSummary);
+  await scope.dispose();
+  const afterScopeDisposeSnapshot = manager.snapshot();
+
+  return {
+    catalogVersion: afterScopeDisposeSnapshot.catalogVersion,
+    leakWarningsAfterDispose: afterScopeDisposeSnapshot.leakWarnings,
+    leakWarningsWhileHeld,
+    repeated,
+    scopeBeforeDispose: beforeScopeDispose,
+    scopeDisposed: scope.disposed,
+    scopeHandlesReleased: scopeHandles.map((handle) => handle.released),
+    scopeResourcesAfterDispose: scopeAssetIds.map((assetId) =>
+      resourceSummary(afterScopeDisposeSnapshot, assetId)
+    )
+  };
+}
+
 function resourceSummary(snapshot, assetId) {
   const resource = snapshot.resources.find((candidate) => candidate.assetId === assetId);
   return {
@@ -170,6 +252,14 @@ function resourceSummary(snapshot, assetId) {
     fallbackAssetId: resource?.fallbackAssetId,
     refCount: resource?.refCount,
     state: resource?.state
+  };
+}
+
+function leakSummary(resource) {
+  return {
+    assetId: resource.assetId,
+    refCount: resource.refCount,
+    state: resource.state
   };
 }
 

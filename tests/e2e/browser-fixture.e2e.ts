@@ -6,6 +6,24 @@ test("serves the browser E2E fixture", async ({ page }) => {
   await expect(page).toHaveTitle("Indirection E2E Fixture");
   await expect(page.getByTestId("status")).toHaveText("ready");
 
+  const repeatedRuntimeStress = [1, 2, 3, 4].map((iteration) => ({
+    afterRelease: {
+      causeCode: undefined,
+      fallbackAssetId: undefined,
+      refCount: 0,
+      state: "released"
+    },
+    handleReleased: true,
+    iteration,
+    value: "stress-repeated-value",
+    whileHeld: {
+      causeCode: undefined,
+      fallbackAssetId: undefined,
+      refCount: 1,
+      state: "ready"
+    }
+  }));
+
   await expect
     .poll(() =>
       page.evaluate(() => (window as Window & { __indirectionE2E?: unknown }).__indirectionE2E)
@@ -84,6 +102,62 @@ test("serves the browser E2E fixture", async ({ page }) => {
         value: "runtime-from-browser"
       },
       status: "ready",
+      stress: {
+        runtimeLifecycle: {
+          catalogVersion: "phase-16-runtime-stress",
+          leakWarningsAfterDispose: [],
+          leakWarningsWhileHeld: [
+            {
+              assetId: "browser:stress.scope-a",
+              refCount: 1,
+              state: "ready"
+            },
+            {
+              assetId: "browser:stress.scope-b",
+              refCount: 1,
+              state: "ready"
+            },
+            {
+              assetId: "browser:stress.scope-c",
+              refCount: 1,
+              state: "ready"
+            }
+          ],
+          repeated: repeatedRuntimeStress,
+          scopeBeforeDispose: {
+            assetIds: [
+              "browser:stress.scope-a",
+              "browser:stress.scope-b",
+              "browser:stress.scope-c"
+            ],
+            disposed: false,
+            handleCount: 3,
+            id: "browser-stress-scope"
+          },
+          scopeDisposed: true,
+          scopeHandlesReleased: [true, true, true],
+          scopeResourcesAfterDispose: [
+            {
+              causeCode: undefined,
+              fallbackAssetId: undefined,
+              refCount: 0,
+              state: "released"
+            },
+            {
+              causeCode: undefined,
+              fallbackAssetId: undefined,
+              refCount: 0,
+              state: "released"
+            },
+            {
+              causeCode: undefined,
+              fallbackAssetId: undefined,
+              refCount: 0,
+              state: "released"
+            }
+          ]
+        }
+      },
       virtualCatalog: {
         assetIds: ["browser:virtual.text"],
         catalogVersionIsHash: true,
