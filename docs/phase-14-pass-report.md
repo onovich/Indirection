@@ -83,9 +83,11 @@ Expected final push target: `origin/main`.
 
 ## Next Phase
 
-Planner selection after PASS: no Phase 15 guide is selected in this executor report.
+Planner selection after PASS: Phase 15 Compressed Capability Source Selection.
 
-The architect/strategist flow should choose the next approved guide before executor-side implementation continues.
+Next guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
+
+The architect/strategist flow selected capability-driven compressed source selection as the next in-repository phase while real npm publish, live Sinan Engine integration, decoder package integration, and renderer E2E remain deferred.
 
 ## Risks And Recommendations
 

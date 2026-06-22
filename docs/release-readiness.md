@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, and Phase 14 Three lifecycle posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, and selected Phase 15 compressed capability source-selection guide before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -157,9 +157,15 @@ Three adapter lifecycle docs: `docs/three-gltf-adapter.md`
 
 Phase 14 PASS report: `docs/phase-14-pass-report.md`
 
+## Phase 15 Compressed Capability Source Selection
+
+Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
+
+Phase 15 is selected as the next in-repository phase after Phase 14 PASS. It should make Draco, KTX2, and meshopt readiness visible through declarative capability/source-selection contracts without adding real decoder dependencies, texture pipeline work, renderer E2E, live Sinan Engine integration, or real npm publishing.
+
 ## Recommended Next Steps
 
-1. Wait for the architect/strategist flow to select the next approved phase guide.
+1. Execute the selected Phase 15 compressed capability source-selection guide before starting real publish or live Sinan integration.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -175,6 +181,8 @@ Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 
 Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
+
+Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 
 Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 

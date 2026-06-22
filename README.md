@@ -74,6 +74,7 @@ git diff --check
 - [Phase 12 Browser Matrix Goal guide](docs/indirection-phase-12-browser-matrix-goal-guide.md)
 - [Phase 13 Three GLTF Goal guide](docs/indirection-phase-13-three-gltf-goal-guide.md)
 - [Phase 14 Three Lifecycle Goal guide](docs/indirection-phase-14-three-lifecycle-goal-guide.md)
+- [Phase 15 Compressed Capability Goal guide](docs/indirection-phase-15-compressed-capability-goal-guide.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
 - [Phase 14 PASS report](docs/phase-14-pass-report.md)
