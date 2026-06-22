@@ -652,6 +652,156 @@ function checkImageBitmapLifecyclePlan() {
       issues.push(`docs/phase-21-pass-report.md: missing '${text}'`);
     }
   }
+
+  const loadersWeb = readText("packages/loaders-web/src/index.ts");
+  for (const text of [
+    "createImageBitmapLoader",
+    "ImageBitmapResource",
+    "createImageBitmapResourceDisposer",
+    "image/bitmap",
+    "createImageBitmap"
+  ]) {
+    if (!loadersWeb.includes(text)) {
+      issues.push(`packages/loaders-web/src/index.ts: missing '${text}'`);
+    }
+  }
+
+  const loadersWebTests = readText("packages/loaders-web/test/loaders-web.test.ts");
+  for (const text of [
+    "disposes ImageBitmap resources after the final shared handle release",
+    "closes ImageBitmap resources once when a scope is disposed repeatedly",
+    "keeps image decode failure distinct from runtime fallback success",
+    "rejects ImageBitmap decode when the acquire signal is already aborted"
+  ]) {
+    if (!loadersWebTests.includes(text)) {
+      issues.push(`packages/loaders-web/test/loaders-web.test.ts: missing '${text}'`);
+    }
+  }
+
+  const browserSmoke = readText("scripts/browser-smoke.mjs");
+  for (const text of [
+    "createImageBitmapLoader",
+    "imageBitmap",
+    "closeCount"
+  ]) {
+    if (!browserSmoke.includes(text)) {
+      issues.push(`scripts/browser-smoke.mjs: missing '${text}'`);
+    }
+  }
+
+  const packCheck = readText("scripts/pack-check.mjs");
+  for (const text of [
+    "createImageBitmapLoader",
+    "pack-image-bitmap-smoke",
+    "image bitmap disposer idempotency failed"
+  ]) {
+    if (!packCheck.includes(text)) {
+      issues.push(`scripts/pack-check.mjs: missing '${text}'`);
+    }
+  }
+
+  const browserFixture = readText("tests/e2e/fixtures/minimal-app.js");
+  for (const text of [
+    "runImageBitmapLifecycleProbe",
+    "tinyPngBytes",
+    "createImageBitmap",
+    "imageBitmapCloseCount",
+    "phase-22-image-bitmap"
+  ]) {
+    if (!browserFixture.includes(text)) {
+      issues.push(`tests/e2e/fixtures/minimal-app.js: missing '${text}'`);
+    }
+  }
+
+  const e2eTest = readText("tests/e2e/browser-fixture.e2e.ts");
+  for (const text of [
+    "imageBitmap",
+    "imageBitmapCloseCount",
+    "phase-22-image-bitmap",
+    "snapshotAfterDispose"
+  ]) {
+    if (!e2eTest.includes(text)) {
+      issues.push(`tests/e2e/browser-fixture.e2e.ts: missing '${text}'`);
+    }
+  }
+
+  const imageDocs = readText("docs/image-bitmap-lifecycle.md");
+  for (const text of [
+    "corepack pnpm test:e2e",
+    "corepack pnpm pack:check",
+    "LoadedAsset.dispose",
+    "ImageBitmapResource",
+    "renderer",
+    "WebGL"
+  ]) {
+    if (!imageDocs.includes(text)) {
+      issues.push(`docs/image-bitmap-lifecycle.md: missing '${text}'`);
+    }
+  }
+
+  for (const pointer of [
+    {
+      file: "README.md",
+      text: "docs/image-bitmap-lifecycle.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/phase-22-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "image-bitmap-lifecycle.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-22-pass-report.md"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "ImageBitmap"
+    },
+    {
+      file: "docs/runtime-lifecycle.md",
+      text: "@indirection/loaders-web"
+    },
+    {
+      file: "docs/evaluator-quickstart.md",
+      text: "Browser ImageBitmap"
+    },
+    {
+      file: "docs/package-entrypoints.md",
+      text: "ImageBitmap/image-source loader boundary"
+    },
+    {
+      file: "docs/example-workflows.md",
+      text: "Browser ImageBitmap lifecycle"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/image-bitmap-lifecycle.md"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-22-image-bitmap-lifecycle"
+    },
+    {
+      file: "docs/phase-22-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-22-pass-report.md",
+      text: "createImageBitmapLoader"
+    },
+    {
+      file: "docs/phase-22-pass-report.md",
+      text: "Real npm publish"
+    }
+  ]) {
+    const text = readText(pointer.file);
+    if (!text.includes(pointer.text)) {
+      issues.push(`${pointer.file}: missing '${pointer.text}'`);
+    }
+  }
 }
 
 function checkBrowserMatrix() {

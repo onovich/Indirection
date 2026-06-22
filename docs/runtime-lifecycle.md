@@ -29,6 +29,8 @@ A loader can return:
 
 If `dispose` rejects, the resource remains `released`, keeps `hasValue` and `hasDisposer`, and records `causeCode: "IND_DISPOSE_FAILED"`. The rejected release promise is returned again on repeated `handle.release()` calls, so a failed disposer is not called repeatedly.
 
+Browser image resources use this same generic path from adapter code. `@indirection/loaders-web` can attach a disposer that closes an `ImageBitmap`, but runtime still only sees `LoadedAsset.dispose`; it does not import or model browser APIs.
+
 ## Resource Snapshot States
 
 - `ready`: a loaded value is currently held by one or more handles.
@@ -51,7 +53,7 @@ This lifecycle contract does not implement:
 
 - A decoded-memory eviction policy beyond final-reference disposal.
 - A GPU memory estimator.
-- ImageBitmap lifecycle policy.
+- Browser-specific ImageBitmap lifecycle policy inside runtime core.
 - Renderer-specific traversal of Three.js objects.
 - Scene attach, camera/light management, or gameplay object factory behavior.
 

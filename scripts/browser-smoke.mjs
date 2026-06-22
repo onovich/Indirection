@@ -1,10 +1,23 @@
 import { InMemoryTransport } from "@indirection/runtime";
 import {
+  createImageBitmapLoader,
   createWebDataLoaders,
   MemoryCacheStorageAdapter
 } from "@indirection/loaders-web";
 
-const loaders = createWebDataLoaders();
+const imageClosures = [];
+const imageLoader = createImageBitmapLoader({
+  decode(input) {
+    return {
+      width: 1,
+      height: 1,
+      close() {
+        imageClosures.push(input.sourceUrl);
+      }
+    };
+  }
+});
+const loaders = [...createWebDataLoaders(), imageLoader];
 const textLoader = loaders.find((loader) => loader.types.includes("text/plain"));
 
 if (textLoader === undefined) {
@@ -27,6 +40,24 @@ const loaded = await textLoader.load({
   })
 });
 
+const imageLoaded = await imageLoader.load({
+  assetId: "browser:image.pixel",
+  source: {
+    assetId: "browser:image.pixel",
+    type: "image/bitmap",
+    catalogVersion: "browser-smoke",
+    sourceIndex: 0,
+    source: {
+      url: "pixel.png"
+    }
+  },
+  transport: new InMemoryTransport({
+    "pixel.png": new Uint8Array([137, 80, 78, 71])
+  })
+});
+await imageLoaded.dispose?.();
+await imageLoaded.dispose?.();
+
 const cache = new MemoryCacheStorageAdapter();
 await cache.put(
   {
@@ -41,6 +72,13 @@ const result = {
   status: "passed",
   loaderCount: loaders.length,
   textValue: loaded.value,
+  imageBitmap: {
+    closeCount: imageClosures.length,
+    closedSourceUrl: imageClosures[0],
+    contentType: imageLoaded.value.contentType,
+    dimensions: [imageLoaded.value.width, imageLoaded.value.height],
+    sourceUrl: imageLoaded.value.sourceUrl
+  },
   cacheHit:
     (await cache.match({
       catalogVersion: "browser-smoke",

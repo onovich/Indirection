@@ -1,5 +1,6 @@
 import {
   BrowserCacheStorageAdapter,
+  createImageBitmapLoader,
   createWebDataLoaders,
   loadersWebPackageName
 } from "@indirection/loaders-web";
@@ -7,10 +8,34 @@ import { protocolVersion } from "@indirection/protocol";
 import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
 import virtualCatalog from "/virtual/indirection/catalog.js";
 
-const loaders = createWebDataLoaders();
+let imageBitmapCloseCount = 0;
+const imageBitmapLoader = createImageBitmapLoader({
+  async decode(input) {
+    if (typeof createImageBitmap !== "function") {
+      throw new Error("createImageBitmap is not available");
+    }
+
+    const bitmap = await createImageBitmap(
+      new Blob([input.arrayBuffer], {
+        type: input.contentType
+      })
+    );
+
+    return {
+      width: bitmap.width,
+      height: bitmap.height,
+      close() {
+        imageBitmapCloseCount += 1;
+        bitmap.close();
+      }
+    };
+  }
+});
+const loaders = [...createWebDataLoaders(), imageBitmapLoader];
 const transport = new InMemoryTransport({
   "payload.bin": new Uint8Array([5, 8, 13, 21]),
   "payload.json": JSON.stringify({ count: 3, label: "json-from-browser" }),
+  "pixel.png": tinyPngBytes(),
   "payload.txt": "text-from-browser"
 });
 
@@ -20,6 +45,7 @@ try {
   const binary = await load("binary/array-buffer", "payload.bin");
   const cache = await runCacheStorageProbe();
   const fallback = await runFallbackDiagnosticsProbe();
+  const imageBitmap = await runImageBitmapLifecycleProbe();
   const runtime = await runRuntimeLifecycleProbe();
   const stress = {
     cacheStorage: await runCacheStorageStressProbe(),
@@ -30,9 +56,10 @@ try {
 
   const result = {
     cache,
-    diagnostics: createSuccessDiagnostics(stress),
+    diagnostics: createSuccessDiagnostics(stress, imageBitmap),
     fallback,
     fixture: "loaders-web-browser",
+    imageBitmap,
     loaderCount: loaders.length,
     loaders: {
       binary: Array.from(binary),
@@ -84,7 +111,7 @@ async function load(type, url) {
   return loaded.value;
 }
 
-function createSuccessDiagnostics(stress) {
+function createSuccessDiagnostics(stress, imageBitmap) {
   return {
     artifactName: "indirection-e2e-result.json",
     schemaVersion: 1,
@@ -93,6 +120,7 @@ function createSuccessDiagnostics(stress) {
       "cache",
       "runtime",
       "fallback",
+      "imageBitmap",
       "stress.cacheStorage",
       "stress.capabilitySelection",
       "stress.runtimeLifecycle",
@@ -101,8 +129,60 @@ function createSuccessDiagnostics(stress) {
     stressSummary: {
       cacheVersionCount: stress.cacheStorage.versions.length,
       capabilityCases: Object.keys(stress.capabilitySelection).sort(),
+      imageBitmapCloseCount: imageBitmap.closeCount,
       runtimeRepeatedCount: stress.runtimeLifecycle.repeated.length
     }
+  };
+}
+
+async function runImageBitmapLifecycleProbe() {
+  const assetId = "browser:image.pixel";
+  imageBitmapCloseCount = 0;
+  const manager = createAssetManager({
+    catalog: {
+      assets: {
+        [assetId]: {
+          sources: [{ url: "pixel.png" }],
+          type: "image/bitmap"
+        }
+      },
+      catalogVersion: "phase-22-image-bitmap",
+      protocolVersion
+    },
+    loaders,
+    transport
+  });
+  const scope = manager.createScope("browser-image-bitmap-scope");
+
+  const firstHandle = await scope.acquire(assetId);
+  const secondHandle = await scope.acquire(assetId);
+  const snapshotWhileHeld = manager.snapshot();
+  const sharedValue = firstHandle.value === secondHandle.value;
+
+  await firstHandle.release();
+  await firstHandle.release();
+  const snapshotAfterFirstRelease = manager.snapshot();
+
+  const scopeBeforeDispose = scope.snapshot();
+  await scope.dispose();
+  await scope.dispose();
+  const snapshotAfterDispose = manager.snapshot();
+
+  return {
+    byteLength: firstHandle.value.byteLength,
+    catalogVersion: snapshotAfterDispose.catalogVersion,
+    closeCount: imageBitmapCloseCount,
+    contentType: firstHandle.value.contentType,
+    dimensions: [firstHandle.value.width, firstHandle.value.height],
+    firstHandleReleased: firstHandle.released,
+    secondHandleReleased: secondHandle.released,
+    sharedValue,
+    sourceUrl: firstHandle.value.sourceUrl,
+    scopeBeforeDispose,
+    scopeDisposed: scope.disposed,
+    snapshotAfterDispose: resourceSummary(snapshotAfterDispose, assetId),
+    snapshotAfterFirstRelease: resourceSummary(snapshotAfterFirstRelease, assetId),
+    snapshotWhileHeld: resourceSummary(snapshotWhileHeld, assetId)
   };
 }
 
@@ -478,6 +558,13 @@ function consumeVirtualCatalog() {
     protocolVersion: virtualCatalog.protocolVersion,
     textSourceUrl: virtualText.sources[0].url
   };
+}
+
+function tinyPngBytes() {
+  const binary = atob(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4AWL6z8DwHwAAAP//A3ONEwAAAAZJREFUAwAFCgIByRpMngAAAABJRU5ErkJggg=="
+  );
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 }
 
 async function runFallbackDiagnosticsProbe() {

@@ -8,6 +8,7 @@ This guide is for a technical evaluator running Indirection from a local checkou
 - Deterministic catalog compilation and report output.
 - Runtime source selection, fallback, in-flight loading, scope/handle lifecycle, and disposal.
 - Browser-facing loaders, Cache Storage adapters, and Chromium/Firefox/WebKit E2E behavior.
+- Browser ImageBitmap/image-source decode and final-release `close()` lifecycle through loaders-web.
 - Vite virtual catalog generation.
 - Three GLTF adapter parsing through injected parser boundaries.
 - Compressed capability source selection for `draco`, `ktx2`, and `meshopt` as declarative catalog data.
@@ -33,7 +34,7 @@ Run the main local validation matrix:
 corepack pnpm validate:full
 ```
 
-`validate:full` runs lint, format, docs drift checks, typecheck, Vitest, browser smoke, Chromium/Firefox/WebKit E2E, boundary checks, CLI smoke, Phase 7 example smoke, and package smoke.
+`validate:full` runs lint, format, docs drift checks, typecheck, Vitest, browser smoke, Chromium/Firefox/WebKit E2E, boundary checks, CLI smoke, Phase 7 example smoke, and package smoke. Browser smoke, E2E, and package smoke include the ImageBitmap lifecycle path without creating renderer or WebGL artifacts.
 
 If Playwright browsers are missing on a new machine, install them once:
 

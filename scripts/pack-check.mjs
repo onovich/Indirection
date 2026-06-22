@@ -268,6 +268,7 @@ import {
 } from "@indirection/testkit";
 import {
   loadersWebPackageName,
+  createImageBitmapLoader,
   createWebDataLoaders,
   MemoryCacheStorageAdapter
 } from "@indirection/loaders-web";
@@ -394,6 +395,49 @@ assert(createWebDataLoaders().length === 3, "web loaders import failed");
 const cache = new MemoryCacheStorageAdapter();
 await cache.put({ catalogVersion: result.catalog.catalogVersion, sourceUrl: "intro.txt" }, "cached");
 assert(await cache.match({ catalogVersion: result.catalog.catalogVersion, sourceUrl: "intro.txt" }) === "cached", "cache adapter failed");
+
+const imageBitmapClosures = [];
+const imageBitmapLoader = createImageBitmapLoader({
+  decode(input) {
+    assert(input.contentType === "image/png", "image bitmap content type failed");
+    assert(input.byteLength === 4, "image bitmap byte length failed");
+    return {
+      width: 1,
+      height: 1,
+      close() {
+        imageBitmapClosures.push(input.sourceUrl);
+      }
+    };
+  }
+});
+const imageBitmapAssetId = normalizeAssetId("pack:image.pixel");
+const imageBitmapManager = createAssetManager({
+  catalog: {
+    protocolVersion: result.catalog.protocolVersion,
+    catalogVersion: "sha256-pack-image-bitmap",
+    assets: {
+      [imageBitmapAssetId]: {
+        type: "image/bitmap",
+        sources: [{ url: "images/pixel.png" }]
+      }
+    }
+  },
+  transport: new InMemoryTransport({ "images/pixel.png": new Uint8Array([137, 80, 78, 71]) }),
+  loaders: [imageBitmapLoader]
+});
+const imageBitmapScope = imageBitmapManager.createScope("pack-image-bitmap-smoke");
+const imageBitmapFirstHandle = await imageBitmapScope.acquire(imageBitmapAssetId);
+const imageBitmapSecondHandle = await imageBitmapScope.acquire(imageBitmapAssetId);
+assert(imageBitmapFirstHandle.value === imageBitmapSecondHandle.value, "image bitmap shared handle failed");
+assert(imageBitmapFirstHandle.value.width === 1, "image bitmap width failed");
+assert(imageBitmapFirstHandle.value.height === 1, "image bitmap height failed");
+assert(imageBitmapFirstHandle.value.sourceUrl === "images/pixel.png", "image bitmap source url failed");
+await imageBitmapFirstHandle.release();
+assert(imageBitmapClosures.length === 0, "image bitmap disposed before final release");
+await imageBitmapSecondHandle.release();
+await imageBitmapSecondHandle.release();
+await imageBitmapScope.dispose();
+assert(imageBitmapClosures.join(",") === "images/pixel.png", "image bitmap disposer idempotency failed");
 
 const gltfLoader = createThreeGltfLoader();
 assert(gltfLoader.types.includes("model/gltf"), "three loader boundary failed");

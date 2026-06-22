@@ -57,6 +57,7 @@ test("serves the browser E2E fixture", async ({ page }) => {
           "cache",
           "runtime",
           "fallback",
+          "imageBitmap",
           "stress.cacheStorage",
           "stress.capabilitySelection",
           "stress.runtimeLifecycle",
@@ -65,6 +66,7 @@ test("serves the browser E2E fixture", async ({ page }) => {
         stressSummary: {
           cacheVersionCount: 3,
           capabilityCases: ["declarationOrder", "defaultSource", "ktx2"],
+          imageBitmapCloseCount: 1,
           runtimeRepeatedCount: 4
         }
       },
@@ -96,7 +98,43 @@ test("serves the browser E2E fixture", async ({ page }) => {
         }
       },
       fixture: "loaders-web-browser",
-      loaderCount: 3,
+      imageBitmap: {
+        byteLength: 88,
+        catalogVersion: "phase-22-image-bitmap",
+        closeCount: 1,
+        contentType: "image/png",
+        dimensions: [1, 1],
+        firstHandleReleased: true,
+        secondHandleReleased: true,
+        sharedValue: true,
+        sourceUrl: "pixel.png",
+        scopeBeforeDispose: {
+          assetIds: ["browser:image.pixel"],
+          disposed: false,
+          handleCount: 1,
+          id: "browser-image-bitmap-scope"
+        },
+        scopeDisposed: true,
+        snapshotAfterDispose: {
+          causeCode: undefined,
+          fallbackAssetId: undefined,
+          refCount: 0,
+          state: "disposed"
+        },
+        snapshotAfterFirstRelease: {
+          causeCode: undefined,
+          fallbackAssetId: undefined,
+          refCount: 1,
+          state: "ready"
+        },
+        snapshotWhileHeld: {
+          causeCode: undefined,
+          fallbackAssetId: undefined,
+          refCount: 2,
+          state: "ready"
+        }
+      },
+      loaderCount: 4,
       loaders: {
         binary: [5, 8, 13, 21],
         json: {

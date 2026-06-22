@@ -176,6 +176,27 @@ corepack pnpm release:rc-check
 git diff --check
 ```
 
+## 0.0.0-phase-22-image-bitmap-lifecycle - 2026-06-23
+
+- Added `createImageBitmapLoader` in `@indirection/loaders-web` for bounded `image/bitmap` decode and final-release `ImageBitmap.close()` lifecycle support.
+- Added unit coverage for shared handles, repeated release, `AssetScope.dispose()`, decode failure fallback, and abort handling without changing runtime core browser boundaries.
+- Extended browser-facing smoke, Chromium/Firefox/WebKit E2E, and packed package smoke to exercise ImageBitmap/image-source lifecycle with tiny deterministic image fixtures.
+- Added Browser ImageBitmap lifecycle docs, docs drift guards, and the Phase 22 PASS report while keeping Three texture creation, renderer E2E, WebGL scene smoke, GPU memory estimation, real decoder dependencies, live Sinan integration, publishing, deployment, tags, GitHub Releases, signing, OIDC, workflow write permission, `private: true`, and `UNLICENSED` boundaries unchanged.
+
+Validation:
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm test -- --run packages/loaders-web
+corepack pnpm test:browser
+corepack pnpm test:e2e
+corepack pnpm pack:check
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
 ## 0.0.0-phase-12-browser-matrix - 2026-06-22
 
 - Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.

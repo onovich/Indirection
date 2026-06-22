@@ -62,6 +62,12 @@ Phase 16 adds bounded stress coverage to the same fixture:
 - compressed capability source selection with tiny text fixture data for `draco`, `ktx2`, `meshopt`, and the default source.
 - structured `window.__indirectionE2E.diagnostics` plus the `indirection-e2e-result.json` Playwright attachment for easier failure inspection.
 
+Phase 22 adds bounded browser image-source lifecycle coverage to the same fixture:
+
+- a tiny deterministic 1x1 PNG byte fixture is decoded with real browser `createImageBitmap(new Blob(...))`;
+- the decoded bitmap is wrapped to count `close()` calls without creating Three textures, WebGL renderer state, screenshots, or visual approval artifacts;
+- shared runtime handles and `AssetScope.dispose()` prove that the ImageBitmap closes exactly once after final release through `LoadedAsset.dispose`.
+
 The fixture data and assertions must stay browser-neutral. Names such as `chromium` belong to Playwright project labels and should not appear in loader payload values, runtime fixture values, or diagnostic expectations.
 
 The older Node `test:browser` smoke remains as a fast browser-facing loader smoke. It does not replace `test:e2e`.

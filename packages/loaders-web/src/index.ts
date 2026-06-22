@@ -46,6 +46,121 @@ export function createWebDataLoaders(): readonly AssetLoader[] {
   return [createWebJsonLoader(), createWebTextLoader(), createWebBinaryLoader()];
 }
 
+export interface ImageBitmapLike {
+  readonly width: number;
+  readonly height: number;
+
+  close?(): void;
+}
+
+export interface ImageBitmapResource {
+  readonly bitmap: ImageBitmapLike;
+  readonly byteLength: number;
+  readonly contentType: string;
+  readonly height: number;
+  readonly sourceUrl: string;
+  readonly width: number;
+}
+
+export interface ImageBitmapDecodeInput {
+  readonly assetId: string;
+  readonly arrayBuffer: ArrayBuffer;
+  readonly byteLength: number;
+  readonly bytes: Uint8Array;
+  readonly contentType: string;
+  readonly signal?: AbortSignal;
+  readonly source: LoaderContext["source"];
+  readonly sourceUrl: string;
+}
+
+export interface ImageBitmapDisposeInput extends ImageBitmapDecodeInput {
+  readonly resource: ImageBitmapResource;
+}
+
+export type ImageBitmapDecoder = (
+  input: ImageBitmapDecodeInput
+) => ImageBitmapLike | Promise<ImageBitmapLike>;
+
+export type ImageBitmapDisposer = (
+  input: ImageBitmapDisposeInput
+) => void | Promise<void>;
+
+export interface CreateImageBitmapLoaderOptions {
+  readonly createBlob?: (
+    bytes: Uint8Array,
+    contentType: string
+  ) => Blob;
+  readonly createImageBitmap?: (blob: Blob) => Promise<ImageBitmapLike>;
+  readonly decode?: ImageBitmapDecoder;
+  readonly dispose?: ImageBitmapDisposer;
+  readonly id?: string;
+  readonly types?: readonly string[];
+}
+
+export function createImageBitmapLoader(
+  options: CreateImageBitmapLoaderOptions = {}
+): AssetLoader<ImageBitmapResource> {
+  const id = options.id ?? "web-image-bitmap";
+  const types = options.types ?? ["image/bitmap"];
+
+  return {
+    id,
+    types,
+    async load(context) {
+      assertNotAborted(context.signal, context.assetId);
+
+      const response = await context.transport.read(context);
+      assertNotAborted(context.signal, context.assetId);
+
+      const bytes = bodyToBytes(response.body);
+      const contentType =
+        response.contentType ?? inferImageContentType(context.source.type);
+      const input = createImageBitmapDecodeInput(context, bytes, contentType);
+      const bitmap = await decodeImageBitmap(input, options);
+      assertNotAborted(context.signal, context.assetId, bitmap);
+
+      const resource: ImageBitmapResource = {
+        bitmap,
+        byteLength: bytes.byteLength,
+        contentType,
+        height: bitmap.height,
+        sourceUrl: context.source.source.url,
+        width: bitmap.width
+      };
+
+      return {
+        value: resource,
+        dispose: createImageBitmapResourceDisposer(resource, input, options.dispose)
+      };
+    }
+  };
+}
+
+function createImageBitmapResourceDisposer(
+  resource: ImageBitmapResource,
+  input: ImageBitmapDecodeInput,
+  dispose?: ImageBitmapDisposer
+): () => Promise<void> {
+  let disposed = false;
+
+  return async () => {
+    if (disposed) {
+      return;
+    }
+
+    disposed = true;
+    if (dispose !== undefined) {
+      await dispose({
+        ...input,
+        resource
+      });
+      return;
+    }
+
+    resource.bitmap.close?.();
+  };
+}
+
 export interface CacheStorageKey {
   readonly catalogVersion: string;
   readonly sourceUrl: string;
@@ -187,6 +302,76 @@ function bodyToBytes(body: TransportBody): Uint8Array {
   }
 
   return new TextEncoder().encode(bodyToText(body));
+}
+
+function createImageBitmapDecodeInput(
+  context: LoaderContext,
+  bytes: Uint8Array,
+  contentType: string
+): ImageBitmapDecodeInput {
+  return {
+    assetId: context.assetId,
+    arrayBuffer: bodyToArrayBuffer(bytes),
+    byteLength: bytes.byteLength,
+    bytes,
+    contentType,
+    ...(context.signal === undefined ? {} : { signal: context.signal }),
+    source: context.source,
+    sourceUrl: context.source.source.url
+  };
+}
+
+async function decodeImageBitmap(
+  input: ImageBitmapDecodeInput,
+  options: CreateImageBitmapLoaderOptions
+): Promise<ImageBitmapLike> {
+  if (options.decode !== undefined) {
+    return options.decode(input);
+  }
+
+  const createBlob = options.createBlob ?? createBrowserBlob;
+  return (options.createImageBitmap ?? createBrowserImageBitmap)(
+    createBlob(input.bytes, input.contentType)
+  );
+}
+
+function createBrowserBlob(bytes: Uint8Array, contentType: string): Blob {
+  if (globalThis.Blob === undefined) {
+    throw new Error("Blob is not available in this environment");
+  }
+
+  return new Blob([bodyToArrayBuffer(bytes)], {
+    type: contentType
+  });
+}
+
+function createBrowserImageBitmap(blob: Blob): Promise<ImageBitmapLike> {
+  if (globalThis.createImageBitmap === undefined) {
+    throw new Error("createImageBitmap is not available in this environment");
+  }
+
+  return globalThis.createImageBitmap(blob);
+}
+
+function inferImageContentType(type: string): string {
+  if (type.startsWith("image/") && type !== "image/bitmap") {
+    return type;
+  }
+
+  return "image/png";
+}
+
+function assertNotAborted(
+  signal: AbortSignal | undefined,
+  assetId: string,
+  bitmap?: ImageBitmapLike
+): void {
+  if (signal?.aborted !== true) {
+    return;
+  }
+
+  bitmap?.close?.();
+  throw new Error(`ImageBitmap decode aborted: ${assetId}`);
 }
 
 function createCacheRequest(key: CacheStorageKey): Request {

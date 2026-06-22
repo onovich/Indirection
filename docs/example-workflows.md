@@ -62,6 +62,8 @@ corepack pnpm test:e2e
 
 The E2E fixture validates browser loader imports, Cache Storage isolation/cleanup, runtime lifecycle stress, fallback diagnostics, compressed capability selection, and Vite virtual catalog consumption.
 
+Phase 22 also covers browser image-source lifecycle through `createImageBitmapLoader`. The browser fixture decodes a tiny deterministic PNG with real `createImageBitmap`, then proves shared handles and `AssetScope.dispose()` close the wrapped bitmap exactly once through runtime `LoadedAsset.dispose`. See [Browser ImageBitmap lifecycle](image-bitmap-lifecycle.md).
+
 ## Phase 7 Integrated Example
 
 `examples/phase7-advanced-loaders.mjs` is the compact end-to-end local example. It covers:
