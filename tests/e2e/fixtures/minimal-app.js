@@ -22,6 +22,7 @@ try {
   const fallback = await runFallbackDiagnosticsProbe();
   const runtime = await runRuntimeLifecycleProbe();
   const stress = {
+    cacheStorage: await runCacheStorageStressProbe(),
     runtimeLifecycle: await runRuntimeLifecycleStressProbe()
   };
   const virtualCatalogResult = consumeVirtualCatalog();
@@ -121,6 +122,105 @@ async function runCacheStorageProbe() {
     staleHit,
     staleStillIsolated
   };
+}
+
+async function runCacheStorageStressProbe() {
+  const cache = new BrowserCacheStorageAdapter({
+    cacheName: "indirection-phase-16-e2e"
+  });
+  const versions = [
+    "phase-16-cache-a",
+    "phase-16-cache-b",
+    "phase-16-cache-c"
+  ];
+
+  for (const version of versions) {
+    await cache.deleteCatalogVersion(version);
+  }
+
+  await cache.put(
+    { catalogVersion: versions[0], sourceUrl: "alpha.txt" },
+    "alpha-a"
+  );
+  await cache.put(
+    { catalogVersion: versions[0], sourceUrl: "beta.txt" },
+    "beta-a"
+  );
+  await cache.put(
+    { catalogVersion: versions[1], sourceUrl: "alpha.txt" },
+    "alpha-b"
+  );
+  await cache.put(
+    { catalogVersion: versions[2], sourceUrl: "gamma.txt" },
+    "gamma-c"
+  );
+
+  const keysBeforeCleanup = await cacheKeysByVersion(cache, versions);
+  const hitsBeforeCleanup = {
+    alphaA: await cache.match({
+      catalogVersion: versions[0],
+      sourceUrl: "alpha.txt"
+    }),
+    alphaB: await cache.match({
+      catalogVersion: versions[1],
+      sourceUrl: "alpha.txt"
+    }),
+    gammaC: await cache.match({
+      catalogVersion: versions[2],
+      sourceUrl: "gamma.txt"
+    })
+  };
+
+  await cache.deleteCatalogVersion(versions[1]);
+
+  const keysAfterVersionCleanup = await cacheKeysByVersion(cache, versions);
+  const deletedVersionMiss =
+    (await cache.match({
+      catalogVersion: versions[1],
+      sourceUrl: "alpha.txt"
+    })) === undefined;
+  const retainedHitsAfterVersionCleanup = {
+    betaA: await cache.match({
+      catalogVersion: versions[0],
+      sourceUrl: "beta.txt"
+    }),
+    gammaC: await cache.match({
+      catalogVersion: versions[2],
+      sourceUrl: "gamma.txt"
+    })
+  };
+
+  await cache.deleteCatalogVersion(versions[0]);
+  await cache.deleteCatalogVersion(versions[2]);
+
+  return {
+    deletedVersionMiss,
+    finalCleanupMisses: {
+      alphaA:
+        (await cache.match({
+          catalogVersion: versions[0],
+          sourceUrl: "alpha.txt"
+        })) === undefined,
+      gammaC:
+        (await cache.match({
+          catalogVersion: versions[2],
+          sourceUrl: "gamma.txt"
+        })) === undefined
+    },
+    hitsBeforeCleanup,
+    keysAfterVersionCleanup,
+    keysBeforeCleanup,
+    retainedHitsAfterVersionCleanup,
+    versions
+  };
+}
+
+async function cacheKeysByVersion(cache, versions) {
+  return Object.fromEntries(
+    await Promise.all(
+      versions.map(async (version) => [version, await cache.keys(version)])
+    )
+  );
 }
 
 async function runRuntimeLifecycleProbe() {

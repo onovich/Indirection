@@ -103,6 +103,37 @@ test("serves the browser E2E fixture", async ({ page }) => {
       },
       status: "ready",
       stress: {
+        cacheStorage: {
+          deletedVersionMiss: true,
+          finalCleanupMisses: {
+            alphaA: true,
+            gammaC: true
+          },
+          hitsBeforeCleanup: {
+            alphaA: "alpha-a",
+            alphaB: "alpha-b",
+            gammaC: "gamma-c"
+          },
+          keysAfterVersionCleanup: {
+            "phase-16-cache-a": ["alpha.txt", "beta.txt"],
+            "phase-16-cache-b": [],
+            "phase-16-cache-c": ["gamma.txt"]
+          },
+          keysBeforeCleanup: {
+            "phase-16-cache-a": ["alpha.txt", "beta.txt"],
+            "phase-16-cache-b": ["alpha.txt"],
+            "phase-16-cache-c": ["gamma.txt"]
+          },
+          retainedHitsAfterVersionCleanup: {
+            betaA: "beta-a",
+            gammaC: "gamma-c"
+          },
+          versions: [
+            "phase-16-cache-a",
+            "phase-16-cache-b",
+            "phase-16-cache-c"
+          ]
+        },
         runtimeLifecycle: {
           catalogVersion: "phase-16-runtime-stress",
           leakWarningsAfterDispose: [],
