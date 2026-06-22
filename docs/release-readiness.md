@@ -96,3 +96,5 @@ Phase 9 PASS report: `docs/phase-9-pass-report.md`
 Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
+
+Phase 10 PASS report: `docs/phase-10-pass-report.md`
