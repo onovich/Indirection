@@ -31,8 +31,8 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright Chromium
-        run: corepack pnpm exec playwright install --with-deps chromium
+      - name: Install Playwright Browsers
+        run: corepack pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Validate
         run: corepack pnpm validate:full
