@@ -25,9 +25,9 @@ corepack pnpm test:e2e
 Use project filters for single-browser debugging:
 
 ```powershell
-corepack pnpm test:e2e -- --project=chromium
-corepack pnpm test:e2e -- --project=firefox
-corepack pnpm test:e2e -- --project=webkit
+corepack pnpm test:e2e:chromium
+corepack pnpm test:e2e:firefox
+corepack pnpm test:e2e:webkit
 ```
 
 Run the complete local release gate:
