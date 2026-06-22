@@ -45,6 +45,17 @@ git diff --check
 
 At this checkpoint, the full matrix passes without requiring buffer-round fixes.
 
+## Phase 9 Main Implementation Checkpoint
+
+The real browser E2E main implementation is now part of the same release gate:
+
+```powershell
+corepack pnpm validate:full
+git diff --check
+```
+
+At this checkpoint, Chromium E2E passes locally through `validate:full` and covers loaders-web, Cache Storage, runtime lifecycle, fallback diagnostics, and virtual catalog consumption.
+
 ## v0.1 Remaining Risks
 
 - No real npm publishing workflow has been created yet.
