@@ -24,3 +24,42 @@ git diff --check
 - Added CLI, docs drift, package file whitelist, and GitHub Actions validation gates.
 - Documented release readiness and v0.1 remaining risks.
 - Added the Phase 8 PASS report.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+git diff --check
+```
+
+## 0.0.0-phase-9-browser-e2e - 2026-06-22
+
+- Added Playwright Chromium E2E coverage for browser-facing loader, cache, runtime lifecycle, fallback diagnostics, and virtual catalog behavior.
+- Added `BrowserCacheStorageAdapter` coverage against real `window.caches`.
+- Added `test:e2e` to the local `validate:full` release gate.
+- Updated GitHub Actions to install and cache Playwright Chromium.
+- Added browser E2E docs and the Phase 9 PASS report.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm test:e2e
+git diff --check
+```
+
+## 0.0.0-phase-10-release-dry-run - 2026-06-22
+
+- Added release workflow dry-run policy, package visibility policy, and release versioning ADR.
+- Added package metadata across workspace package manifests while keeping all packages `private: true`.
+- Extended `pack:check` to validate package metadata, tarball contents, temporary consumer imports, and the installed CLI bin.
+- Added `release:dry-run` to audit private package policy, version policy, workspace dependency ranges, release docs, package smoke, and no publish/tag side effects.
+- Added a manual GitHub Actions `Release Dry Run` workflow with read-only repository permissions.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+git diff --check
+```

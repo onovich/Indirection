@@ -15,6 +15,7 @@ const packages = await readWorkspacePackages();
 assertRootPolicy(rootManifest);
 assertPackagePolicy(packages);
 await assertDocsPolicy(packages);
+await assertChangelogPolicy();
 assertNoRealPublishScripts([rootManifest, ...packages.map((entry) => entry.manifest)]);
 assertNoForbiddenTrackedArtifacts();
 
@@ -155,6 +156,18 @@ async function assertDocsPolicy(packages) {
     "instead of adding Changesets"
   ]) {
     assert(versioning.includes(text), `release versioning ADR missing '${text}'`);
+  }
+}
+
+async function assertChangelogPolicy() {
+  const changelog = await readText(join(repoRoot, "CHANGELOG.md"));
+  for (const text of [
+    "0.0.0-phase-8-hardening",
+    "0.0.0-phase-9-browser-e2e",
+    "0.0.0-phase-10-release-dry-run",
+    "corepack pnpm release:dry-run"
+  ]) {
+    assert(changelog.includes(text), `CHANGELOG.md missing '${text}'`);
   }
 }
 
