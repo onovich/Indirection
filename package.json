@@ -2,8 +2,20 @@
   "name": "indirection",
   "version": "0.0.0",
   "private": true,
+  "license": "UNLICENSED",
   "type": "module",
   "packageManager": "pnpm@11.8.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/onovich/Indirection.git"
+  },
+  "homepage": "https://github.com/onovich/Indirection#readme",
+  "keywords": [
+    "indirection",
+    "assets",
+    "asset-id",
+    "monorepo"
+  ],
   "engines": {
     "node": ">=22.0.0"
   },

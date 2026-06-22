@@ -26,6 +26,7 @@ let failed = false;
 
 try {
   const packages = await readWorkspacePackages();
+  await assertPackageMetadata(packages);
   await assertExportTargets(packages);
 
   tempRoot = await mkdtemp(join(tmpdir(), "indirection-pack-check-"));
@@ -77,6 +78,50 @@ async function readWorkspacePackages() {
   return packages.sort((left, right) =>
     left.manifest.name.localeCompare(right.manifest.name)
   );
+}
+
+async function assertPackageMetadata(packages) {
+  for (const packageInfo of packages) {
+    const { dir, manifest } = packageInfo;
+    assertString(manifest.license, "license", manifest.name);
+    assertObject(manifest.repository, "repository", manifest.name);
+    assertString(manifest.repository.type, "repository.type", manifest.name);
+    assertString(manifest.repository.url, "repository.url", manifest.name);
+    assertString(
+      manifest.repository.directory,
+      "repository.directory",
+      manifest.name
+    );
+    assertString(manifest.homepage, "homepage", manifest.name);
+    assertString(manifest.engines?.node, "engines.node", manifest.name);
+    assertStringArray(manifest.keywords, "keywords", manifest.name);
+    assertBoolean(manifest.sideEffects, "sideEffects", manifest.name);
+    assertStringArray(manifest.files, "files", manifest.name);
+
+    const expectedDirectory = relative(repoRoot, dir).replaceAll("\\", "/");
+    if (manifest.repository.directory !== expectedDirectory) {
+      throw new Error(
+        `${manifest.name} repository.directory must be ${expectedDirectory}`
+      );
+    }
+
+    for (const filePattern of [
+      "dist/**/*.d.ts",
+      "dist/**/*.d.ts.map",
+      "dist/**/*.js",
+      "dist/**/*.js.map"
+    ]) {
+      if (!manifest.files.includes(filePattern)) {
+        throw new Error(`${manifest.name} files must include ${filePattern}`);
+      }
+    }
+
+    for (const peerName of Object.keys(manifest.peerDependencies ?? {})) {
+      if (manifest.peerDependenciesMeta?.[peerName]?.optional !== true) {
+        throw new Error(`${manifest.name} peer ${peerName} must be optional`);
+      }
+    }
+  }
 }
 
 async function assertExportTargets(packages) {
@@ -360,6 +405,22 @@ function assertString(value, field, packageName) {
 function assertObject(value, field, packageName) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error(`${packageName} must define ${field}`);
+  }
+}
+
+function assertBoolean(value, field, packageName) {
+  if (typeof value !== "boolean") {
+    throw new Error(`${packageName} must define boolean ${field}`);
+  }
+}
+
+function assertStringArray(value, field, packageName) {
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    value.some((entry) => typeof entry !== "string" || entry.length === 0)
+  ) {
+    throw new Error(`${packageName} must define non-empty string array ${field}`);
   }
 }
 

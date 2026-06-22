@@ -40,6 +40,18 @@ All workspace packages remain `private: true` during Phase 10. The visibility ta
 - Package versioning and protocol versioning remain separate decisions.
 - A later real-publish phase must decide whether to remove `private: true`, keep selected packages private, or defer individual packages.
 
+## Package Metadata Rules
+
+Every workspace package must define:
+
+- `name`, `version`, `private`, `license`, `type`, `sideEffects`, `main`, `types`, `exports`, `files`, `repository`, `homepage`, `keywords`, and `engines.node`.
+- `repository.directory` matching the package directory under `packages/`.
+- `files` limited to built `dist/**/*.d.ts`, `dist/**/*.d.ts.map`, `dist/**/*.js`, and `dist/**/*.js.map` outputs.
+- `bin` paths for CLI packages, with each path pointing at a built file.
+- optional peer metadata for every declared peer dependency.
+
+Phase 10 uses `UNLICENSED` while packages remain private. A real publish-preflight phase must replace that with an accepted SPDX license and matching repository license file before public release.
+
 ## Promotion Rules
 
 A package can move from dry-run candidate to real publish candidate only when:
