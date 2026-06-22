@@ -41,7 +41,13 @@ describe("report JSON shape contract", () => {
       "id",
       "type",
       "sourceCount",
+      "sources",
       "dependencyCount"
+    ]);
+    expect(Object.keys(report.assets[0]?.sources[0] ?? {})).toEqual([
+      "index",
+      "url",
+      "default"
     ]);
     expect(Object.keys(report.groups[0] ?? {})).toEqual([
       "id",

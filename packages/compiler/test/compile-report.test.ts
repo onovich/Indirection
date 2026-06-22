@@ -33,12 +33,26 @@ describe("compile report", () => {
             "dependencyCount": 0,
             "id": "vanilla:config.gameplay",
             "sourceCount": 1,
+            "sources": [
+              {
+                "default": true,
+                "index": 0,
+                "url": "./config/gameplay.json",
+              },
+            ],
             "type": "data/json",
           },
           {
             "dependencyCount": 0,
             "id": "vanilla:text.fallback",
             "sourceCount": 1,
+            "sources": [
+              {
+                "default": true,
+                "index": 0,
+                "url": "./text/fallback.txt",
+              },
+            ],
             "type": "text/plain",
           },
           {
@@ -46,6 +60,23 @@ describe("compile report", () => {
             "fallback": "vanilla:text.fallback",
             "id": "vanilla:text.intro",
             "sourceCount": 2,
+            "sources": [
+              {
+                "default": false,
+                "index": 0,
+                "url": "./text/intro.zh-CN.txt",
+                "when": {
+                  "locale": [
+                    "zh-CN",
+                  ],
+                },
+              },
+              {
+                "default": true,
+                "index": 1,
+                "url": "./text/intro.en.txt",
+              },
+            ],
             "type": "text/plain",
           },
         ],
@@ -98,5 +129,49 @@ describe("compile report", () => {
         },
       }
     `);
+  });
+
+  it("reports compressed capability source conditions without runtime decoder objects", () => {
+    const model = importIndirectionManifest({
+      schemaVersion: 1,
+      namespace: "game",
+      assets: {
+        "character.hero": {
+          type: "model/gltf",
+          sources: [
+            { when: { capability: ["draco"] }, url: "./models/hero.draco.glb" },
+            { when: { capability: ["ktx2"] }, url: "./models/hero.ktx2.glb" },
+            { when: { capability: ["meshopt"] }, url: "./models/hero.meshopt.glb" },
+            { url: "./models/hero.glb" }
+          ]
+        }
+      }
+    });
+
+    expect(compileNormalizedModel(model).report.assets[0]?.sources).toEqual([
+      {
+        index: 0,
+        url: "./models/hero.draco.glb",
+        default: false,
+        when: { capability: ["draco"] }
+      },
+      {
+        index: 1,
+        url: "./models/hero.ktx2.glb",
+        default: false,
+        when: { capability: ["ktx2"] }
+      },
+      {
+        index: 2,
+        url: "./models/hero.meshopt.glb",
+        default: false,
+        when: { capability: ["meshopt"] }
+      },
+      {
+        index: 3,
+        url: "./models/hero.glb",
+        default: true
+      }
+    ]);
   });
 });

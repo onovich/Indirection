@@ -8,6 +8,7 @@ import {
   type NormalizedAssetModel,
   type NormalizedAssetRecord,
   type NormalizeAssetIdOptions,
+  type VariantCondition,
   normalizeAssetId,
   protocolVersion
 } from "@indirection/protocol";
@@ -211,8 +212,16 @@ export interface AssetReportAsset {
   readonly id: string;
   readonly type: string;
   readonly sourceCount: number;
+  readonly sources: readonly AssetReportSource[];
   readonly dependencyCount: number;
   readonly fallback?: string;
+}
+
+export interface AssetReportSource {
+  readonly index: number;
+  readonly url: string;
+  readonly default: boolean;
+  readonly when?: VariantCondition;
 }
 
 export interface AssetReportGroup {
@@ -413,6 +422,12 @@ function createAssetReport(
       id: asset.id,
       type: asset.type,
       sourceCount: asset.sources.length,
+      sources: asset.sources.map((source, index) => ({
+        index,
+        url: source.url,
+        default: source.when === undefined,
+        ...(source.when === undefined ? {} : { when: source.when })
+      })),
       dependencyCount: asset.dependencies.length,
       ...(asset.fallback === undefined ? {} : { fallback: asset.fallback })
     })),
