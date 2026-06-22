@@ -168,9 +168,15 @@ Compressed capability docs: `docs/compressed-capability-source-selection.md`
 
 Phase 15 PASS report: `docs/phase-15-pass-report.md`
 
+## Phase 16 Browser E2E Stress And Artifact Diagnostics
+
+Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
+
+Phase 16 is selected as the next in-repository phase after Phase 15 PASS. It should strengthen the Chromium, Firefox, and WebKit browser E2E gate with bounded stress coverage and better artifact diagnostics while keeping renderer E2E, real decoder integration, live Sinan Engine integration, and real npm publishing out of scope.
+
 ## Recommended Next Steps
 
-1. Wait for the architect/strategist flow to select and dispatch the next approved guide before starting Phase 16.
+1. Execute the selected Phase 16 browser E2E stress and artifact diagnostics guide before starting real publish or live Sinan integration.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -188,6 +194,8 @@ Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
+
+Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
 
 Compressed capability docs: `docs/compressed-capability-source-selection.md`
 

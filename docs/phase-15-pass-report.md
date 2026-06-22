@@ -73,9 +73,11 @@ Expected final push target: `origin/main`.
 
 ## Next Phase
 
-Planner selection after PASS: pending architect/strategist next guide.
+Planner selection after PASS: Phase 16 Browser E2E Stress And Artifact Diagnostics.
 
-The executor should not invent Phase 16 locally. The architect/strategist flow must select and dispatch the next approved goal guide before implementation continues.
+Next guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
+
+The architect/strategist flow selected browser E2E stress and artifact diagnostics as the next in-repository phase while real npm publish, live Sinan Engine integration, real decoder integration, texture pipeline, and renderer E2E remain deferred.
 
 ## Risks And Recommendations
 

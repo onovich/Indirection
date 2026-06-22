@@ -195,6 +195,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/compressed-capability-source-selection.md"
     },
     {
@@ -288,6 +292,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-15-compressed-capability-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-16-browser-e2e-stress-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -420,6 +428,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-15-compressed-capability-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 16 Browser E2E Stress And Artifact Diagnostics"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -687,6 +703,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/phase-15-pass-report.md",
+      text: "Planner selection after PASS: Phase 16 Browser E2E Stress And Artifact Diagnostics"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
+      text: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md"
+    },
+    {
+      file: "docs/phase-15-pass-report.md",
       text: "ResolutionContext.capability"
     },
     {
@@ -728,10 +752,6 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-15-pass-report.md",
       text: "Real npm publish"
-    },
-    {
-      file: "docs/phase-15-pass-report.md",
-      text: "Planner selection after PASS: pending architect/strategist next guide"
     },
     {
       file: "docs/phase-0-7-pass-report.md",
@@ -859,6 +879,46 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/indirection-phase-15-compressed-capability-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "Browser E2E Stress And Artifact Diagnostics"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm test:e2e"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm test:e2e:chromium"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm test:e2e:firefox"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm test:e2e:webkit"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "playwright-report/"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "test-results/"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
       text: "corepack pnpm publish:preflight"
     },
     {
