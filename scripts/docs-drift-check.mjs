@@ -187,6 +187,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/three-gltf-adapter.md"
+    },
+    {
+      file: "README.md",
       text: "docs/phase-10-pass-report.md"
     },
     {
@@ -248,6 +252,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "three-gltf-adapter.md"
     },
     {
       file: "docs/README.md",
@@ -340,6 +348,38 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "Phase 13 Real Three GLTF Adapter"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/three-gltf-adapter.md"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "createThreeGltfLoader"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "GLTFLoader.parseAsync"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "IND_DECODE_FAILED"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "basePath"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "sourceUrl"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "Draco, KTX2, or meshopt"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "Full GPU disposal"
     },
     {
       file: "docs/release-readiness.md",

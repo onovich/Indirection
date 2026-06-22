@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, and Phase 13 Three GLTF adapter planning posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, and Phase 13 Three GLTF adapter posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -25,7 +25,7 @@ git diff --check
 - `check:boundaries`: core package dependency and host-specific boundary scan.
 - `smoke:cli`: real CLI bin smoke for `validate`, `build`, `report`, and `inspect`.
 - `smoke:phase7`: advanced loader/cache/Vite integration example.
-- `pack:check`: tarball file whitelist plus temporary consumer import smoke.
+- `pack:check`: tarball file whitelist plus temporary consumer import smoke, including the packaged Three GLTF parser API with a parser stub.
 
 ## Current Release Candidate Status
 
@@ -35,6 +35,7 @@ git diff --check
 - Report JSON shapes are documented and covered by contract tests.
 - CLI and package smoke are part of the full matrix.
 - Real browser E2E runs in Chromium, Firefox, and WebKit through Playwright and is part of `validate:full`.
+- `@indirection/three` parses `model/gltf` transport bodies through injected `GLTFLoader.parseAsync` or a host-provided parser wrapper while keeping Three.js out of runtime core.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 
@@ -103,7 +104,7 @@ At this checkpoint, `test:e2e` runs the same browser fixture in Chromium, Firefo
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
 - Browser E2E stress and artifact diagnostics remain future hardening candidates.
-- The Three adapter remains a peer-boundary skeleton and does not parse real GLTF through Three.js.
+- The Three adapter intentionally does not cover Draco/KTX2/meshopt, texture pipeline, renderer E2E, full GPU disposal, model instantiate helpers, or animation metadata.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
 ## Phase 10 Dry-Run Policy
@@ -136,11 +137,13 @@ Phase 12 PASS report: `docs/phase-12-pass-report.md`
 
 Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 
-Phase 13 has been selected as the next architect/strategist-owned implementation phase. It should turn `@indirection/three` from a peer-boundary skeleton into a real GLTF parser adapter through parser injection while keeping Three.js out of runtime core and keeping real npm publish, live Sinan Engine integration, Draco/KTX2/meshopt, and GPU disposal out of scope.
+Phase 13 turns `@indirection/three` from a peer-boundary skeleton into a real GLTF parser adapter through parser injection while keeping Three.js out of runtime core and keeping real npm publish, live Sinan Engine integration, Draco/KTX2/meshopt, texture pipeline, renderer E2E, and GPU disposal out of scope.
+
+Three GLTF adapter docs: `docs/three-gltf-adapter.md`
 
 ## Recommended Next Steps
 
-1. Execute Phase 13 Real Three GLTF Adapter using `docs/indirection-phase-13-three-gltf-goal-guide.md`.
+1. Keep Phase 13 acceptance tied to `validate:full`, `release:dry-run`, `publish:preflight`, and `git diff --check`.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -154,6 +157,8 @@ Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
 Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 
 Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
+
+Phase 13 adapter docs: `docs/three-gltf-adapter.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
 
