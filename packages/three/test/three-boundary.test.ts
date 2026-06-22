@@ -6,6 +6,7 @@ import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
 import {
   createThreeGltfLoader,
   createThreeOwnedResourceDisposer,
+  instantiateThreeGltf,
   threePackageName,
   type ThreeGltfParseInput
 } from "@indirection/three";
@@ -45,6 +46,36 @@ describe("three adapter", () => {
     await dispose?.();
 
     expect(calls).toEqual(["geometry", "material"]);
+  });
+
+  it("uses a host injected instantiate hook without mutating the loaded value", async () => {
+    const loadedValue = {
+      sceneName: "Hero",
+      cloneCount: 0
+    };
+    const instance = await instantiateThreeGltf(
+      loadedValue,
+      async ({ value, assetId, sourceUrl, basePath }) => {
+        expect(assetId).toBe("three:hero");
+        expect(sourceUrl).toBe("models/hero.gltf");
+        expect(basePath).toBe("models/");
+        return {
+          instanceName: `${value.sceneName}-instance`,
+          templateCloneCount: value.cloneCount
+        };
+      },
+      {
+        assetId: "three:hero",
+        sourceUrl: "models/hero.gltf",
+        basePath: "models/"
+      }
+    );
+
+    expect(instance).toEqual({
+      instanceName: "Hero-instance",
+      templateCloneCount: 0
+    });
+    expect(loadedValue.cloneCount).toBe(0);
   });
 
   it("loads fake GLTF payloads through injected transport", async () => {

@@ -35,6 +35,21 @@ export type ThreeGltfOwnedResources<TValue = unknown> = (
   input: ThreeGltfParseInput
 ) => Iterable<ThreeDisposableResource> | undefined;
 
+export interface ThreeGltfInstantiateContext {
+  readonly assetId?: string;
+  readonly sourceUrl?: string;
+  readonly basePath?: string;
+}
+
+export interface ThreeGltfInstantiateInput<TValue = unknown>
+  extends ThreeGltfInstantiateContext {
+  readonly value: TValue;
+}
+
+export type ThreeGltfInstantiate<TValue = unknown, TInstance = TValue> = (
+  input: ThreeGltfInstantiateInput<TValue>
+) => TInstance | Promise<TInstance>;
+
 export interface ThreeGltfLoaderOptions<TValue = unknown> {
   readonly basePath?: string | ((input: ThreeGltfBasePathInput) => string);
   readonly parse?: (input: ThreeGltfParseInput) => TValue | Promise<TValue>;
@@ -70,6 +85,17 @@ export function createThreeGltfLoader<TValue = FakeGltfPayload>(
       return createLoadedThreeGltfAsset(value, parseInput, options);
     }
   };
+}
+
+export function instantiateThreeGltf<TValue, TInstance = TValue>(
+  value: TValue,
+  instantiate: ThreeGltfInstantiate<TValue, TInstance>,
+  context: ThreeGltfInstantiateContext = {}
+): TInstance | Promise<TInstance> {
+  return instantiate({
+    value,
+    ...definedInstantiateContext(context)
+  });
 }
 
 export function createThreeOwnedResourceDisposer(
@@ -133,6 +159,16 @@ async function disposeOwnedResources(resources: readonly ThreeDisposableResource
   if (failures.length > 1) {
     throw new AggregateError(failures, "Failed to dispose one or more Three owned resources");
   }
+}
+
+function definedInstantiateContext(
+  context: ThreeGltfInstantiateContext
+): ThreeGltfInstantiateContext {
+  return {
+    ...(context.assetId === undefined ? {} : { assetId: context.assetId }),
+    ...(context.sourceUrl === undefined ? {} : { sourceUrl: context.sourceUrl }),
+    ...(context.basePath === undefined ? {} : { basePath: context.basePath })
+  };
 }
 
 function bodyToBytes(body: TransportBody): Uint8Array {
