@@ -60,6 +60,10 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm test:e2e"
     },
     {
+      file: "README.md",
+      text: "docs/phase-9-pass-report.md"
+    },
+    {
       file: "docs/README.md",
       text: "indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -74,6 +78,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "real browser E2E"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-9-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",

@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening and Phase 9 browser E2E posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -32,6 +32,7 @@ git diff --check
 - `skipLibCheck` is disabled and `corepack pnpm typecheck` passes.
 - Report JSON shapes are documented and covered by contract tests.
 - CLI and package smoke are part of the full matrix.
+- Real browser E2E runs in Chromium through Playwright and is part of `validate:full`.
 - GitHub Actions mirrors the local validation entrypoint.
 
 ## Phase 8 Main Implementation Checkpoint
@@ -61,15 +62,15 @@ At this checkpoint, Chromium E2E passes locally through `validate:full` and cove
 - No real npm publishing workflow has been created yet.
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
-- Browser smoke is still a Node-executed browser-facing loader smoke, not a real browser E2E matrix.
+- Firefox and WebKit are not yet part of the real browser E2E matrix.
 - The Three adapter remains a peer-boundary skeleton and does not parse real GLTF through Three.js.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
 ## Recommended Next Steps
 
-1. Execute Phase 9 as real browser E2E, because it is the safest remaining release-readiness risk that does not depend on package publishing decisions or an external Sinan repository.
+1. Choose the next Phase 10 track: npm release workflow, live Sinan Engine integration, real Three.js GLTF parser integration, or Firefox/WebKit E2E expansion.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, and versioning policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
-Phase 9 guide: `docs/indirection-phase-9-browser-e2e-goal-guide.md`
+Phase 9 PASS report: `docs/phase-9-pass-report.md`
