@@ -59,6 +59,7 @@ corepack pnpm validate:full
 - [Phase 0-7 Big Goal execution guide](docs/indirection-phase-0-7-big-goal-execution-guide.md)
 - [Phase 8 Release Hardening Goal guide](docs/indirection-phase-8-release-hardening-goal-guide.md)
 - [Phase 9 Real Browser E2E Goal guide](docs/indirection-phase-9-browser-e2e-goal-guide.md)
+- [Browser E2E validation](docs/browser-e2e.md)
 - [Phase 8 PASS report](docs/phase-8-pass-report.md)
 - [Phase 7 integration and package smoke](docs/phase-7-integration.md)
 - [R&D plan after Sinan alignment](docs/rd-plan-sinan-alignment-2026-06-20.md)
