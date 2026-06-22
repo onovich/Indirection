@@ -191,6 +191,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-12-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/publish-preflight-policy.md"
     },
     {
@@ -244,6 +248,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "phase-11-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-12-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -311,6 +319,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/release-readiness.md",
+      text: "docs/phase-12-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
       text: "docs/indirection-phase-12-browser-matrix-goal-guide.md"
     },
     {
@@ -356,6 +368,26 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-11-pass-report.md",
       text: "docs/indirection-phase-12-browser-matrix-goal-guide.md"
+    },
+    {
+      file: "docs/phase-12-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-12-pass-report.md",
+      text: "Chromium, Firefox, and WebKit"
+    },
+    {
+      file: "docs/phase-12-pass-report.md",
+      text: "corepack pnpm test:e2e"
+    },
+    {
+      file: "docs/phase-12-pass-report.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/phase-12-pass-report.md",
+      text: "corepack pnpm publish:preflight"
     },
     {
       file: "docs/phase-0-7-pass-report.md",
@@ -456,6 +488,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-11-publish-preflight"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-12-browser-matrix"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

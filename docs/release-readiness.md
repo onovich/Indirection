@@ -130,6 +130,8 @@ Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 
 Phase 12 expands the existing Playwright E2E gate from Chromium-only to Chromium, Firefox, and WebKit while keeping real npm publish, live Sinan Engine integration, and real Three.js GLTF parsing out of scope.
 
+Phase 12 PASS report: `docs/phase-12-pass-report.md`
+
 ## Recommended Next Steps
 
 1. Keep the Phase 12 browser matrix in `validate:full` and CI.
@@ -150,3 +152,5 @@ Phase 10 release workflow policy: `docs/release-workflow.md`
 Phase 10 PASS report: `docs/phase-10-pass-report.md`
 
 Phase 11 PASS report: `docs/phase-11-pass-report.md`
+
+Phase 12 PASS report: `docs/phase-12-pass-report.md`

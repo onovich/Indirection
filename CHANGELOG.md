@@ -80,3 +80,22 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
 ```
+
+## 0.0.0-phase-12-browser-matrix - 2026-06-22
+
+- Expanded Playwright E2E from Chromium-only to Chromium, Firefox, and WebKit projects.
+- Added single-browser debug scripts for Chromium, Firefox, and WebKit.
+- Neutralized browser fixture data so assertions no longer encode Chromium-specific payload names.
+- Updated GitHub Actions to install all three Playwright browser dependencies before `validate:full`.
+- Extended docs drift checks to guard the browser matrix, CI install command, debug scripts, and fixture data neutrality.
+- Added the Phase 12 PASS report while keeping real npm publish, npm login, registry writes, Git tags, and GitHub Releases out of scope.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm test:e2e
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
