@@ -80,10 +80,24 @@ If CI fails before tests start on Linux browser dependencies, inspect the `Insta
 
 ## Artifact Policy
 
-Do not commit Playwright runtime artifacts. The following are intentionally ignored:
+Playwright diagnostics are for local and CI troubleshooting only. Do not commit Playwright runtime artifacts. The following are intentionally ignored:
 
 - `playwright-report/`
 - `test-results/`
 - `trace.zip`
+
+`playwright.config.ts` writes the HTML report to `playwright-report/`, stores per-test output under `test-results/`, and retains traces on failure. The browser fixture also attaches `indirection-e2e-result.json` to the Playwright test output before the strict object assertion runs. That JSON attachment mirrors `window.__indirectionE2E` so a failure can be inspected by section instead of only through a large assertion diff.
+
+Useful local inspection paths after a failing run:
+
+- `playwright-report/index.html` for the HTML report.
+- `test-results/**/indirection-e2e-result.json` for the structured browser result attachment.
+- `test-results/**/*.zip` for retained traces when Playwright records them.
+
+Delete these directories after inspection if they are no longer needed:
+
+```powershell
+Remove-Item -Recurse -Force playwright-report, test-results
+```
 
 Committed E2E files should stay under `tests/e2e/`, and the fixture must remain derived from compiler/runtime/adapter APIs rather than becoming a new authoring source-of-truth.
