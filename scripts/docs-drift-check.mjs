@@ -911,6 +911,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
+      text: "docs/phase-16-pass-report.md"
+    },
+    {
+      file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
       text: "corepack pnpm validate:full"
     },
     {
@@ -966,8 +970,60 @@ function checkRequiredDocPointers() {
       text: "capability report meshopt source missing"
     },
     {
+      file: "tests/e2e/fixtures/minimal-app.js",
+      text: "runRuntimeLifecycleStressProbe"
+    },
+    {
+      file: "tests/e2e/fixtures/minimal-app.js",
+      text: "runCacheStorageStressProbe"
+    },
+    {
+      file: "tests/e2e/fixtures/minimal-app.js",
+      text: "runCapabilitySelectionProbe"
+    },
+    {
+      file: "tests/e2e/fixtures/minimal-app.js",
+      text: "stress.cacheStorage"
+    },
+    {
+      file: "tests/e2e/browser-fixture.e2e.ts",
+      text: "indirection-e2e-result.json"
+    },
+    {
+      file: "tests/e2e/browser-fixture.e2e.ts",
+      text: "capabilitySelection"
+    },
+    {
+      file: "tests/e2e/browser-fixture.e2e.ts",
+      text: "runtimeLifecycle"
+    },
+    {
       file: "docs/browser-e2e.md",
       text: "corepack pnpm exec playwright install chromium firefox webkit"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "repeated runtime acquire/release loops"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "Cache Storage isolation across multiple catalog versions"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "compressed capability source selection"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "indirection-e2e-result.json"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "playwright-report/index.html"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "test-results/**/indirection-e2e-result.json"
     },
     {
       file: "docs/browser-e2e.md",
