@@ -50,6 +50,33 @@ describe("Indirection authoring manifest schema", () => {
     expect(manifest.groups?.["scene.gate"]?.assets).toEqual(["character.hero"]);
   });
 
+  it("accepts compressed capability source conditions as declarative strings", () => {
+    const manifest = parseIndirectionManifest({
+      schemaVersion: 1,
+      namespace: "game",
+      assets: {
+        "character.hero": {
+          type: "model/gltf",
+          sources: [
+            {
+              when: {
+                capability: ["draco", "ktx2", "meshopt"]
+              },
+              url: "./models/hero.compressed.glb"
+            },
+            {
+              url: "./models/hero.glb"
+            }
+          ]
+        }
+      }
+    });
+
+    expect(manifest.assets["character.hero"]?.sources[0]?.when).toEqual({
+      capability: ["draco", "ktx2", "meshopt"]
+    });
+  });
+
   it("rejects missing sources and unknown top-level fields", () => {
     expect(() =>
       indirectionManifestSchema.parse({
@@ -75,6 +102,31 @@ describe("Indirection authoring manifest schema", () => {
             type: "model/gltf",
             sources: [{ url: "./models/hero.glb" }],
             dependencies: ["./models/material.glb"]
+          }
+        }
+      })
+    ).toThrow(ZodError);
+  });
+
+  it("rejects executable or object-shaped capability conditions", () => {
+    expect(() =>
+      parseIndirectionManifest({
+        schemaVersion: 1,
+        namespace: "game",
+        assets: {
+          "character.hero": {
+            type: "model/gltf",
+            sources: [
+              {
+                when: {
+                  capability: [{ decoder: "draco" }]
+                },
+                url: "./models/hero.draco.glb"
+              },
+              {
+                url: "./models/hero.glb"
+              }
+            ]
           }
         }
       })

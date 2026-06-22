@@ -455,7 +455,7 @@ function validateVariantSources(
         asset.id,
         "Asset sources must contain exactly one default source.",
         options,
-        { path: ["assets", asset.id, "sources"] }
+        { causeCode: "variant", path: ["assets", asset.id, "sources"] }
       )
     );
   } else if (defaultSourceIndexes[0] !== asset.sources.length - 1) {
@@ -465,7 +465,7 @@ function validateVariantSources(
         asset.id,
         "Asset default source must be last.",
         options,
-        { path: ["assets", asset.id, "sources"] }
+        { causeCode: "variant", path: ["assets", asset.id, "sources"] }
       )
     );
   }
@@ -480,6 +480,7 @@ function validateVariantSources(
             "Variant conditions must use non-empty dimensions and values.",
             options,
             {
+              causeCode: "variant",
               path: ["assets", asset.id, "sources", String(sourceIndex), "when"]
             }
           )

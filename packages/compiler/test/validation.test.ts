@@ -133,4 +133,48 @@ describe("compiler validation", () => {
       "IND_VARIANT_INVALID"
     ]);
   });
+
+  it("accepts compressed capability sources when a default source is last", () => {
+    const diagnostics = validateNormalizedModel(
+      model([
+        {
+          id: normalizeAssetId("game:hero"),
+          type: "model/gltf",
+          sources: [
+            { when: { capability: ["draco"] }, url: "hero.draco.glb" },
+            { when: { capability: ["ktx2"] }, url: "hero.ktx2.glb" },
+            { when: { capability: ["meshopt"] }, url: "hero.meshopt.glb" },
+            { url: "hero.glb" }
+          ],
+          dependencies: []
+        }
+      ])
+    );
+
+    expect(diagnostics).toEqual([]);
+  });
+
+  it("reports empty compressed capability conditions as invalid variants", () => {
+    const diagnostics = validateNormalizedModel(
+      model([
+        {
+          id: normalizeAssetId("game:hero"),
+          type: "model/gltf",
+          sources: [
+            { when: { capability: [] }, url: "hero.draco.glb" },
+            { url: "hero.glb" }
+          ],
+          dependencies: []
+        }
+      ])
+    );
+
+    expect(diagnostics).toMatchObject([
+      {
+        code: "IND_VARIANT_INVALID",
+        causeCode: "variant",
+        path: ["assets", "game:hero", "sources", "0", "when"]
+      }
+    ]);
+  });
 });

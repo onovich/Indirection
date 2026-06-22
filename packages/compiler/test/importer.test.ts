@@ -101,6 +101,41 @@ describe("importer pipeline", () => {
     expect(result.assets[0]?.id).toBe("demo:hero");
   });
 
+  it("preserves compressed capability source conditions as catalog data", () => {
+    const result = importIndirectionManifest({
+      schemaVersion: 1,
+      namespace: "game",
+      assets: {
+        "character.hero": {
+          type: "model/gltf",
+          sources: [
+            {
+              when: {
+                capability: ["draco", "ktx2", "meshopt"]
+              },
+              url: "./models/hero.compressed.glb"
+            },
+            {
+              url: "./models/hero.glb"
+            }
+          ]
+        }
+      }
+    });
+
+    expect(result.assets[0]?.sources).toEqual([
+      {
+        when: {
+          capability: ["draco", "ktx2", "meshopt"]
+        },
+        url: "./models/hero.compressed.glb"
+      },
+      {
+        url: "./models/hero.glb"
+      }
+    ]);
+  });
+
   it("supports host-owned importer implementations", async () => {
     const hostImporter: AssetImporter<{ readonly ids: readonly string[] }> = {
       id: "host-manifest",
