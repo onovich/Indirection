@@ -99,3 +99,20 @@ corepack pnpm release:dry-run
 corepack pnpm publish:preflight
 git diff --check
 ```
+
+## 0.0.0-phase-13-three-gltf - 2026-06-22
+
+- Upgraded `@indirection/three` from a peer-boundary skeleton to a parser-injection GLTF adapter.
+- Added parser input coverage for raw transport bytes, plain `ArrayBuffer`, `assetId`, `sourceUrl`, source metadata, `basePath`, and optional `contentType`.
+- Added real `GLTFLoader.parseAsync` tests for a minimal glTF fixture plus invalid glTF fallback coverage preserving `IND_DECODE_FAILED`.
+- Extended package smoke to exercise the packed `@indirection/three` parser API with a parser stub.
+- Added Three GLTF adapter docs and the Phase 13 PASS report while keeping Three.js out of runtime core.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```

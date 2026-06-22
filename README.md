@@ -74,6 +74,7 @@ git diff --check
 - [Phase 12 Browser Matrix Goal guide](docs/indirection-phase-12-browser-matrix-goal-guide.md)
 - [Phase 13 Three GLTF Goal guide](docs/indirection-phase-13-three-gltf-goal-guide.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)
+- [Phase 13 PASS report](docs/phase-13-pass-report.md)
 - [Phase 12 PASS report](docs/phase-12-pass-report.md)
 - [Phase 11 PASS report](docs/phase-11-pass-report.md)
 - [Phase 10 PASS report](docs/phase-10-pass-report.md)

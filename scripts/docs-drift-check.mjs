@@ -203,6 +203,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-13-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/publish-preflight-policy.md"
     },
     {
@@ -271,6 +275,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/README.md",
+      text: "phase-13-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
       text: "publish-preflight-policy.md"
     },
     {
@@ -336,6 +344,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/phase-12-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/phase-13-pass-report.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -448,6 +460,30 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-12-pass-report.md",
       text: "docs/indirection-phase-13-three-gltf-goal-guide.md"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "GLTFLoader.parseAsync"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "IND_DECODE_FAILED"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "docs/three-gltf-adapter.md"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/phase-13-pass-report.md",
+      text: "No executor-side Phase 14 guide is selected"
     },
     {
       file: "docs/phase-0-7-pass-report.md",
@@ -572,6 +608,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-12-browser-matrix"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-13-three-gltf"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

@@ -141,6 +141,8 @@ Phase 13 turns `@indirection/three` from a peer-boundary skeleton into a real GL
 
 Three GLTF adapter docs: `docs/three-gltf-adapter.md`
 
+Phase 13 PASS report: `docs/phase-13-pass-report.md`
+
 ## Recommended Next Steps
 
 1. Keep Phase 13 acceptance tied to `validate:full`, `release:dry-run`, `publish:preflight`, and `git diff --check`.
@@ -159,6 +161,8 @@ Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 
 Phase 13 adapter docs: `docs/three-gltf-adapter.md`
+
+Phase 13 PASS report: `docs/phase-13-pass-report.md`
 
 Phase 10 release workflow policy: `docs/release-workflow.md`
 

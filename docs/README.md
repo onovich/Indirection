@@ -15,6 +15,7 @@ This index points to the current Phase 0-13 release-candidate, release-hardening
 - [Phase 12 Browser Matrix Goal guide](indirection-phase-12-browser-matrix-goal-guide.md)
 - [Phase 13 Three GLTF Goal guide](indirection-phase-13-three-gltf-goal-guide.md)
 - [Three GLTF adapter](three-gltf-adapter.md)
+- [Phase 13 PASS report](phase-13-pass-report.md)
 - [Phase 12 PASS report](phase-12-pass-report.md)
 - [Phase 11 PASS report](phase-11-pass-report.md)
 - [Phase 10 PASS report](phase-10-pass-report.md)
