@@ -19,6 +19,7 @@ git diff --check
 - `typecheck`: TypeScript project references with `skipLibCheck` disabled.
 - `test`: Vitest unit and contract suite.
 - `test:browser`: browser-facing loader smoke.
+- `test:e2e`: Playwright real browser E2E in Chromium for loaders-web, Cache Storage, runtime lifecycle, fallback diagnostics, and virtual catalog consumption.
 - `check:boundaries`: core package dependency and host-specific boundary scan.
 - `smoke:cli`: real CLI bin smoke for `validate`, `build`, `report`, and `inspect`.
 - `smoke:phase7`: advanced loader/cache/Vite integration example.

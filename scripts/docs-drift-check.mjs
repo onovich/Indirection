@@ -27,6 +27,7 @@ function checkValidateFull() {
     "pnpm typecheck",
     "pnpm test",
     "pnpm test:browser",
+    "pnpm test:e2e",
     "pnpm check:boundaries",
     "pnpm smoke:cli",
     "pnpm smoke:phase7",
@@ -55,6 +56,10 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm smoke:cli"
     },
     {
+      file: "README.md",
+      text: "corepack pnpm test:e2e"
+    },
+    {
       file: "docs/README.md",
       text: "indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -65,6 +70,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "docs drift checks"
+    },
+    {
+      file: "docs/README.md",
+      text: "real browser E2E"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "`test:e2e`"
     },
     {
       file: "docs/phase-0-7-pass-report.md",

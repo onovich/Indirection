@@ -37,6 +37,7 @@ corepack pnpm check:docs
 corepack pnpm typecheck
 corepack pnpm test
 corepack pnpm test:browser
+corepack pnpm test:e2e
 corepack pnpm check:boundaries
 corepack pnpm smoke:cli
 corepack pnpm smoke:phase7

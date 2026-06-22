@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-8 release-candidate and release-hardening documentation.
+This index points to the current Phase 0-9 release-candidate, release-hardening, and real browser E2E documentation.
 
 ## Core Project
 
@@ -33,4 +33,4 @@ corepack pnpm validate:full
 git diff --check
 ```
 
-`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
+`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
