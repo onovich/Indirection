@@ -107,7 +107,7 @@ git diff --check
 
 Phase 10 不做：
 
-- 不执行 `npm publish`。
+- 不执行真实 `npm publish`。允许在明确 `--dry-run`、不上传、不创建 tag、不写入 npm registry、不留下可提交产物的保护下使用 `npm publish --dry-run` 或 `pnpm publish --dry-run`。
 - 不创建真实 Git tag 或 GitHub Release。
 - 不更换 npm scope 到未确认的组织 scope。
 - 不把 private/internal 包强行公开。
@@ -205,6 +205,7 @@ git status --short --branch
 - 不提交 package tarball、temporary consumer、release archive、npm cache、Playwright trace/report/screenshot、`dist/` 或 `*.tsbuildinfo`。
 - 不 force-push。
 - 验证失败不提交。
+- release dry-run 不得修改 package versions、lockfile、workspace dependency ranges，除非该轮目标明确是版本策略文件变更且已通过验证。
 
 ---
 
@@ -321,6 +322,7 @@ Phase 10 PASS 必须满足：
 - 存在明确的 package visibility policy。
 - package metadata 规则已文档化，并被脚本或 smoke 覆盖。
 - release dry-run 可重复运行，且不会真实 publish、不会创建 tag、不会提交生成产物。
+- release dry-run 必须确认不会上传到 npm registry、不会创建 Git tag/GitHub Release、不会意外修改 package versions 或 lockfile，且不会留下未跟踪产物。
 - pack/import smoke 继续覆盖 9 个 workspace packages。
 - CLI bin、exports、types、files whitelist、peer dependency 和 workspace dependency publishability 被验证。
 - Changesets 或等价 release notes/versioning 流程有结论和文档。
