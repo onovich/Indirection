@@ -206,6 +206,12 @@ git diff --check
 
 Phase 11 adds `corepack pnpm publish:preflight` as a local policy gate. It must only inspect repository state and local Git metadata. It must not publish, login, create tags, create releases, or mutate manifests.
 
+Run the local publish preflight gate with:
+
+```powershell
+corepack pnpm publish:preflight
+```
+
 ## Relationship To Phase 10
 
 Phase 10 proved package readiness and release dry-run safety. Phase 11 adds the policy gate that says which human decisions are still required before a later real publish phase can start.
