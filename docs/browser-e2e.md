@@ -55,6 +55,13 @@ The browser matrix verifies the same fixture in Chromium, Firefox, and WebKit:
 - fallback success and no-fallback failure using structured `causeCode` and `fallbackAssetId` snapshot fields.
 - virtual catalog consumption by importing a JS module generated through the Vite plugin and compiler output.
 
+Phase 16 adds bounded stress coverage to the same fixture:
+
+- repeated runtime acquire/release loops, followed by multi-handle `AssetScope.dispose()` cleanup and leak-warning checks.
+- Cache Storage isolation across multiple catalog versions and keys, including deleting one version while retaining the others, then final cleanup.
+- compressed capability source selection with tiny text fixture data for `draco`, `ktx2`, `meshopt`, and the default source.
+- structured `window.__indirectionE2E.diagnostics` plus the `indirection-e2e-result.json` Playwright attachment for easier failure inspection.
+
 The fixture data and assertions must stay browser-neutral. Names such as `chromium` belong to Playwright project labels and should not appear in loader payload values, runtime fixture values, or diagnostic expectations.
 
 The older Node `test:browser` smoke remains as a fast browser-facing loader smoke. It does not replace `test:e2e`.
@@ -77,6 +84,17 @@ corepack pnpm test:e2e
 If the local server port is already occupied, stop the process using port `4173` and rerun `corepack pnpm test:e2e`.
 
 If CI fails before tests start on Linux browser dependencies, inspect the `Install Playwright Browsers` step before debugging the fixture.
+
+If a stress assertion fails, inspect `window.__indirectionE2E.diagnostics` in the assertion output or open the attached `indirection-e2e-result.json` under `test-results/`. The sections list localizes the failure to loaders, cache, runtime, fallback, stress cache, stress capability selection, stress runtime lifecycle, or virtual catalog consumption.
+
+If a Cache Storage stress assertion fails, rerun the affected browser project after clearing local Playwright artifacts and browser cache state:
+
+```powershell
+Remove-Item -Recurse -Force playwright-report, test-results
+corepack pnpm test:e2e:chromium
+```
+
+Use `test:e2e:firefox` or `test:e2e:webkit` when the failing project is not Chromium.
 
 ## Artifact Policy
 
