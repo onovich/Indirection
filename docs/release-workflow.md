@@ -62,6 +62,8 @@ Every workspace package must define:
 
 Phase 10 uses `UNLICENSED` while packages remain private. A real publish-preflight phase must replace that with an accepted SPDX license and matching repository license file before public release.
 
+`pack:check` must pack every workspace package, install those tarballs into a temporary consumer, import every public ESM entrypoint, and execute the installed `indirection` CLI bin from that consumer.
+
 ## Promotion Rules
 
 A package can move from dry-run candidate to real publish candidate only when:

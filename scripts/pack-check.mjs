@@ -237,6 +237,7 @@ async function runInstallSmoke(packedPackages, destination) {
 
   await writeFile(join(consumerDir, "smoke.mjs"), createSmokeSource(), "utf8");
   runNode(["smoke.mjs"], consumerDir);
+  runInstalledCliSmoke(consumerDir);
 }
 
 function createSmokeSource() {
@@ -358,6 +359,23 @@ assert(code === 0, "cli validate failed");
 assert(stderr.length === 0, "cli emitted stderr");
 assert(JSON.parse(stdout[0]).ok === true, "cli output failed");
 `;
+}
+
+function runInstalledCliSmoke(consumerDir) {
+  const binPath = binCommandPath(consumerDir, "indirection");
+  const binArgs = ["validate", "--manifest", "indirection.manifest.json"];
+  const stdout =
+    process.platform === "win32"
+      ? run(
+          process.env.ComSpec ?? "cmd.exe",
+          ["/d", "/c", "call", binPath, ...binArgs],
+          consumerDir
+        )
+      : run(binPath, binArgs, consumerDir);
+  const parsed = JSON.parse(stdout);
+  if (parsed.ok !== true || !Array.isArray(parsed.diagnostics)) {
+    throw new Error("installed CLI bin smoke did not return ok diagnostics JSON");
+  }
 }
 
 async function assertFileExists(baseDir, relativePath, label) {
@@ -487,4 +505,9 @@ function run(command, args, cwd) {
 
 function commandPath(command) {
   return process.platform === "win32" ? `${command}.cmd` : command;
+}
+
+function binCommandPath(root, command) {
+  const bin = join(root, "node_modules", ".bin", command);
+  return process.platform === "win32" ? `${bin}.cmd` : bin;
 }
