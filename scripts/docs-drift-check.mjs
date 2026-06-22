@@ -400,6 +400,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/release-ci-policy.md"
     },
     {
@@ -533,6 +537,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -717,6 +725,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 19 No-Publish Release Candidate Rehearsal And Decision Handoff"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1347,6 +1363,38 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "No-Publish Release Candidate Rehearsal And Decision Handoff"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "release:rc-check"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "owner decision blockers"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "release-candidate handoff"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "corepack pnpm release:ci-check"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
       file: "docs/release-provenance.md",
       text: "Release Provenance"
     },
@@ -1581,6 +1629,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-18-pass-report.md",
       text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-18-pass-report.md",
+      text: "Planner selection after PASS: Phase 19 No-Publish Release Candidate Rehearsal And Decision Handoff"
+    },
+    {
+      file: "docs/phase-18-pass-report.md",
+      text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
     },
     {
       file: "docs/phase-17-pass-report.md",

@@ -80,6 +80,7 @@ git diff --check
 - [Phase 16 Browser E2E Stress Goal guide](docs/indirection-phase-16-browser-e2e-stress-goal-guide.md)
 - [Phase 17 Release Provenance Goal guide](docs/indirection-phase-17-release-provenance-goal-guide.md)
 - [Phase 18 Release CI Policy Goal guide](docs/indirection-phase-18-release-ci-policy-goal-guide.md)
+- [Phase 19 Release Candidate Rehearsal Goal guide](docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md)
 - [Release CI policy](docs/release-ci-policy.md)
 - [Release provenance](docs/release-provenance.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)

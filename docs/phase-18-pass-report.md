@@ -57,6 +57,12 @@ The final pushed commit is recorded in the execution response after this report 
 
 Expected final push target: `origin/main`.
 
+## Next Phase
+
+Planner selection after PASS: Phase 19 No-Publish Release Candidate Rehearsal And Decision Handoff.
+
+Guide: `docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md`
+
 ## Unfinished / Follow-Up Items
 
 - No Phase 18 PASS blockers remain.
