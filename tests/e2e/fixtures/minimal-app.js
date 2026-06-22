@@ -30,6 +30,7 @@ try {
 
   const result = {
     cache,
+    diagnostics: createSuccessDiagnostics(stress),
     fallback,
     fixture: "loaders-web-browser",
     loaderCount: loaders.length,
@@ -49,7 +50,12 @@ try {
   document.querySelector("[data-testid='status']").textContent = result.status;
 } catch (error) {
   window.__indirectionE2E = {
-    message: error instanceof Error ? error.message : String(error),
+    diagnostics: {
+      errorName: error instanceof Error ? error.name : "unknown",
+      message: error instanceof Error ? error.message : String(error),
+      schemaVersion: 1,
+      stage: "browser-fixture"
+    },
     status: "failed"
   };
   document.querySelector("[data-testid='status']").textContent = "failed";
@@ -76,6 +82,28 @@ async function load(type, url) {
   });
 
   return loaded.value;
+}
+
+function createSuccessDiagnostics(stress) {
+  return {
+    artifactName: "indirection-e2e-result.json",
+    schemaVersion: 1,
+    sections: [
+      "loaders",
+      "cache",
+      "runtime",
+      "fallback",
+      "stress.cacheStorage",
+      "stress.capabilitySelection",
+      "stress.runtimeLifecycle",
+      "virtualCatalog"
+    ],
+    stressSummary: {
+      cacheVersionCount: stress.cacheStorage.versions.length,
+      capabilityCases: Object.keys(stress.capabilitySelection).sort(),
+      runtimeRepeatedCount: stress.runtimeLifecycle.repeated.length
+    }
+  };
 }
 
 async function runCacheStorageProbe() {

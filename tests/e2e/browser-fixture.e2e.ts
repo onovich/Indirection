@@ -28,7 +28,19 @@ test("serves the browser E2E fixture", async ({ page }) => {
     .poll(() =>
       page.evaluate(() => (window as Window & { __indirectionE2E?: unknown }).__indirectionE2E)
     )
-    .toEqual({
+    .toMatchObject({
+      status: "ready"
+    });
+
+  const browserResult = await page.evaluate(
+    () => (window as Window & { __indirectionE2E?: unknown }).__indirectionE2E
+  );
+  await test.info().attach("indirection-e2e-result.json", {
+    body: JSON.stringify(browserResult, null, 2),
+    contentType: "application/json"
+  });
+
+  expect(browserResult).toEqual({
       cache: {
         hit: "current-cache-value",
         keysBeforeCleanup: ["cache-entry.txt"],
@@ -36,6 +48,25 @@ test("serves the browser E2E fixture", async ({ page }) => {
         missBeforePut: true,
         staleHit: "stale-cache-value",
         staleStillIsolated: true
+      },
+      diagnostics: {
+        artifactName: "indirection-e2e-result.json",
+        schemaVersion: 1,
+        sections: [
+          "loaders",
+          "cache",
+          "runtime",
+          "fallback",
+          "stress.cacheStorage",
+          "stress.capabilitySelection",
+          "stress.runtimeLifecycle",
+          "virtualCatalog"
+        ],
+        stressSummary: {
+          cacheVersionCount: 3,
+          capabilityCases: ["declarationOrder", "defaultSource", "ktx2"],
+          runtimeRepeatedCount: 4
+        }
       },
       fallback: {
         broken: {
