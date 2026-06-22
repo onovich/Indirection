@@ -267,6 +267,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/release-provenance.md"
     },
     {
@@ -384,6 +388,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-17-release-provenance-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-18-release-ci-policy-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -548,6 +556,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-17-release-provenance-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 18 Release CI Policy Parity And Workflow Hardening"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1138,6 +1154,34 @@ function checkRequiredDocPointers() {
       text: "npm provenance upload"
     },
     {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "Release CI Policy Parity And Workflow Hardening"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "release:ci-check"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "contents: write"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "id-token: write"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "corepack pnpm release:provenance"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-18-release-ci-policy-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
       file: "docs/release-provenance.md",
       text: "Release Provenance"
     },
@@ -1348,6 +1392,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-17-pass-report.md",
       text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "Planner selection after PASS: Phase 18 Release CI Policy Parity And Workflow Hardening"
+    },
+    {
+      file: "docs/phase-17-pass-report.md",
+      text: "docs/indirection-phase-18-release-ci-policy-goal-guide.md"
     },
     {
       file: ".github/workflows/release-dry-run.yml",

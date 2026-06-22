@@ -56,6 +56,12 @@ The final pushed commit is recorded in the execution response after this report 
 
 Expected final push target: `origin/main`.
 
+## Next Phase
+
+Planner selection after PASS: Phase 18 Release CI Policy Parity And Workflow Hardening.
+
+Guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
+
 ## Unfinished / Follow-Up Items
 
 - No Phase 17 PASS blockers remain.

@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, and Phase 17 release provenance posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, and selected Phase 18 release CI policy plan before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -189,11 +189,18 @@ Release provenance docs: `docs/release-provenance.md`
 
 Phase 17 PASS report: `docs/phase-17-pass-report.md`
 
+## Phase 18 Release CI Policy Parity And Workflow Hardening
+
+Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
+
+Phase 18 is selected to harden the read-only GitHub Actions release gates and local release command parity after Phase 17 PASS. It must keep real npm publish, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, OIDC publish permissions, workflow write permissions, and generated release artifacts out of scope.
+
 ## Recommended Next Steps
 
 1. Keep `validate:full`, `release:provenance`, `release:dry-run`, and `publish:preflight` as the local release-readiness gates.
-2. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
-3. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
+2. Execute the selected Phase 18 release CI policy guide before adding any real publishing workflow.
+3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, and rollback decisions are accepted.
+4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
 
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
 
@@ -212,6 +219,8 @@ Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
 
 Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
+
+Phase 18 guide: `docs/indirection-phase-18-release-ci-policy-goal-guide.md`
 
 Release provenance docs: `docs/release-provenance.md`
 
