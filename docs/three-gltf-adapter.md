@@ -83,6 +83,33 @@ createThreeGltfLoader({
 
 The adapter passes `arrayBuffer` and `basePath` to `GLTFLoader.parseAsync`. Asset ownership, URL selection, fallback, and decode failure reporting remain runtime responsibilities.
 
+## Compressed Decoder Capabilities
+
+Compressed source selection is a runtime catalog contract, not a Three adapter decoder contract. Catalogs can declare source conditions such as `when.capability: ["draco"]`, `["ktx2"]`, or `["meshopt"]`; the runtime selects the first matching source from `ResolutionContext.capability`.
+
+Hosts that use real Three decoder plugins must configure those plugins on their own `GLTFLoader` instance or parser wrapper before passing it to `createThreeGltfLoader`:
+
+```ts
+const parser = new GLTFLoader();
+// Host-owned setup, for example DRACOLoader, KTX2Loader, or meshopt support.
+
+const manager = createAssetManager({
+  catalog,
+  context: {
+    capability: ["draco", "ktx2", "meshopt"]
+  },
+  loaders: [
+    createThreeGltfLoader({
+      parser
+    })
+  ]
+});
+```
+
+`@indirection/three` does not create decoder instances, import decoder packages, detect GPU support, or decide which compressed capability strings are safe for a host. It only parses the already selected `model/gltf` source through the host-provided parser.
+
+Default source selection and runtime fallback remain distinct. If a decoder capability is absent, runtime selects the uncompressed default source. If a selected compressed source fails to load or decode, runtime records the structured failure and uses the asset's explicit fallback when one is declared.
+
 ## Failure And Fallback
 
 Parser failures are allowed to throw. `@indirection/runtime` records those failures as `IND_DECODE_FAILED`; if the catalog asset has a fallback, the parent asset transitions to `fallback-ready` and preserves the fallback asset id.
@@ -97,7 +124,7 @@ The package smoke test imports the packed `@indirection/three` package without r
 
 ## Non-Scope
 
-Phase 14 intentionally does not implement:
+The current adapter intentionally does not implement:
 
 - Draco, KTX2, or meshopt decoder wiring.
 - A texture pipeline or renderer E2E scene.

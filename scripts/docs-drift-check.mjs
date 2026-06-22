@@ -195,6 +195,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/compressed-capability-source-selection.md"
+    },
+    {
+      file: "README.md",
       text: "docs/runtime-lifecycle.md"
     },
     {
@@ -280,6 +284,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-15-compressed-capability-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "compressed-capability-source-selection.md"
     },
     {
       file: "docs/README.md",
@@ -407,6 +415,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/release-readiness.md",
+      text: "docs/compressed-capability-source-selection.md"
+    },
+    {
+      file: "docs/release-readiness.md",
       text: "docs/runtime-lifecycle.md"
     },
     {
@@ -491,6 +503,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/three-gltf-adapter.md",
+      text: "ResolutionContext.capability"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
       text: "basePath"
     },
     {
@@ -500,6 +516,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/three-gltf-adapter.md",
       text: "Draco, KTX2, or meshopt"
+    },
+    {
+      file: "docs/report-json-shapes.md",
+      text: "AssetReportSource"
+    },
+    {
+      file: "docs/report-json-shapes.md",
+      text: "when?: Record<string, readonly string[]>"
     },
     {
       file: "docs/three-gltf-adapter.md",
@@ -772,6 +796,42 @@ function checkRequiredDocPointers() {
     {
       file: "docs/indirection-phase-15-compressed-capability-goal-guide.md",
       text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "Compressed Capability Source Selection"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "ResolutionContext.capability"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "draco"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "ktx2"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "meshopt"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "default source"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "runtime fallback"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/compressed-capability-source-selection.md",
+      text: "corepack pnpm pack:check"
     },
     {
       file: "docs/browser-e2e.md",

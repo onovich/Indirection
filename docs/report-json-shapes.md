@@ -80,8 +80,16 @@ interface AssetReportAsset {
   id: string;
   type: string;
   sourceCount: number;
+  sources: readonly AssetReportSource[];
   dependencyCount: number;
   fallback?: string;
+}
+
+interface AssetReportSource {
+  index: number;
+  url: string;
+  default: boolean;
+  when?: Record<string, readonly string[]>;
 }
 ```
 

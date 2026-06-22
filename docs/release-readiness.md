@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, and selected Phase 15 compressed capability source-selection guide before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, and Phase 15 compressed capability source-selection posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -38,6 +38,7 @@ git diff --check
 - Runtime `LoadedAsset.dispose` execution is documented as a generic lifecycle contract in `docs/runtime-lifecycle.md`.
 - `@indirection/three` parses `model/gltf` transport bodies through injected `GLTFLoader.parseAsync` or a host-provided parser wrapper while keeping Three.js out of runtime core.
 - `@indirection/three` exposes `createThreeOwnedResourceDisposer`, `instantiateThreeGltf`, and `extractThreeAnimationMetadata` as adapter-side lifecycle helpers.
+- Compressed Draco/KTX2/meshopt readiness is represented through declarative `ResolutionContext.capability` strings, capability-gated catalog sources, compiler reports, runtime tests, and package smoke data without real decoder dependencies.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 
@@ -106,7 +107,7 @@ At this checkpoint, `test:e2e` runs the same browser fixture in Chromium, Firefo
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
 - Browser E2E stress and artifact diagnostics remain future hardening candidates.
-- The Three adapter intentionally does not cover Draco/KTX2/meshopt, texture pipeline, renderer E2E, automatic deep GPU disposal, scene attach, renderer attach, or gameplay object factories.
+- The Three adapter intentionally does not cover real Draco/KTX2/meshopt decoder wiring, texture pipeline, renderer E2E, automatic deep GPU disposal, scene attach, renderer attach, or gameplay object factories.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
 ## Phase 10 Dry-Run Policy
@@ -161,11 +162,13 @@ Phase 14 PASS report: `docs/phase-14-pass-report.md`
 
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 
-Phase 15 is selected as the next in-repository phase after Phase 14 PASS. It should make Draco, KTX2, and meshopt readiness visible through declarative capability/source-selection contracts without adding real decoder dependencies, texture pipeline work, renderer E2E, live Sinan Engine integration, or real npm publishing.
+Phase 15 makes Draco, KTX2, and meshopt readiness visible through declarative capability/source-selection contracts without adding real decoder dependencies, texture pipeline work, renderer E2E, live Sinan Engine integration, or real npm publishing.
+
+Compressed capability docs: `docs/compressed-capability-source-selection.md`
 
 ## Recommended Next Steps
 
-1. Execute the selected Phase 15 compressed capability source-selection guide before starting real publish or live Sinan integration.
+1. Complete Phase 15 validation and PASS reporting before starting real publish or live Sinan integration.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -183,6 +186,8 @@ Phase 13 guide: `docs/indirection-phase-13-three-gltf-goal-guide.md`
 Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
+
+Compressed capability docs: `docs/compressed-capability-source-selection.md`
 
 Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
