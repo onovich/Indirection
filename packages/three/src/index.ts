@@ -50,6 +50,23 @@ export type ThreeGltfInstantiate<TValue = unknown, TInstance = TValue> = (
   input: ThreeGltfInstantiateInput<TValue>
 ) => TInstance | Promise<TInstance>;
 
+export interface ThreeAnimationClipLike {
+  readonly name?: string;
+  readonly duration?: number;
+  readonly tracks?: readonly unknown[];
+}
+
+export interface ThreeAnimationSourceLike {
+  readonly animations?: readonly ThreeAnimationClipLike[];
+}
+
+export interface ThreeAnimationMetadata {
+  readonly index: number;
+  readonly durationSeconds: number;
+  readonly trackCount: number;
+  readonly name?: string;
+}
+
 export interface ThreeGltfLoaderOptions<TValue = unknown> {
   readonly basePath?: string | ((input: ThreeGltfBasePathInput) => string);
   readonly parse?: (input: ThreeGltfParseInput) => TValue | Promise<TValue>;
@@ -85,6 +102,21 @@ export function createThreeGltfLoader<TValue = FakeGltfPayload>(
       return createLoadedThreeGltfAsset(value, parseInput, options);
     }
   };
+}
+
+export function extractThreeAnimationMetadata(
+  input: ThreeAnimationSourceLike | readonly ThreeAnimationClipLike[]
+): readonly ThreeAnimationMetadata[] {
+  const animations = isAnimationClipArray(input) ? input : input.animations ?? [];
+  return animations.map((clip, index) => {
+    const metadata = {
+      index,
+      durationSeconds: normalizeAnimationDuration(clip.duration),
+      trackCount: clip.tracks?.length ?? 0,
+      ...(clip.name === undefined ? {} : { name: clip.name })
+    };
+    return metadata;
+  });
 }
 
 export function instantiateThreeGltf<TValue, TInstance = TValue>(
@@ -159,6 +191,16 @@ async function disposeOwnedResources(resources: readonly ThreeDisposableResource
   if (failures.length > 1) {
     throw new AggregateError(failures, "Failed to dispose one or more Three owned resources");
   }
+}
+
+function isAnimationClipArray(
+  input: ThreeAnimationSourceLike | readonly ThreeAnimationClipLike[]
+): input is readonly ThreeAnimationClipLike[] {
+  return Array.isArray(input);
+}
+
+function normalizeAnimationDuration(duration: number | undefined): number {
+  return typeof duration === "number" && Number.isFinite(duration) ? duration : 0;
 }
 
 function definedInstantiateContext(

@@ -6,6 +6,7 @@ import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
 import {
   createThreeGltfLoader,
   createThreeOwnedResourceDisposer,
+  extractThreeAnimationMetadata,
   instantiateThreeGltf,
   threePackageName,
   type ThreeGltfParseInput
@@ -76,6 +77,45 @@ describe("three adapter", () => {
       templateCloneCount: 0
     });
     expect(loadedValue.cloneCount).toBe(0);
+  });
+
+  it("extracts empty animation metadata without changing the source", () => {
+    const source = {};
+
+    expect(extractThreeAnimationMetadata(source)).toEqual([]);
+    expect(source).toEqual({});
+  });
+
+  it("extracts named animation metadata as a read-only summary", () => {
+    const clips = [
+      {
+        name: "Idle",
+        duration: 1.25,
+        tracks: [{ name: "hip.position" }, { name: "arm.rotation" }]
+      },
+      {
+        name: "Run",
+        duration: 0.75,
+        tracks: []
+      }
+    ];
+    const source = { animations: clips };
+
+    expect(extractThreeAnimationMetadata(source)).toEqual([
+      {
+        index: 0,
+        name: "Idle",
+        durationSeconds: 1.25,
+        trackCount: 2
+      },
+      {
+        index: 1,
+        name: "Run",
+        durationSeconds: 0.75,
+        trackCount: 0
+      }
+    ]);
+    expect(source.animations).toBe(clips);
   });
 
   it("loads fake GLTF payloads through injected transport", async () => {
