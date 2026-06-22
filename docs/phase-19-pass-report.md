@@ -57,6 +57,12 @@ The final pushed commit is recorded in the execution response after this report 
 
 Expected final push target: `origin/main`.
 
+## Next Phase
+
+Planner selection after PASS: Phase 20 Public Docs, Examples, And Consumer Onboarding Polish.
+
+Guide: `docs/indirection-phase-20-public-docs-onboarding-goal-guide.md`
+
 ## Unfinished / Follow-Up Items
 
 - No Phase 19 PASS blockers remain.

@@ -503,6 +503,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/release-candidate-handoff.md"
     },
     {
@@ -652,6 +656,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-20-public-docs-onboarding-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -856,6 +864,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 20 Public Docs, Examples, And Consumer Onboarding Polish"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -1530,6 +1546,34 @@ function checkRequiredDocPointers() {
       text: "corepack pnpm publish:preflight"
     },
     {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "Public Docs, Examples, And Consumer Onboarding Polish"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "evaluator guide"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "package entrypoint documentation"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "no-publish"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
       file: "docs/release-provenance.md",
       text: "Release Provenance"
     },
@@ -1788,6 +1832,26 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-18-pass-report.md",
       text: "docs/indirection-phase-19-release-candidate-rehearsal-goal-guide.md"
+    },
+    {
+      file: "docs/phase-19-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-19-pass-report.md",
+      text: "corepack pnpm release:rc-check"
+    },
+    {
+      file: "docs/phase-19-pass-report.md",
+      text: "Real npm publish"
+    },
+    {
+      file: "docs/phase-19-pass-report.md",
+      text: "Planner selection after PASS: Phase 20 Public Docs, Examples, And Consumer Onboarding Polish"
+    },
+    {
+      file: "docs/phase-19-pass-report.md",
+      text: "docs/indirection-phase-20-public-docs-onboarding-goal-guide.md"
     },
     {
       file: "docs/phase-17-pass-report.md",
