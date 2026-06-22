@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, and Phase 14 Three lifecycle planning posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, and Phase 14 Three lifecycle posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -37,6 +37,7 @@ git diff --check
 - Real browser E2E runs in Chromium, Firefox, and WebKit through Playwright and is part of `validate:full`.
 - Runtime `LoadedAsset.dispose` execution is documented as a generic lifecycle contract in `docs/runtime-lifecycle.md`.
 - `@indirection/three` parses `model/gltf` transport bodies through injected `GLTFLoader.parseAsync` or a host-provided parser wrapper while keeping Three.js out of runtime core.
+- `@indirection/three` exposes `createThreeOwnedResourceDisposer`, `instantiateThreeGltf`, and `extractThreeAnimationMetadata` as adapter-side lifecycle helpers.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 
@@ -105,7 +106,7 @@ At this checkpoint, `test:e2e` runs the same browser fixture in Chromium, Firefo
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
 - Browser E2E stress and artifact diagnostics remain future hardening candidates.
-- The Three adapter intentionally does not cover Draco/KTX2/meshopt, texture pipeline, renderer E2E, full GPU disposal, model instantiate helpers, or animation metadata.
+- The Three adapter intentionally does not cover Draco/KTX2/meshopt, texture pipeline, renderer E2E, automatic deep GPU disposal, scene attach, renderer attach, or gameplay object factories.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
 ## Phase 10 Dry-Run Policy
@@ -148,13 +149,15 @@ Phase 13 PASS report: `docs/phase-13-pass-report.md`
 
 Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 
-Phase 14 has been selected as the next architect/strategist-owned implementation phase. It should make runtime `LoadedAsset.dispose` executable and testable, then add bounded `@indirection/three` owned-resource disposer, instantiate hook, and animation metadata contracts while keeping Three-specific lifecycle outside runtime core.
+Phase 14 makes runtime `LoadedAsset.dispose` executable and testable, then adds bounded `@indirection/three` owned-resource disposer, instantiate hook, and animation metadata contracts while keeping Three-specific lifecycle outside runtime core.
 
 Runtime lifecycle docs: `docs/runtime-lifecycle.md`
 
+Three adapter lifecycle docs: `docs/three-gltf-adapter.md`
+
 ## Recommended Next Steps
 
-1. Execute Phase 14 Three Adapter Lifecycle using `docs/indirection-phase-14-three-lifecycle-goal-guide.md`.
+1. Complete Phase 14 final validation and PASS reporting using `docs/indirection-phase-14-three-lifecycle-goal-guide.md`.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.

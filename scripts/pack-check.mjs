@@ -273,7 +273,10 @@ import {
 } from "@indirection/loaders-web";
 import {
   threePackageName,
-  createThreeGltfLoader
+  createThreeGltfLoader,
+  createThreeOwnedResourceDisposer,
+  extractThreeAnimationMetadata,
+  instantiateThreeGltf
 } from "@indirection/three";
 import {
   vitePackageName,
@@ -338,12 +341,23 @@ assert(await cache.match({ catalogVersion: result.catalog.catalogVersion, source
 
 const gltfLoader = createThreeGltfLoader();
 assert(gltfLoader.types.includes("model/gltf"), "three loader boundary failed");
+const gltfDisposals = [];
 const parsedGltfLoader = createThreeGltfLoader({
   basePath: "packed/",
   parser: {
     async parseAsync(input, basePath) {
       return { basePath, byteLength: input.byteLength };
     }
+  },
+  ownedResources(value) {
+    assert(value.byteLength === 3, "three owned resources saw wrong value");
+    return [
+      {
+        dispose() {
+          gltfDisposals.push("parsed-gltf");
+        }
+      }
+    ];
   }
 });
 const gltfAssetId = normalizeAssetId("pack:model.hero");
@@ -365,8 +379,44 @@ const gltfScope = gltfManager.createScope("pack-gltf-smoke");
 const gltfHandle = await gltfScope.acquire(gltfAssetId);
 assert(gltfHandle.value.basePath === "packed/", "three parser basePath failed");
 assert(gltfHandle.value.byteLength === 3, "three parser bytes failed");
+const gltfInstance = await instantiateThreeGltf(
+  gltfHandle.value,
+  ({ value, assetId }) => ({
+    assetId,
+    instanceByteLength: value.byteLength
+  }),
+  { assetId: gltfAssetId }
+);
+assert(gltfInstance.assetId === gltfAssetId, "three instantiate asset id failed");
+assert(gltfInstance.instanceByteLength === 3, "three instantiate hook failed");
+const animations = extractThreeAnimationMetadata({
+  animations: [{ name: "Idle", duration: 1.5, tracks: [{}, {}] }]
+});
+assert(animations.length === 1, "three animation metadata length failed");
+assert(animations[0].name === "Idle", "three animation metadata name failed");
+assert(animations[0].durationSeconds === 1.5, "three animation metadata duration failed");
+assert(animations[0].trackCount === 2, "three animation metadata track count failed");
 await gltfHandle.release();
 await gltfScope.dispose();
+assert(gltfDisposals.join(",") === "parsed-gltf", "three owned resource disposer failed");
+
+const directDisposals = [];
+const directThreeDispose = createThreeOwnedResourceDisposer([
+  {
+    dispose() {
+      directDisposals.push("geometry");
+    }
+  },
+  {
+    dispose() {
+      directDisposals.push("material");
+    }
+  }
+]);
+assert(directThreeDispose !== undefined, "three direct disposer missing");
+await directThreeDispose();
+await directThreeDispose();
+assert(directDisposals.join(",") === "geometry,material", "three direct disposer idempotency failed");
 
 const plugin = createIndirectionVitePlugin({ model });
 assert(plugin.resolveId(virtualCatalogModuleId) === resolvedVirtualCatalogModuleId, "vite resolve failed");

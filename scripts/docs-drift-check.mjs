@@ -386,6 +386,18 @@ function checkRequiredDocPointers() {
       text: "docs/runtime-lifecycle.md"
     },
     {
+      file: "docs/release-readiness.md",
+      text: "createThreeOwnedResourceDisposer"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "instantiateThreeGltf"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "extractThreeAnimationMetadata"
+    },
+    {
       file: "docs/runtime-lifecycle.md",
       text: "LoadedAsset.dispose"
     },
@@ -423,6 +435,26 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/three-gltf-adapter.md",
+      text: "ownedResources"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "createThreeOwnedResourceDisposer"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "instantiateThreeGltf"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "extractThreeAnimationMetadata"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
+      text: "AssetHandle.release()"
+    },
+    {
+      file: "docs/three-gltf-adapter.md",
       text: "GLTFLoader.parseAsync"
     },
     {
@@ -443,7 +475,7 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/three-gltf-adapter.md",
-      text: "Full GPU disposal"
+      text: "Automatic deep GPU disposal"
     },
     {
       file: "docs/release-readiness.md",
