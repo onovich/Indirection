@@ -96,6 +96,43 @@ A later real publish phase must accept all license items before removing `privat
 
 If the public license is still `pending`, `publish:preflight` must fail any attempt to mark packages publishable for real. Phase 11 policy gates may still pass because they prove the project is intentionally not publishing yet.
 
+## Npm Scope, Account, And Permission Policy
+
+Current Phase 11 npm state:
+
+- package names remain under the logical `@indirection/*` scope;
+- root package `indirection` remains private and non-publishable;
+- no npm account is selected in repository policy;
+- no npm organization ownership is verified in Phase 11;
+- no npm token, login, 2FA, provenance, or registry write command runs in Phase 11.
+
+A later real publish phase must accept:
+
+- whether `@indirection/*` is the final npm scope;
+- npm organization owner and maintainer list;
+- publishing account or automation identity;
+- 2FA and token policy;
+- package provenance policy;
+- whether package access is public or restricted;
+- who may run the final publish command;
+- how permission evidence is recorded without committing secrets.
+
+Allowed Phase 11 checks:
+
+- verify package manifest names use the current logical `@indirection/*` scope;
+- verify all workspace packages remain `private: true`;
+- verify there are no real publish scripts;
+- verify CI workflows use read-only repository permissions for preflight jobs;
+- verify no `.npmrc` token or registry credential is committed.
+
+Disallowed Phase 11 checks:
+
+- `npm login`;
+- `npm whoami` when it requires a live user/session;
+- `npm token` commands;
+- `npm owner` mutation commands;
+- `npm publish`, `pnpm publish`, or any registry write command.
+
 ## Safe Local Gates
 
 The safe local gates are:
