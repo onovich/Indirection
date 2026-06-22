@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-15 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, and the selected Phase 16 browser E2E stress guide.
+This index points to the current Phase 0-16 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, browser matrix, runtime lifecycle, Three GLTF adapter, Three lifecycle documentation, compressed capability source-selection documentation, browser E2E stress documentation, and the selected Phase 17 release provenance guide.
 
 ## Core Project
 
@@ -17,6 +17,7 @@ This index points to the current Phase 0-15 release-candidate, release-hardening
 - [Phase 14 Three Lifecycle Goal guide](indirection-phase-14-three-lifecycle-goal-guide.md)
 - [Phase 15 Compressed Capability Goal guide](indirection-phase-15-compressed-capability-goal-guide.md)
 - [Phase 16 Browser E2E Stress Goal guide](indirection-phase-16-browser-e2e-stress-goal-guide.md)
+- [Phase 17 Release Provenance Goal guide](indirection-phase-17-release-provenance-goal-guide.md)
 - [Compressed capability source selection](compressed-capability-source-selection.md)
 - [Runtime lifecycle](runtime-lifecycle.md)
 - [Three GLTF adapter](three-gltf-adapter.md)

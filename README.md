@@ -76,6 +76,7 @@ git diff --check
 - [Phase 14 Three Lifecycle Goal guide](docs/indirection-phase-14-three-lifecycle-goal-guide.md)
 - [Phase 15 Compressed Capability Goal guide](docs/indirection-phase-15-compressed-capability-goal-guide.md)
 - [Phase 16 Browser E2E Stress Goal guide](docs/indirection-phase-16-browser-e2e-stress-goal-guide.md)
+- [Phase 17 Release Provenance Goal guide](docs/indirection-phase-17-release-provenance-goal-guide.md)
 - [Compressed capability source selection](docs/compressed-capability-source-selection.md)
 - [Runtime lifecycle](docs/runtime-lifecycle.md)
 - [Three GLTF adapter](docs/three-gltf-adapter.md)

@@ -199,6 +199,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/indirection-phase-17-release-provenance-goal-guide.md"
+    },
+    {
+      file: "README.md",
       text: "docs/compressed-capability-source-selection.md"
     },
     {
@@ -300,6 +304,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "indirection-phase-16-browser-e2e-stress-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-17-release-provenance-goal-guide.md"
     },
     {
       file: "docs/README.md",
@@ -444,6 +452,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 17 Release Artifact Provenance And Verification"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-17-release-provenance-goal-guide.md"
     },
     {
       file: "docs/release-readiness.md",
@@ -771,6 +787,14 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/phase-16-pass-report.md",
+      text: "Planner selection after PASS: Phase 17 Release Artifact Provenance And Verification"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
+      text: "docs/indirection-phase-17-release-provenance-goal-guide.md"
+    },
+    {
+      file: "docs/phase-16-pass-report.md",
       text: "repeated runtime lifecycle"
     },
     {
@@ -984,6 +1008,34 @@ function checkRequiredDocPointers() {
     {
       file: "docs/indirection-phase-16-browser-e2e-stress-goal-guide.md",
       text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "Release Artifact Provenance And Verification"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "tarball sha256"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "corepack pnpm pack:check"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "Sigstore"
+    },
+    {
+      file: "docs/indirection-phase-17-release-provenance-goal-guide.md",
+      text: "npm provenance upload"
     },
     {
       file: "docs/compressed-capability-source-selection.md",

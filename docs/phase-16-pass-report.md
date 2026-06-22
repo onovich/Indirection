@@ -64,6 +64,14 @@ Expected final push target: `origin/main`.
 - Live Sinan Engine integration remains a future phase candidate.
 - Real Draco/KTX2/meshopt decoder integration, transcoders, texture pipeline, ImageBitmap lifecycle, GPU memory estimator, renderer E2E, `@indirection/sinan`, and real WebGL scene smoke remain future hardening candidates.
 
+## Next Phase
+
+Planner selection after PASS: Phase 17 Release Artifact Provenance And Verification.
+
+Next guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
+
+The architect/strategist flow selected local release artifact provenance as the next in-repository phase while real npm publish, registry writes, Git tags, GitHub Releases, signing, live Sinan Engine integration, real decoder integration, texture pipeline, and renderer E2E remain deferred.
+
 ## Risks And Recommendations
 
 - Keep browser E2E stress bounded and deterministic; do not add timing thresholds or screenshot approval gates to the release path.

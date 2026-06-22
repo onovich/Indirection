@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, and Phase 16 browser E2E stress posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, and selected Phase 17 release provenance guide before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -176,9 +176,15 @@ Phase 16 strengthens the Chromium, Firefox, and WebKit browser E2E gate with bou
 
 Phase 16 PASS report: `docs/phase-16-pass-report.md`
 
+## Phase 17 Release Artifact Provenance And Verification
+
+Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
+
+Phase 17 is selected as the next in-repository phase after Phase 16 PASS. It should add deterministic local provenance and verification for packed dry-run artifacts while keeping real npm publish, npm login, registry writes, Git tags, GitHub Releases, signing, Sigstore, npm provenance upload, and generated release artifacts out of the committed repository.
+
 ## Recommended Next Steps
 
-1. Wait for the architect/strategist flow to select and dispatch the next approved guide before starting Phase 17.
+1. Execute the selected Phase 17 release artifact provenance guide before starting real publish or live Sinan integration.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -198,6 +204,8 @@ Phase 14 guide: `docs/indirection-phase-14-three-lifecycle-goal-guide.md`
 Phase 15 guide: `docs/indirection-phase-15-compressed-capability-goal-guide.md`
 
 Phase 16 guide: `docs/indirection-phase-16-browser-e2e-stress-goal-guide.md`
+
+Phase 17 guide: `docs/indirection-phase-17-release-provenance-goal-guide.md`
 
 Phase 16 PASS report: `docs/phase-16-pass-report.md`
 
