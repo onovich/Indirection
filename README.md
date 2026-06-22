@@ -44,6 +44,8 @@ corepack pnpm smoke:phase7
 corepack pnpm pack:check
 ```
 
+`test:e2e` runs the Playwright browser matrix in Chromium, Firefox, and WebKit. For single-browser debugging, use `test:e2e:chromium`, `test:e2e:firefox`, or `test:e2e:webkit`.
+
 Or run the full local matrix:
 
 ```powershell

@@ -1,6 +1,6 @@
 # Indirection Docs
 
-This index points to the current Phase 0-12 release-candidate, release-hardening, browser E2E, release workflow, publish preflight, and browser matrix planning documentation.
+This index points to the current Phase 0-12 release-candidate, release-hardening, browser E2E matrix, release workflow, publish preflight, and browser matrix documentation.
 
 ## Core Project
 
@@ -45,6 +45,6 @@ corepack pnpm publish:preflight
 git diff --check
 ```
 
-`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
+`validate:full` runs lint, format, docs drift checks, typecheck, tests, browser-facing loader smoke, real browser E2E in Chromium, Firefox, and WebKit, boundary checks, CLI smoke, Phase 7 example smoke, and package tarball/import smoke.
 
 `release:dry-run` and `publish:preflight` remain explicit release-readiness gates because they audit publish and tag side effects separately from the main validation matrix.

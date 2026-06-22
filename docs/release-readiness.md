@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, and Phase 12 browser matrix planning posture before any real v0.1 npm release or tag.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, and Phase 12 browser matrix posture before any real v0.1 npm release or tag.
 
 ## Current Quality Gates
 
@@ -21,7 +21,7 @@ git diff --check
 - `typecheck`: TypeScript project references with `skipLibCheck` disabled.
 - `test`: Vitest unit and contract suite.
 - `test:browser`: browser-facing loader smoke.
-- `test:e2e`: Playwright real browser E2E in Chromium for loaders-web, Cache Storage, runtime lifecycle, fallback diagnostics, and virtual catalog consumption.
+- `test:e2e`: Playwright real browser E2E in Chromium, Firefox, and WebKit for loaders-web, Cache Storage, runtime lifecycle, fallback diagnostics, and virtual catalog consumption.
 - `check:boundaries`: core package dependency and host-specific boundary scan.
 - `smoke:cli`: real CLI bin smoke for `validate`, `build`, `report`, and `inspect`.
 - `smoke:phase7`: advanced loader/cache/Vite integration example.
@@ -34,7 +34,7 @@ git diff --check
 - `skipLibCheck` is disabled and `corepack pnpm typecheck` passes.
 - Report JSON shapes are documented and covered by contract tests.
 - CLI and package smoke are part of the full matrix.
-- Real browser E2E runs in Chromium through Playwright and is part of `validate:full`.
+- Real browser E2E runs in Chromium, Firefox, and WebKit through Playwright and is part of `validate:full`.
 - GitHub Actions mirrors the local validation entrypoint.
 - Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 
@@ -85,12 +85,24 @@ git diff --check
 
 At this checkpoint, package publish candidacy, license, npm scope/account/permission, Git tag, GitHub Release, rollback, versioning, local preflight, docs drift, and manual workflow policies are in place without publishing npm packages, logging in to npm, writing to the registry, creating tags, or creating GitHub Releases.
 
+## Phase 12 Main Implementation Checkpoint
+
+The browser matrix implementation now has a local and CI-ready gate:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm test:e2e
+git diff --check
+```
+
+At this checkpoint, `test:e2e` runs the same browser fixture in Chromium, Firefox, and WebKit. Single-browser debug entrypoints are available as `test:e2e:chromium`, `test:e2e:firefox`, and `test:e2e:webkit`.
+
 ## v0.1 Remaining Risks
 
 - No real npm publishing workflow has been created yet.
 - No release tag automation has been created yet.
 - Package names remain private workspace packages until a publishing decision is made.
-- Firefox and WebKit are not yet part of the real browser E2E matrix.
+- Browser E2E stress and artifact diagnostics remain future hardening candidates.
 - The Three adapter remains a peer-boundary skeleton and does not parse real GLTF through Three.js.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
@@ -116,11 +128,11 @@ The manual GitHub Actions [Publish Preflight](../.github/workflows/publish-prefl
 
 Phase 12 guide: `docs/indirection-phase-12-browser-matrix-goal-guide.md`
 
-Phase 12 has been selected as the next architect/strategist-owned implementation phase. It should expand the existing Playwright E2E gate from Chromium-only to Chromium, Firefox, and WebKit while keeping real npm publish, live Sinan Engine integration, and real Three.js GLTF parsing out of scope.
+Phase 12 expands the existing Playwright E2E gate from Chromium-only to Chromium, Firefox, and WebKit while keeping real npm publish, live Sinan Engine integration, and real Three.js GLTF parsing out of scope.
 
 ## Recommended Next Steps
 
-1. Execute Phase 12 Browser Matrix Expansion using `docs/indirection-phase-12-browser-matrix-goal-guide.md`.
+1. Keep the Phase 12 browser matrix in `validate:full` and CI.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
