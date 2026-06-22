@@ -12,7 +12,7 @@
     "typecheck": "tsc -b --pretty false",
     "test": "pnpm build && vitest run",
     "test:browser": "node scripts/browser-smoke.mjs",
-    "test:e2e": "playwright test",
+    "test:e2e": "pnpm build && playwright test",
     "pack:check": "node scripts/pack-check.mjs",
     "check:docs": "node scripts/docs-drift-check.mjs",
     "check:boundaries": "node scripts/core-boundary-check.mjs",
