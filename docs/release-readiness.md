@@ -66,6 +66,10 @@ At this checkpoint, Chromium E2E passes locally through `validate:full` and cove
 - The Three adapter remains a peer-boundary skeleton and does not parse real GLTF through Three.js.
 - Sinan integration remains a fixture/adapter POC, not a live Sinan Engine repository integration.
 
+## Phase 10 Dry-Run Policy
+
+Phase 10 records the v0.1 package visibility policy in `docs/release-workflow.md`. All workspace package manifests remain `private: true` during release dry-run work. Public package candidates are treated as dry-run candidates only until a later publish-preflight phase accepts npm permissions, package visibility, and tag policy.
+
 ## Recommended Next Steps
 
 1. Execute Phase 10 as release workflow dry-run and package readiness, because it is the safest remaining v0.1 release-readiness risk that can be solved inside this repository without npm publish permissions.
@@ -76,3 +80,5 @@ At this checkpoint, Chromium E2E passes locally through `validate:full` and cove
 Phase 9 PASS report: `docs/phase-9-pass-report.md`
 
 Phase 10 guide: `docs/indirection-phase-10-release-workflow-goal-guide.md`
+
+Phase 10 release workflow policy: `docs/release-workflow.md`

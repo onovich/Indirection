@@ -60,6 +60,7 @@ corepack pnpm validate:full
 - [Phase 8 Release Hardening Goal guide](docs/indirection-phase-8-release-hardening-goal-guide.md)
 - [Phase 9 Real Browser E2E Goal guide](docs/indirection-phase-9-browser-e2e-goal-guide.md)
 - [Phase 10 Release Workflow Goal guide](docs/indirection-phase-10-release-workflow-goal-guide.md)
+- [Release workflow dry-run policy](docs/release-workflow.md)
 - [Browser E2E validation](docs/browser-e2e.md)
 - [Phase 9 PASS report](docs/phase-9-pass-report.md)
 - [Phase 8 PASS report](docs/phase-8-pass-report.md)
