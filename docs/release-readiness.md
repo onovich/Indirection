@@ -57,6 +57,18 @@ git diff --check
 
 At this checkpoint, Chromium E2E passes locally through `validate:full` and covers loaders-web, Cache Storage, runtime lifecycle, fallback diagnostics, and virtual catalog consumption.
 
+## Phase 10 Main Implementation Checkpoint
+
+The release workflow dry-run implementation now has a local and manual CI gate:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+git diff --check
+```
+
+At this checkpoint, package visibility policy, package metadata, release versioning policy, package tarball/import smoke, installed CLI bin smoke, release dry-run safety checks, and the manual `Release Dry Run` workflow are in place without publishing npm packages or creating tags.
+
 ## v0.1 Remaining Risks
 
 - No real npm publishing workflow has been created yet.
