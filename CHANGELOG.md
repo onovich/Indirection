@@ -63,3 +63,20 @@ corepack pnpm validate:full
 corepack pnpm release:dry-run
 git diff --check
 ```
+
+## 0.0.0-phase-11-publish-preflight - 2026-06-22
+
+- Added publish preflight policy for package visibility, npm scope/account/permission, license, tag, GitHub Release, rollback, and versioning decisions.
+- Added `publish:preflight` to audit package manifests, docs, workflow permissions, tracked npm credentials, generated artifacts, and no publish/tag side effects.
+- Added a manual GitHub Actions `Publish Preflight` workflow with read-only repository permissions.
+- Extended docs drift checks to guard Phase 11 publish preflight docs, workflow commands, and release-readiness pointers.
+- Added the Phase 11 PASS report while keeping all packages `private: true` and `UNLICENSED`.
+
+Validation:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```

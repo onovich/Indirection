@@ -100,19 +100,21 @@ Phase 10 records the v0.1 package visibility policy in `docs/release-workflow.md
 
 The manual GitHub Actions `Release Dry Run` workflow runs `corepack pnpm release:dry-run` with read-only repository permissions. It is a dry-run gate only and does not publish packages or create tags.
 
-## Phase 11 Publish Preflight Plan
+## Phase 11 Publish Preflight Policy
 
-The next planned phase is `docs/indirection-phase-11-publish-preflight-goal-guide.md`.
+Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
 
-Phase 11 should keep the Phase 10 no-publish posture while creating the policy and safety gates required before any real v0.1 package release. It should document package visibility acceptance, npm scope/account preflight, license policy, versioning policy, Git tag and GitHub Release policy, rollback policy, and a local `publish:preflight` or equivalent gate that does not publish, login to npm, write to the registry, or create tags.
+Phase 11 keeps the Phase 10 no-publish posture while creating the policy and safety gates required before any real v0.1 package release. It documents package visibility acceptance, npm scope/account preflight, license policy, versioning policy, Git tag and GitHub Release policy, rollback policy, and a local `publish:preflight` gate that does not publish, login to npm, write to the registry, or create tags.
 
-Initial publish preflight policy: `docs/publish-preflight-policy.md`
+Publish preflight policy: `docs/publish-preflight-policy.md`
+
+Phase 11 PASS report: `docs/phase-11-pass-report.md`
 
 The manual GitHub Actions [Publish Preflight](../.github/workflows/publish-preflight.yml) workflow runs `corepack pnpm publish:preflight`, `corepack pnpm release:dry-run`, and `git diff --check` with read-only repository permissions.
 
 ## Recommended Next Steps
 
-1. Execute Phase 11 as publish preflight policy and release decision gates, because Phase 10 has already proven release dry-run/package readiness and the remaining v0.1 release risk is decision acceptance before any real publish.
+1. Keep Phase 11 publish preflight policy as the release decision gate until the architect/strategist flow selects Phase 12.
 2. Keep `validate:full` as the local and CI release gate.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, and tag policy are accepted.
 4. Keep host-specific integrations outside core packages unless a dedicated adapter package is approved.
@@ -126,3 +128,5 @@ Phase 11 guide: `docs/indirection-phase-11-publish-preflight-goal-guide.md`
 Phase 10 release workflow policy: `docs/release-workflow.md`
 
 Phase 10 PASS report: `docs/phase-10-pass-report.md`
+
+Phase 11 PASS report: `docs/phase-11-pass-report.md`

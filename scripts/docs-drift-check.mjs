@@ -132,6 +132,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "README.md",
+      text: "docs/phase-11-pass-report.md"
+    },
+    {
+      file: "README.md",
       text: "docs/publish-preflight-policy.md"
     },
     {
@@ -173,6 +177,10 @@ function checkRequiredDocPointers() {
     {
       file: "docs/README.md",
       text: "phase-10-pass-report.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "phase-11-pass-report.md"
     },
     {
       file: "docs/README.md",
@@ -228,6 +236,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/release-readiness.md",
+      text: "docs/phase-11-pass-report.md"
+    },
+    {
+      file: "docs/release-readiness.md",
       text: "../.github/workflows/publish-preflight.yml"
     },
     {
@@ -245,6 +257,22 @@ function checkRequiredDocPointers() {
     {
       file: "docs/phase-10-pass-report.md",
       text: "docs/indirection-phase-11-publish-preflight-goal-guide.md"
+    },
+    {
+      file: "docs/phase-11-pass-report.md",
+      text: "Status: PASS"
+    },
+    {
+      file: "docs/phase-11-pass-report.md",
+      text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/phase-11-pass-report.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/phase-11-pass-report.md",
+      text: "Phase 12 must be selected by the architect/strategist flow"
     },
     {
       file: "docs/phase-0-7-pass-report.md",
@@ -309,6 +337,10 @@ function checkRequiredDocPointers() {
     {
       file: "CHANGELOG.md",
       text: "0.0.0-phase-10-release-dry-run"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-11-publish-preflight"
     },
     {
       file: ".github/workflows/release-dry-run.yml",
