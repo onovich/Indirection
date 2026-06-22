@@ -43,7 +43,7 @@ test("serves the browser E2E fixture", async ({ page }) => {
             refCount: 1,
             state: "fallback-ready"
           },
-          value: "fallback-from-chromium"
+          value: "fallback-from-browser"
         }
       },
       fixture: "loaders-web-browser",
@@ -52,9 +52,9 @@ test("serves the browser E2E fixture", async ({ page }) => {
         binary: [5, 8, 13, 21],
         json: {
           count: 3,
-          label: "json-from-chromium"
+          label: "json-from-browser"
         },
-        text: "text-from-chromium"
+        text: "text-from-browser"
       },
       packageName: "@indirection/loaders-web",
       runtime: {
@@ -81,7 +81,7 @@ test("serves the browser E2E fixture", async ({ page }) => {
           refCount: 1,
           state: "ready"
         },
-        value: "runtime-from-chromium"
+        value: "runtime-from-browser"
       },
       status: "ready",
       virtualCatalog: {

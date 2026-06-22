@@ -10,8 +10,8 @@ import virtualCatalog from "/virtual/indirection/catalog.js";
 const loaders = createWebDataLoaders();
 const transport = new InMemoryTransport({
   "payload.bin": new Uint8Array([5, 8, 13, 21]),
-  "payload.json": JSON.stringify({ count: 3, label: "json-from-chromium" }),
-  "payload.txt": "text-from-chromium"
+  "payload.json": JSON.stringify({ count: 3, label: "json-from-browser" }),
+  "payload.txt": "text-from-browser"
 });
 
 try {
@@ -134,7 +134,7 @@ async function runRuntimeLifecycleProbe() {
     },
     loaders,
     transport: new InMemoryTransport({
-      "runtime.txt": "runtime-from-chromium"
+      "runtime.txt": "runtime-from-browser"
     })
   });
   const scope = manager.createScope("browser-runtime-scope");
@@ -210,7 +210,7 @@ async function runFallbackDiagnosticsProbe() {
     },
     loaders,
     transport: new InMemoryTransport({
-      "fallback.txt": "fallback-from-chromium"
+      "fallback.txt": "fallback-from-browser"
     })
   });
   const scope = manager.createScope("browser-fallback-scope");
