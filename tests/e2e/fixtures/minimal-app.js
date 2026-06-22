@@ -1,4 +1,5 @@
 import {
+  BrowserCacheStorageAdapter,
   createWebDataLoaders,
   loadersWebPackageName
 } from "@indirection/loaders-web";
@@ -15,8 +16,10 @@ try {
   const json = await load("data/json", "payload.json");
   const text = await load("text/plain", "payload.txt");
   const binary = await load("binary/array-buffer", "payload.bin");
+  const cache = await runCacheStorageProbe();
 
   const result = {
+    cache,
     fixture: "loaders-web-browser",
     loaderCount: loaders.length,
     loaders: {
@@ -59,4 +62,51 @@ async function load(type, url) {
   });
 
   return loaded.value;
+}
+
+async function runCacheStorageProbe() {
+  const cache = new BrowserCacheStorageAdapter({
+    cacheName: "indirection-phase-9-e2e"
+  });
+  const currentVersion = "phase-9-cache-current";
+  const staleVersion = "phase-9-cache-stale";
+  const sourceUrl = "cache-entry.txt";
+
+  await cache.deleteCatalogVersion(currentVersion);
+  await cache.deleteCatalogVersion(staleVersion);
+
+  const missBeforePut =
+    (await cache.match({ catalogVersion: currentVersion, sourceUrl })) === undefined;
+
+  await cache.put(
+    { catalogVersion: currentVersion, sourceUrl },
+    "current-cache-value"
+  );
+  await cache.put(
+    { catalogVersion: staleVersion, sourceUrl },
+    "stale-cache-value"
+  );
+
+  const hit = await cache.match({ catalogVersion: currentVersion, sourceUrl });
+  const staleHit = await cache.match({ catalogVersion: staleVersion, sourceUrl });
+  const keysBeforeCleanup = await cache.keys(currentVersion);
+
+  await cache.deleteCatalogVersion(currentVersion);
+
+  const missAfterCleanup =
+    (await cache.match({ catalogVersion: currentVersion, sourceUrl })) === undefined;
+  const staleStillIsolated =
+    (await cache.match({ catalogVersion: staleVersion, sourceUrl })) ===
+    "stale-cache-value";
+
+  await cache.deleteCatalogVersion(staleVersion);
+
+  return {
+    hit,
+    keysBeforeCleanup,
+    missAfterCleanup,
+    missBeforePut,
+    staleHit,
+    staleStillIsolated
+  };
 }

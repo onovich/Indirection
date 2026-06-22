@@ -11,6 +11,14 @@ test("serves the browser E2E fixture", async ({ page }) => {
       page.evaluate(() => (window as Window & { __indirectionE2E?: unknown }).__indirectionE2E)
     )
     .toEqual({
+      cache: {
+        hit: "current-cache-value",
+        keysBeforeCleanup: ["cache-entry.txt"],
+        missAfterCleanup: true,
+        missBeforePut: true,
+        staleHit: "stale-cache-value",
+        staleStillIsolated: true
+      },
       fixture: "loaders-web-browser",
       loaderCount: 3,
       loaders: {
