@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { describe, expect, it } from "vitest";
 import { normalizeAssetId, protocolVersion, type CompiledCatalog } from "@indirection/protocol";
 import { InMemoryTransport, createAssetManager } from "@indirection/runtime";
@@ -11,8 +12,11 @@ import {
 const packageJsonUrl = new URL("../package.json", import.meta.url);
 const sourceUrl = new URL("../src/index.ts", import.meta.url);
 const hero = normalizeAssetId("three:hero");
+const fallback = normalizeAssetId("three:fallback");
 
-describe("three adapter skeleton", () => {
+type ParsedGltf = Awaited<ReturnType<InstanceType<typeof GLTFLoader>["parseAsync"]>>;
+
+describe("three adapter", () => {
   it("declares Three as an optional peer boundary", () => {
     const packageJson = JSON.parse(readFileSync(packageJsonUrl, "utf8")) as {
       readonly peerDependencies?: Readonly<Record<string, string>>;
@@ -103,4 +107,95 @@ describe("three adapter skeleton", () => {
       "{\"asset\":{\"version\":\"2.0\"}}"
     );
   });
+
+  it("parses minimal glTF through an injected GLTFLoader parser", async () => {
+    const catalog: CompiledCatalog = {
+      protocolVersion,
+      catalogVersion: "sha256-three-real-gltf",
+      assets: {
+        [hero]: {
+          type: "model/gltf",
+          sources: [{ url: "models/hero.gltf" }]
+        }
+      }
+    };
+    const seenBasePaths: string[] = [];
+    const manager = createAssetManager({
+      catalog,
+      loaders: [createThreeGltfLoader<ParsedGltf>({ parser: createGltfParser(seenBasePaths) })],
+      transport: new InMemoryTransport({
+        "models/hero.gltf": minimalGltfJson()
+      })
+    });
+    const scope = manager.createScope("three");
+    const handle = await scope.acquire<ParsedGltf>(hero);
+
+    expect(handle.value.asset.version).toBe("2.0");
+    expect(handle.value.scenes).toHaveLength(1);
+    expect(handle.value.scene.type).toBe("Group");
+    expect(seenBasePaths).toEqual(["models/"]);
+  });
+
+  it("falls back with IND_DECODE_FAILED when GLTFLoader rejects invalid glTF", async () => {
+    const catalog: CompiledCatalog = {
+      protocolVersion,
+      catalogVersion: "sha256-three-real-gltf-fallback",
+      assets: {
+        [hero]: {
+          type: "model/gltf",
+          sources: [{ url: "models/broken.gltf" }],
+          fallback
+        },
+        [fallback]: {
+          type: "model/gltf",
+          sources: [{ url: "models/fallback.gltf" }]
+        }
+      }
+    };
+    const manager = createAssetManager({
+      catalog,
+      loaders: [createThreeGltfLoader<ParsedGltf>({ parser: createGltfParser() })],
+      transport: new InMemoryTransport({
+        "models/broken.gltf": "not gltf",
+        "models/fallback.gltf": minimalGltfJson()
+      })
+    });
+    const scope = manager.createScope("three");
+    const handle = await scope.acquire<ParsedGltf>(hero);
+
+    expect(handle.value.asset.version).toBe("2.0");
+    expect(manager.resourceTable.snapshot(hero)[0]).toMatchObject({
+      state: "fallback-ready",
+      causeCode: "IND_DECODE_FAILED",
+      fallbackAssetId: "three:fallback"
+    });
+    expect(manager.resourceTable.snapshot(fallback)[0]).toMatchObject({
+      refCount: 1,
+      state: "ready"
+    });
+
+    handle.release();
+    expect(manager.resourceTable.snapshot(fallback)[0]).toMatchObject({
+      refCount: 0
+    });
+  });
 });
+
+function createGltfParser(seenBasePaths: string[] = []) {
+  const parser = new GLTFLoader();
+
+  return {
+    async parseAsync(input: ArrayBuffer, basePath: string): Promise<ParsedGltf> {
+      seenBasePaths.push(basePath);
+      return parser.parseAsync(input, basePath);
+    }
+  };
+}
+
+function minimalGltfJson(): string {
+  return JSON.stringify({
+    asset: { version: "2.0" },
+    scenes: [{}],
+    scene: 0
+  });
+}

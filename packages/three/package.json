@@ -50,5 +50,8 @@
     "three": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "three": "0.184.0"
   }
 }

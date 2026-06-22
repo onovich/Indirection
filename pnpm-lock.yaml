@@ -103,8 +103,9 @@ importers:
       '@indirection/runtime':
         specifier: workspace:*
         version: link:../runtime
+    devDependencies:
       three:
-        specifier: '>=0.160.0'
+        specifier: 0.184.0
         version: 0.184.0
 
   packages/vite:
