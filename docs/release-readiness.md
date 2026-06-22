@@ -36,6 +36,7 @@ git diff --check
 - CLI and package smoke are part of the full matrix.
 - Real browser E2E runs in Chromium through Playwright and is part of `validate:full`.
 - GitHub Actions mirrors the local validation entrypoint.
+- Phase 11 publish preflight policy, local `publish:preflight`, docs drift guards, and the manual `Publish Preflight` workflow are in place without granting permission to publish.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -70,6 +71,19 @@ git diff --check
 ```
 
 At this checkpoint, package visibility policy, package metadata, release versioning policy, package tarball/import smoke, installed CLI bin smoke, release dry-run safety checks, and the manual `Release Dry Run` workflow are in place without publishing npm packages or creating tags.
+
+## Phase 11 Main Implementation Checkpoint
+
+The publish preflight policy implementation now has local and manual CI gates:
+
+```powershell
+corepack pnpm validate:full
+corepack pnpm release:dry-run
+corepack pnpm publish:preflight
+git diff --check
+```
+
+At this checkpoint, package publish candidacy, license, npm scope/account/permission, Git tag, GitHub Release, rollback, versioning, local preflight, docs drift, and manual workflow policies are in place without publishing npm packages, logging in to npm, writing to the registry, creating tags, or creating GitHub Releases.
 
 ## v0.1 Remaining Risks
 
