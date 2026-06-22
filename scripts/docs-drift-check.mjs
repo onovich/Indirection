@@ -6,6 +6,7 @@ const issues = [];
 const packageJson = readJson("package.json");
 
 checkValidateFull();
+checkBrowserMatrix();
 checkReleaseDryRun();
 checkPublishPreflight();
 checkRequiredDocPointers();
@@ -47,6 +48,48 @@ function checkReleaseDryRun() {
   const command = packageJson.scripts?.["release:dry-run"];
   if (typeof command !== "string" || !command.includes("scripts/release-dry-run.mjs")) {
     issues.push("package.json: release:dry-run must run scripts/release-dry-run.mjs");
+  }
+}
+
+function checkBrowserMatrix() {
+  assertScriptIncludes("test:e2e", "playwright test");
+  assertScriptIncludes("test:e2e:chromium", "--project=chromium");
+  assertScriptIncludes("test:e2e:firefox", "--project=firefox");
+  assertScriptIncludes("test:e2e:webkit", "--project=webkit");
+
+  const playwrightConfig = readText("playwright.config.ts");
+  for (const projectName of ["chromium", "firefox", "webkit"]) {
+    if (!playwrightConfig.includes(`name: "${projectName}"`)) {
+      issues.push(`playwright.config.ts: missing ${projectName} project`);
+    }
+  }
+
+  const workflow = readText(".github/workflows/validate.yml");
+  for (const text of [
+    "Install Playwright Browsers",
+    "corepack pnpm exec playwright install --with-deps chromium firefox webkit",
+    "corepack pnpm validate:full"
+  ]) {
+    if (!workflow.includes(text)) {
+      issues.push(`.github/workflows/validate.yml: missing '${text}'`);
+    }
+  }
+
+  for (const file of [
+    "tests/e2e/browser-fixture.e2e.ts",
+    "tests/e2e/fixtures/minimal-app.js"
+  ]) {
+    const text = readText(file);
+    if (/from-chromium/.test(text)) {
+      issues.push(`${file}: fixture data must stay browser-neutral`);
+    }
+  }
+}
+
+function assertScriptIncludes(scriptName, expected) {
+  const command = packageJson.scripts?.[scriptName];
+  if (typeof command !== "string" || !command.includes(expected)) {
+    issues.push(`package.json: ${scriptName} must include '${expected}'`);
   }
 }
 
@@ -105,6 +148,14 @@ function checkRequiredDocPointers() {
     {
       file: "README.md",
       text: "corepack pnpm test:e2e"
+    },
+    {
+      file: "README.md",
+      text: "test:e2e:firefox"
+    },
+    {
+      file: "README.md",
+      text: "test:e2e:webkit"
     },
     {
       file: "README.md",
@@ -168,6 +219,10 @@ function checkRequiredDocPointers() {
     },
     {
       file: "docs/README.md",
+      text: "Chromium, Firefox, and WebKit"
+    },
+    {
+      file: "docs/README.md",
       text: "phase-9-pass-report.md"
     },
     {
@@ -213,6 +268,14 @@ function checkRequiredDocPointers() {
     {
       file: "docs/release-readiness.md",
       text: "`test:e2e`"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "test:e2e:chromium"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Chromium, Firefox, and WebKit"
     },
     {
       file: "docs/release-readiness.md",
@@ -345,6 +408,18 @@ function checkRequiredDocPointers() {
     {
       file: "docs/indirection-phase-12-browser-matrix-goal-guide.md",
       text: "corepack pnpm publish:preflight"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "corepack pnpm exec playwright install chromium firefox webkit"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "corepack pnpm test:e2e:firefox"
+    },
+    {
+      file: "docs/browser-e2e.md",
+      text: "Install Playwright Browsers"
     },
     {
       file: "docs/publish-preflight-policy.md",
