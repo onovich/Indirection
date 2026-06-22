@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { normalizeAssetId, protocolVersion, type CompiledCatalog } from "@indirection/protocol";
 import {
+  type AssetLoader,
   AssetResolutionError,
   AssetScopeDisposedError,
+  InMemoryTransport,
   createAssetManager
 } from "@indirection/runtime";
 
 const hero = normalizeAssetId("game:character.hero");
 const tree = normalizeAssetId("game:prop.tree");
+const disposable = normalizeAssetId("game:prop.disposable");
 
 const catalog: CompiledCatalog = {
   protocolVersion,
@@ -20,6 +23,10 @@ const catalog: CompiledCatalog = {
     [tree]: {
       type: "model/gltf",
       sources: [{ url: "models/tree.glb" }]
+    },
+    [disposable]: {
+      type: "test/disposable",
+      sources: [{ url: "disposable.txt" }]
     }
   }
 };
@@ -36,8 +43,8 @@ describe("AssetScope and AssetHandle", () => {
       refCount: 1
     });
 
-    handle.release();
-    handle.release();
+    await handle.release();
+    await handle.release();
 
     expect(handle.released).toBe(true);
     expect(manager.resourceTable.snapshot(hero)[0]).toMatchObject({
@@ -85,6 +92,38 @@ describe("AssetScope and AssetHandle", () => {
     ]);
   });
 
+  it("calls a loaded asset disposer once after the final handle release", async () => {
+    const disposeCalls: string[] = [];
+    const manager = createAssetManager({
+      catalog,
+      loaders: [createDisposableLoader(disposeCalls)],
+      transport: new InMemoryTransport({
+        "disposable.txt": "owned"
+      })
+    });
+    const scope = manager.createScope("scene.gate");
+    const handle = await scope.acquire<{ readonly text: string }>(disposable);
+
+    expect(handle.value.text).toBe("owned");
+    expect(manager.resourceTable.snapshot(disposable)[0]).toMatchObject({
+      state: "ready",
+      refCount: 1,
+      hasValue: true,
+      hasDisposer: true
+    });
+
+    await handle.release();
+    await handle.release();
+
+    expect(disposeCalls).toEqual(["owned"]);
+    expect(manager.resourceTable.snapshot(disposable)[0]).toMatchObject({
+      state: "disposed",
+      refCount: 0,
+      hasValue: false,
+      hasDisposer: false
+    });
+  });
+
   it("rejects acquire after dispose and missing assets", async () => {
     const manager = createAssetManager({ catalog });
     const scope = manager.createScope("scene.gate");
@@ -94,3 +133,25 @@ describe("AssetScope and AssetHandle", () => {
     await expect(scope.acquire(hero)).rejects.toThrow(AssetScopeDisposedError);
   });
 });
+
+function createDisposableLoader(disposeCalls: string[]): AssetLoader<{ readonly text: string }> {
+  return {
+    id: "test-disposable",
+    types: ["test/disposable"],
+    async load(context) {
+      const response = await context.transport.read({
+        assetId: context.assetId,
+        source: context.source,
+        ...(context.signal === undefined ? {} : { signal: context.signal })
+      });
+      const text = String(response.body);
+
+      return {
+        value: { text },
+        dispose() {
+          disposeCalls.push(text);
+        }
+      };
+    }
+  };
+}

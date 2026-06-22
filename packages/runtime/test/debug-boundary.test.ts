@@ -35,7 +35,7 @@ describe("debug snapshot leak warnings", () => {
       }
     ]);
 
-    handle.release();
+    await handle.release();
     expect(manager.snapshot().leakWarnings).toEqual([]);
   });
 });

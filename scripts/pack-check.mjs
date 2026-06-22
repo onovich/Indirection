@@ -328,7 +328,7 @@ const manager = createAssetManager({
 const scope = manager.createScope("pack-smoke");
 const handle = await scope.acquire("pack:text.intro");
 assert(handle.value === "hello from pack", "runtime acquire failed");
-handle.release();
+await handle.release();
 await scope.dispose();
 
 assert(createWebDataLoaders().length === 3, "web loaders import failed");
@@ -365,7 +365,7 @@ const gltfScope = gltfManager.createScope("pack-gltf-smoke");
 const gltfHandle = await gltfScope.acquire(gltfAssetId);
 assert(gltfHandle.value.basePath === "packed/", "three parser basePath failed");
 assert(gltfHandle.value.byteLength === 3, "three parser bytes failed");
-gltfHandle.release();
+await gltfHandle.release();
 await gltfScope.dispose();
 
 const plugin = createIndirectionVitePlugin({ model });

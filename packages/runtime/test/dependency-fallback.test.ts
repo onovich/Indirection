@@ -41,7 +41,7 @@ describe("dependency retain/release", () => {
       refCount: 1
     });
 
-    handle.release();
+    await handle.release();
 
     expect(manager.resourceTable.snapshot(material)[0]).toMatchObject({
       refCount: 0
@@ -86,7 +86,7 @@ describe("fallback cause retention", () => {
       state: "ready"
     });
 
-    handle.release();
+    await handle.release();
     expect(manager.resourceTable.snapshot(fallback)[0]).toMatchObject({
       refCount: 0
     });

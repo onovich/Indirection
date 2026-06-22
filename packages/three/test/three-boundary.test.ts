@@ -174,7 +174,7 @@ describe("three adapter", () => {
       state: "ready"
     });
 
-    handle.release();
+    await handle.release();
     expect(manager.resourceTable.snapshot(fallback)[0]).toMatchObject({
       refCount: 0
     });

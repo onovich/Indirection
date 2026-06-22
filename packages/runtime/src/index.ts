@@ -44,7 +44,7 @@ export interface AssetHandle<T = ResolvedSource> {
   readonly value: T;
   readonly released: boolean;
 
-  release(): void;
+  release(): Promise<void>;
 }
 
 export interface AssetScope {
@@ -179,8 +179,8 @@ export interface ResourceTransition {
   readonly hasTransport?: boolean;
   readonly hasValue?: boolean;
   readonly hasDisposer?: boolean;
-  readonly causeCode?: string;
-  readonly fallbackAssetId?: string;
+  readonly causeCode?: string | undefined;
+  readonly fallbackAssetId?: string | undefined;
 }
 
 export interface ResourceSnapshot {
@@ -344,9 +344,14 @@ class RuntimeAssetHandle<T> implements AssetHandle<T> {
   readonly assetId: string;
   readonly value: T;
   #released = false;
-  readonly #releaseHandle: () => void;
+  #releasePromise: Promise<void> | undefined;
+  readonly #releaseHandle: () => Promise<void> | void;
 
-  constructor(assetId: string, value: T, releaseHandle: () => void) {
+  constructor(
+    assetId: string,
+    value: T,
+    releaseHandle: () => Promise<void> | void
+  ) {
     this.assetId = assetId;
     this.value = value;
     this.#releaseHandle = releaseHandle;
@@ -356,13 +361,14 @@ class RuntimeAssetHandle<T> implements AssetHandle<T> {
     return this.#released;
   }
 
-  release(): void {
+  release(): Promise<void> {
     if (this.#released) {
-      return;
+      return this.#releasePromise ?? Promise.resolve();
     }
 
     this.#released = true;
-    this.#releaseHandle();
+    this.#releasePromise = Promise.resolve(this.#releaseHandle());
+    return this.#releasePromise;
   }
 }
 
@@ -375,7 +381,8 @@ class RuntimeAssetScope implements AssetScope {
   readonly #loadAsset: (
     resolved: ResolvedSource,
     signal: AbortSignal | undefined
-  ) => Promise<unknown>;
+  ) => Promise<LoadedAsset<unknown>>;
+  readonly #releaseAsset: (assetId: string) => Promise<void>;
   readonly #getAsset: (assetId: AssetId | string) => CatalogAsset | undefined;
   readonly #resourceTable: ResourceTable;
   readonly #handles = new Set<RuntimeAssetHandle<unknown>>();
@@ -391,13 +398,15 @@ class RuntimeAssetScope implements AssetScope {
     loadAsset: (
       resolved: ResolvedSource,
       signal: AbortSignal | undefined
-    ) => Promise<unknown>,
+    ) => Promise<LoadedAsset<unknown>>,
+    releaseAsset: (assetId: string) => Promise<void>,
     getAsset: (assetId: AssetId | string) => CatalogAsset | undefined
   ) {
     this.id = id;
     this.#resourceTable = resourceTable;
     this.#resolveSource = resolveSource;
     this.#loadAsset = loadAsset;
+    this.#releaseAsset = releaseAsset;
     this.#getAsset = getAsset;
   }
 
@@ -442,23 +451,24 @@ class RuntimeAssetScope implements AssetScope {
       this.#resourceTable.transition(assetId, {
         state: loaded.usedFallback ? "fallback-ready" : "ready",
         hasTransport: false,
-        hasValue: true
+        hasValue: true,
+        hasDisposer: loaded.usedFallback ? false : loaded.loaded.dispose !== undefined,
+        ...(loaded.usedFallback
+          ? {}
+          : {
+              causeCode: undefined,
+              fallbackAssetId: undefined
+            })
       });
 
-      const handle = new RuntimeAssetHandle(String(assetId), loaded.value as T, () => {
+      const handle = new RuntimeAssetHandle(String(assetId), loaded.loaded.value as T, async () => {
         this.#handles.delete(handle);
-        this.#resourceTable.release(assetId);
-        for (const linkedAssetId of linkedAssetIds) {
-          this.#resourceTable.release(linkedAssetId);
-        }
+        await this.releaseAssets(String(assetId), linkedAssetIds);
       });
       this.#handles.add(handle);
       return handle;
     } catch (error) {
-      this.#resourceTable.release(assetId);
-      for (const linkedAssetId of linkedAssetIds) {
-        this.#resourceTable.release(linkedAssetId);
-      }
+      await this.releaseAssets(String(assetId), linkedAssetIds);
       throw error;
     }
   }
@@ -468,10 +478,10 @@ class RuntimeAssetScope implements AssetScope {
     resolved: ResolvedSource,
     acquireOptions: AcquireAssetOptions,
     linkedAssetIds: Set<string>
-  ): Promise<{ readonly value: unknown; readonly usedFallback: boolean }> {
+  ): Promise<{ readonly loaded: LoadedAsset<unknown>; readonly usedFallback: boolean }> {
     try {
       return {
-        value: await this.#loadAsset(resolved, acquireOptions.signal),
+        loaded: await this.#loadAsset(resolved, acquireOptions.signal),
         usedFallback: false
       };
     } catch (error) {
@@ -506,15 +516,26 @@ class RuntimeAssetScope implements AssetScope {
       this.#resourceTable.transition(assetId, {
         state: "fallback-ready",
         hasValue: true,
+        hasDisposer: false,
         causeCode: causeCodeFromError(error),
         fallbackAssetId
       });
 
       return {
-        value: await this.#loadAsset(fallbackResolved, acquireOptions.signal),
+        loaded: await this.#loadAsset(fallbackResolved, acquireOptions.signal),
         usedFallback: true
       };
     }
+  }
+
+  private async releaseAssets(
+    assetId: string,
+    linkedAssetIds: ReadonlySet<string>
+  ): Promise<void> {
+    await Promise.all([
+      this.#releaseAsset(assetId),
+      ...[...linkedAssetIds].map((linkedAssetId) => this.#releaseAsset(linkedAssetId))
+    ]);
   }
 
   async dispose(): Promise<void> {
@@ -523,9 +544,7 @@ class RuntimeAssetScope implements AssetScope {
     }
 
     this.#disposed = true;
-    for (const handle of [...this.#handles]) {
-      handle.release();
-    }
+    await Promise.all([...this.#handles].map((handle) => handle.release()));
   }
 
   snapshot(): AssetScopeSnapshot {
@@ -759,6 +778,7 @@ export function createAssetManager(
     ...(options.loaders ?? [])
   ]);
   const inFlightLoads = new Map<string, InFlightLoad>();
+  const loadedAssets = new Map<string, RuntimeLoadedAssetRecord>();
   const resolverChain = options.resolverChain ?? new ResolverChain();
   const defaultContext = options.context ?? {};
   let nextScopeId = 1;
@@ -773,6 +793,7 @@ export function createAssetManager(
         resourceTable,
         manager.resolveSource,
         loadAsset,
+        releaseLoadedAsset,
         (assetId) => catalogStore.getAsset(assetId)
       );
     },
@@ -806,14 +827,26 @@ export function createAssetManager(
   async function loadAsset(
     resolved: ResolvedSource,
     signal: AbortSignal | undefined
-  ): Promise<unknown> {
+  ): Promise<LoadedAsset<unknown>> {
     if (signal?.aborted) {
       throw new AssetAbortError(resolved.assetId);
     }
 
+    const cached = loadedAssets.get(resolved.assetId);
+    if (cached !== undefined) {
+      if (cached.disposePromise === undefined) {
+        return cached.loaded;
+      }
+
+      await cached.disposePromise.catch(() => undefined);
+      loadedAssets.delete(resolved.assetId);
+    }
+
     const loader = loaderRegistry.get(resolved.type);
     if (loader === undefined || options.transport === undefined) {
-      return resolved;
+      const loaded: LoadedAsset<ResolvedSource> = { value: resolved };
+      loadedAssets.set(resolved.assetId, { loaded });
+      return loaded;
     }
 
     const key = createInFlightKey(resolved, loader);
@@ -831,15 +864,86 @@ export function createAssetManager(
       inFlightLoads.set(key, inFlight);
     }
 
-    return waitForInFlight(inFlight, resolved.assetId, signal);
+    const loaded = await waitForInFlight(inFlight, resolved.assetId, signal);
+    const existing = loadedAssets.get(resolved.assetId);
+    if (existing !== undefined && existing.disposePromise === undefined) {
+      return existing.loaded;
+    }
+
+    loadedAssets.set(resolved.assetId, { loaded });
+    return loaded;
+  }
+
+  async function releaseLoadedAsset(assetId: string): Promise<void> {
+    const snapshot = resourceTable.release(assetId);
+    if (snapshot.refCount > 0) {
+      return;
+    }
+
+    const loaded = loadedAssets.get(assetId);
+    if (loaded === undefined) {
+      if (snapshot.hasValue || snapshot.hasDisposer) {
+        resourceTable.transition(assetId, {
+          state: snapshot.state,
+          hasValue: false,
+          hasDisposer: false
+        });
+      }
+      return;
+    }
+
+    if (loaded.loaded.dispose === undefined) {
+      loadedAssets.delete(assetId);
+      resourceTable.transition(assetId, {
+        state: snapshot.state,
+        hasValue: false,
+        hasDisposer: false
+      });
+      return;
+    }
+
+    if (loaded.disposePromise !== undefined) {
+      return loaded.disposePromise;
+    }
+
+    loaded.disposePromise = Promise.resolve()
+      .then(() => loaded.loaded.dispose?.())
+      .then(
+        () => {
+          loadedAssets.delete(assetId);
+          resourceTable.transition(assetId, {
+            state: "disposed",
+            hasTransport: false,
+            hasValue: false,
+            hasDisposer: false,
+            causeCode: undefined,
+            fallbackAssetId: undefined
+          });
+        },
+        (error: unknown) => {
+          resourceTable.transition(assetId, {
+            state: snapshot.state,
+            hasValue: true,
+            hasDisposer: true,
+            causeCode: "IND_DISPOSE_FAILED"
+          });
+          throw error;
+        }
+      );
+    return loaded.disposePromise;
   }
 }
 
 interface InFlightLoad {
   readonly controller: AbortController;
   readonly consumers: Set<symbol>;
-  readonly promise: Promise<unknown>;
+  readonly promise: Promise<LoadedAsset<unknown>>;
   settled: boolean;
+}
+
+interface RuntimeLoadedAssetRecord {
+  readonly loaded: LoadedAsset<unknown>;
+  disposePromise?: Promise<void>;
 }
 
 function createInFlightKey(resolved: ResolvedSource, loader: AssetLoader): string {
@@ -886,7 +990,7 @@ function startInFlightLoad(
         hasDisposer: loaded.dispose !== undefined
       });
 
-      return loaded.value;
+      return loaded;
     }),
     settled: false
   };
@@ -905,7 +1009,7 @@ function waitForInFlight(
   inFlight: InFlightLoad,
   assetId: string,
   signal: AbortSignal | undefined
-): Promise<unknown> {
+): Promise<LoadedAsset<unknown>> {
   const consumer = Symbol(assetId);
   inFlight.consumers.add(consumer);
 
