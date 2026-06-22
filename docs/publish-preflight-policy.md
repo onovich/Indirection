@@ -76,6 +76,26 @@ Every workspace package remains `private: true` in Phase 11. The matrix below de
 
 Current default: no package may move from candidate to real publish until its owner decision is `accepted` and the publish-preflight gate passes.
 
+## License Policy
+
+Current Phase 11 license state:
+
+- root package license: `UNLICENSED`;
+- every workspace package license: `UNLICENSED`;
+- no repository license file is accepted for public package distribution;
+- no package manifest may switch to a public SPDX license during Phase 11 without an explicit owner decision.
+
+A later real publish phase must accept all license items before removing `private: true` from any package:
+
+- public SPDX license identifier;
+- repository `LICENSE` file contents;
+- whether every workspace package uses the same license;
+- whether adapter packages with optional peers need additional notices;
+- whether generated artifacts, examples, fixtures, and docs have the same license posture as packages;
+- whether third-party dependencies require notices in package docs.
+
+If the public license is still `pending`, `publish:preflight` must fail any attempt to mark packages publishable for real. Phase 11 policy gates may still pass because they prove the project is intentionally not publishing yet.
+
 ## Safe Local Gates
 
 The safe local gates are:
