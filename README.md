@@ -42,6 +42,8 @@ For the guided path through CLI commands, package entrypoints, browser checks, e
 
 Browser image-source lifecycle coverage is documented in [Browser ImageBitmap lifecycle](docs/image-bitmap-lifecycle.md). It stays in `@indirection/loaders-web` and uses runtime `LoadedAsset.dispose` without adding browser APIs to core packages.
 
+The next internal candidate is [Phase 23 Renderer And Three Texture E2E](docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md): a local browser/Three/WebGL proof built on the Phase 22 ImageBitmap lifecycle, without real decoder dependencies, live Sinan integration, publishing, or deployment.
+
 ## Validation
 
 ```powershell
@@ -100,6 +102,7 @@ git diff --check
 - [Phase 20 Public Docs Onboarding Goal guide](docs/indirection-phase-20-public-docs-onboarding-goal-guide.md)
 - [Phase 21 Public Demo Docs Site Goal guide](docs/indirection-phase-21-public-demo-docs-site-goal-guide.md)
 - [Phase 22 ImageBitmap Lifecycle Goal guide](docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md)
+- [Phase 23 Renderer And Three Texture E2E Goal guide](docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md)
 - [Browser ImageBitmap lifecycle](docs/image-bitmap-lifecycle.md)
 - [Evaluator quickstart](docs/evaluator-quickstart.md)
 - [Package entrypoints](docs/package-entrypoints.md)

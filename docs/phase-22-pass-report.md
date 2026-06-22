@@ -77,3 +77,9 @@ Expected final push target: `origin/main`.
 - Keep ImageBitmap lifecycle validation in both package smoke and real browser E2E so browser API drift is caught without requiring renderer tests.
 - Keep browser-specific ownership policies in loaders-web or future renderer adapters, not runtime core.
 - Continue using tiny deterministic image fixtures and avoid committing Playwright artifacts, screenshots, videos, package tarballs, or generated release outputs.
+
+## Next Phase
+
+Planner selection after PASS: Phase 23 Renderer And Three Texture E2E.
+
+Guide: `docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md`

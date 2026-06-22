@@ -14,6 +14,7 @@ checkReleaseCandidateRehearsal();
 checkPublicOnboarding();
 checkPublicDemoDocsSitePlan();
 checkImageBitmapLifecyclePlan();
+checkRendererTextureE2ePlan();
 checkPublishPreflight();
 checkRequiredDocPointers();
 checkMarkdownLinks();
@@ -795,6 +796,58 @@ function checkImageBitmapLifecyclePlan() {
     {
       file: "docs/phase-22-pass-report.md",
       text: "Real npm publish"
+    }
+  ]) {
+    const text = readText(pointer.file);
+    if (!text.includes(pointer.text)) {
+      issues.push(`${pointer.file}: missing '${pointer.text}'`);
+    }
+  }
+}
+
+function checkRendererTextureE2ePlan() {
+  const guide = readText("docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md");
+  for (const text of [
+    "Renderer And Three Texture E2E",
+    "createImageBitmapLoader",
+    "Three texture",
+    "WebGL",
+    "LoadedAsset.dispose",
+    "corepack pnpm test:e2e:chromium",
+    "corepack pnpm validate:full",
+    "corepack pnpm publish:preflight",
+    "docs/phase-23-pass-report.md",
+    "Real decoder package integration"
+  ]) {
+    if (!guide.includes(text)) {
+      issues.push(`docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md: missing '${text}'`);
+    }
+  }
+
+  for (const pointer of [
+    {
+      file: "README.md",
+      text: "docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "indirection-phase-23-renderer-texture-e2e-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "Phase 23 Renderer And Three Texture E2E"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md"
+    },
+    {
+      file: "docs/phase-22-pass-report.md",
+      text: "Planner selection after PASS: Phase 23 Renderer And Three Texture E2E"
+    },
+    {
+      file: "docs/phase-22-pass-report.md",
+      text: "docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md"
     }
   ]) {
     const text = readText(pointer.file);

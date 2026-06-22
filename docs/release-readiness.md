@@ -1,6 +1,6 @@
 # Release Readiness
 
-This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, Phase 19 no-publish release-candidate rehearsal posture, Phase 20 public docs/onboarding posture, Phase 21 local public website/demo docs-site rehearsal posture, and Phase 22 browser ImageBitmap lifecycle posture before any real v0.1 npm release, tag, deployment, or renderer E2E.
+This document records the Phase 8 release-hardening, Phase 9 browser E2E, Phase 10 release dry-run, Phase 11 publish preflight, Phase 12 browser matrix, Phase 13 Three GLTF adapter, Phase 14 Three lifecycle posture, Phase 15 compressed capability source-selection posture, Phase 16 browser E2E stress posture, Phase 17 release provenance posture, Phase 18 release CI policy posture, Phase 19 no-publish release-candidate rehearsal posture, Phase 20 public docs/onboarding posture, Phase 21 local public website/demo docs-site rehearsal posture, Phase 22 browser ImageBitmap lifecycle posture, and selected Phase 23 renderer/Three texture E2E plan before any real v0.1 npm release, tag, deployment, real decoder dependency, or live Sinan integration.
 
 ## Current Quality Gates
 
@@ -55,6 +55,7 @@ git diff --check
 - Phase 20 public onboarding docs, evaluator quickstart, package entrypoint documentation, example workflow documentation, docs drift guards, and PASS report are in place without changing package visibility, license policy, publish permissions, release ownership blockers, or protocol/schema/compiler/runtime semantics.
 - Phase 21 local public demo site rehearsal, `site:demo`, `smoke:site-demo`, generated artifact policy, docs drift guards, and PASS report are in place without deploying, publishing, granting workflow write permissions, or changing protocol/schema/compiler/runtime semantics.
 - Phase 22 browser ImageBitmap lifecycle support, `createImageBitmapLoader`, tiny deterministic image fixture validation, browser smoke, Chromium/Firefox/WebKit E2E, package smoke, docs drift guards, and PASS report are in place without Three texture creation, renderer E2E, WebGL scene smoke, GPU memory estimation, live Sinan integration, real decoder dependencies, publishing, or deployment.
+- Phase 23 renderer/Three texture E2E is selected as the next internal candidate. It should prove a local browser/Three/WebGL texture path on top of Phase 22 without adding real decoder dependencies, live Sinan integration, production renderer framework, publishing, or deployment.
 
 ## Phase 8 Main Implementation Checkpoint
 
@@ -254,10 +255,16 @@ Browser ImageBitmap lifecycle docs: `docs/image-bitmap-lifecycle.md`
 
 Phase 22 PASS report: `docs/phase-22-pass-report.md`
 
+## Phase 23 Renderer And Three Texture E2E
+
+Phase 23 guide: `docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md`
+
+Phase 23 is selected as the last currently actionable internal candidate before Phase 24 strategy decisions. It should add a bounded local browser/Three/WebGL proof that an Indirection-managed image source can become a host-owned Three texture or material input, render deterministically, and release owned resources through the existing runtime lifecycle while keeping core packages renderer-neutral.
+
 ## Recommended Next Steps
 
 1. Keep `validate:full`, `release:ci-check`, `release:provenance`, `release:dry-run`, `publish:preflight`, and `release:rc-check` as the local release-readiness gates.
-2. Keep renderer E2E, Three texture creation, WebGL scene smoke, and GPU memory estimation in later owner-approved phases after the Phase 22 image-source lifecycle boundary.
+2. Execute Phase 23 as the bounded renderer/Three texture E2E candidate, then stop before Phase 24 unless owner strategy decisions unblock real decoder dependencies, live Sinan integration, public deployment, or real publishing.
 3. Add real npm publishing only after package visibility, names, npm account/scope, public license, versioning, tag policy, GitHub Release policy, provenance upload, signing, workflow permissions, package upload, release ownership, and rollback decisions are accepted.
 4. Keep the Phase 19 owner decision blockers visible until a dedicated owner-approved publish phase changes them.
 5. Keep read-only release workflow policy checks in place until a dedicated approved publish phase changes them.
@@ -290,6 +297,8 @@ Phase 20 guide: `docs/indirection-phase-20-public-docs-onboarding-goal-guide.md`
 Phase 21 guide: `docs/indirection-phase-21-public-demo-docs-site-goal-guide.md`
 
 Phase 22 guide: `docs/indirection-phase-22-image-bitmap-lifecycle-goal-guide.md`
+
+Phase 23 guide: `docs/indirection-phase-23-renderer-texture-e2e-goal-guide.md`
 
 Browser ImageBitmap lifecycle docs: `docs/image-bitmap-lifecycle.md`
 
