@@ -6,6 +6,7 @@ const issues = [];
 const packageJson = readJson("package.json");
 
 checkValidateFull();
+checkReleaseDryRun();
 checkRequiredDocPointers();
 checkMarkdownLinks();
 
@@ -41,6 +42,13 @@ function checkValidateFull() {
   }
 }
 
+function checkReleaseDryRun() {
+  const command = packageJson.scripts?.["release:dry-run"];
+  if (typeof command !== "string" || !command.includes("scripts/release-dry-run.mjs")) {
+    issues.push("package.json: release:dry-run must run scripts/release-dry-run.mjs");
+  }
+}
+
 function checkRequiredDocPointers() {
   const requiredPointers = [
     {
@@ -68,6 +76,14 @@ function checkRequiredDocPointers() {
       text: "docs/indirection-phase-10-release-workflow-goal-guide.md"
     },
     {
+      file: "README.md",
+      text: "docs/release-workflow.md"
+    },
+    {
+      file: "README.md",
+      text: "docs/release-versioning-adr.md"
+    },
+    {
       file: "docs/README.md",
       text: "indirection-phase-8-release-hardening-goal-guide.md"
     },
@@ -92,12 +108,28 @@ function checkRequiredDocPointers() {
       text: "indirection-phase-10-release-workflow-goal-guide.md"
     },
     {
+      file: "docs/README.md",
+      text: "release-workflow.md"
+    },
+    {
+      file: "docs/README.md",
+      text: "release-versioning-adr.md"
+    },
+    {
       file: "docs/release-readiness.md",
       text: "`test:e2e`"
     },
     {
       file: "docs/release-readiness.md",
       text: "docs/indirection-phase-10-release-workflow-goal-guide.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "docs/release-workflow.md"
+    },
+    {
+      file: "docs/release-readiness.md",
+      text: "corepack pnpm release:dry-run"
     },
     {
       file: "docs/phase-9-pass-report.md",
@@ -118,6 +150,38 @@ function checkRequiredDocPointers() {
     {
       file: "docs/indirection-phase-8-release-hardening-goal-guide.md",
       text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/indirection-phase-10-release-workflow-goal-guide.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/release-workflow.md",
+      text: "corepack pnpm validate:full"
+    },
+    {
+      file: "docs/release-workflow.md",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: "docs/release-versioning-adr.md",
+      text: "instead of adding Changesets"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-9-browser-e2e"
+    },
+    {
+      file: "CHANGELOG.md",
+      text: "0.0.0-phase-10-release-dry-run"
+    },
+    {
+      file: ".github/workflows/release-dry-run.yml",
+      text: "corepack pnpm release:dry-run"
+    },
+    {
+      file: ".github/workflows/release-dry-run.yml",
+      text: "contents: read"
     }
   ];
 
