@@ -14,8 +14,9 @@ const packages = await readWorkspacePackages();
 
 assertRootPolicy(rootManifest);
 assertPackagePolicy(packages);
-await assertDocsPolicy();
+await assertDocsPolicy(packages);
 assertNoRealPublishScripts([rootManifest, ...packages.map((entry) => entry.manifest)]);
+assertNoForbiddenTrackedArtifacts();
 
 runPnpm(["build"]);
 runPnpm(["pack:check"]);
@@ -125,7 +126,7 @@ function assertWorkspaceDependencyRanges(dependencies, packageName) {
   }
 }
 
-async function assertDocsPolicy() {
+async function assertDocsPolicy(packages) {
   const workflow = await readText(join(repoRoot, "docs/release-workflow.md"));
   const versioning = await readText(
     join(repoRoot, "docs/release-versioning-adr.md")
@@ -134,9 +135,18 @@ async function assertDocsPolicy() {
   for (const text of [
     "Do not run a real `npm publish`",
     "All workspace packages remain `private: true`",
-    "Package Metadata Rules"
+    "Package Metadata Rules",
+    "No `@indirection/sinan` package is approved",
+    "The root `indirection` workspace package is private"
   ]) {
     assert(workflow.includes(text), `release workflow missing '${text}'`);
+  }
+
+  for (const { manifest } of packages) {
+    assert(
+      workflow.includes(`\`${manifest.name}\``),
+      `release workflow must include visibility policy for ${manifest.name}`
+    );
   }
 
   for (const text of [
@@ -145,6 +155,27 @@ async function assertDocsPolicy() {
     "instead of adding Changesets"
   ]) {
     assert(versioning.includes(text), `release versioning ADR missing '${text}'`);
+  }
+}
+
+function assertNoForbiddenTrackedArtifacts() {
+  const trackedFiles = git(["ls-files", "-z"])
+    .split("\0")
+    .filter(Boolean)
+    .map((file) => file.replaceAll("\\", "/"));
+
+  const forbiddenFiles = trackedFiles.filter((file) =>
+    /(?:^|\/)(?:playwright-report|test-results|release-artifacts|release-archives|npm-cache)(?:\/|$)|(?:^|\/)dist\/|\.tgz$|trace\.zip$|tsconfig\.tsbuildinfo$/.test(
+      file
+    )
+  );
+
+  if (forbiddenFiles.length > 0) {
+    throw new Error(
+      `release dry-run forbids tracked generated artifacts:\n${forbiddenFiles.join(
+        "\n"
+      )}`
+    );
   }
 }
 

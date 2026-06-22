@@ -16,7 +16,7 @@ Run the local dry-run gate with:
 corepack pnpm release:dry-run
 ```
 
-The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, package build, package tarball contents, temporary consumer imports, and no Git status or tag side effects.
+The dry-run audits Phase 10 private package policy, version policy, workspace dependency ranges, documentation policy, real publish script absence, forbidden tracked release artifacts, package build, package tarball contents, temporary consumer imports, and no Git status or tag side effects.
 
 ## Package Visibility Policy
 
